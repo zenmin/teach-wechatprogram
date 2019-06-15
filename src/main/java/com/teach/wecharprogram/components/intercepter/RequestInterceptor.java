@@ -1,9 +1,12 @@
 package com.teach.wecharprogram.components.intercepter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.teach.wecharprogram.entity.Logs;
+import com.teach.wecharprogram.service.LogsService;
 import com.teach.wecharprogram.util.IpHelper;
 import com.teach.wecharprogram.util.StaticUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,8 +20,8 @@ import java.util.Map;
 @Slf4j
 public class RequestInterceptor implements HandlerInterceptor {
 
-//    @Autowired
-//    CommonLogService commonLogService;
+    @Autowired
+    LogsService commonLogService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws JsonProcessingException {
@@ -36,7 +39,7 @@ public class RequestInterceptor implements HandlerInterceptor {
         Map<String, String[]> parameterMap = request.getParameterMap();
         String params = StaticUtil.objectMapper.writeValueAsString(parameterMap);
         log.info("客户端ip:[{}]请求URL:[{}] ,请求params:[{}]",IpHelper.getRequestIpAddr(request), request.getRequestURL(), params);
-//        commonLogService.saveLog(new CommonLog(IpHelper.getRequestIpAddr(request), request.getRequestURL().toString(),params));
+        commonLogService.save(new Logs(IpHelper.getRequestIpAddr(request), request.getRequestURL().toString(),params));
         return true;
     }
 

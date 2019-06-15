@@ -24,8 +24,6 @@ public class WebInterceptor extends WebMvcConfigurerAdapter {
         registry.addInterceptor(requestInterceptor())
                 .addPathPatterns("/api/**").excludePathPatterns("/api/login","/api/logOut");
 
-        registry.addInterceptor(sqlInterceptor()).addPathPatterns("/order/**");
-
     }
 
 }

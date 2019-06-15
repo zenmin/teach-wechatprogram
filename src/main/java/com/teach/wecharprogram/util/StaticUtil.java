@@ -1,18 +1,26 @@
 package com.teach.wecharprogram.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.io.BaseEncoding;
 import com.teach.wecharprogram.common.CommonException;
-import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.common.constant.DefinedCode;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @Describle This Class Is
@@ -20,6 +28,9 @@ import java.util.*;
  * @Date 2019/1/16 22:04
  */
 public class StaticUtil {
+
+    // 业务线程池
+    public static ExecutorService executorService = Executors.newFixedThreadPool(5);
 
     public static NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
@@ -31,12 +42,12 @@ public class StaticUtil {
     }
 
     //常规UUID
-    public static String UUID(){
+    public static String UUID() {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
-    //UUID的hashcode +默认随机数  还是有可能重复 1000000万数据重复263个
-    public static String uniqueKey() {
+    //UUID的hashcode +随机数  还是有可能重复
+    public static synchronized String uniqueKey() {
         int abs = Math.abs(Integer.parseInt(String.valueOf(StaticUtil.UUID().hashCode())));
         int random = (int) Math.random() * 1000;
         String temp = String.valueOf(random + abs);
@@ -49,22 +60,38 @@ public class StaticUtil {
         return temp;
     }
 
-    public static String uniqueKeyByTime(Date date){
-        String dateTime = DateUtil.millisToDateTime(date.getTime(), "yyyyMMddHHmmssSS");
-        dateTime =  dateTime + "" + StaticUtil.uniqueKey();
-        return dateTime;
+    // 当前时间的唯一key
+    public static synchronized String uniqueKeyByTime(Date date) {
+        String dateTime = DateUtil.millisToDateTime(date.getTime(), "yyyyMMddHHmmssSSS");
+        // 获取当前进程PID
+        String name = ManagementFactory.getRuntimeMXBean().getName();
+        String pid = name.split("@")[0];
+        // 获取当前线程号
+        long id = Thread.currentThread().getId();
+        return (dateTime + pid + id + StaticUtil.uniqueKey()).substring(0, 30);
     }
 
-    public static String getToken(){
-        return  new Date().getTime()+""+StaticUtil.uniqueKey();
+    // 当前时间的唯一key
+    public static synchronized String uniqueKeyByMillis(Date date, int lng) {
+        long dateTime = date.getTime();
+        // 获取当前进程PID
+        String name = ManagementFactory.getRuntimeMXBean().getName();
+        String pid = name.split("@")[0];
+        // 获取当前线程号
+        long id = Thread.currentThread().getId();
+        return (dateTime + pid + id + StaticUtil.uniqueKey()).substring(0, lng >= 30 ? 29 : lng);
+    }
+
+    public static String getToken() {
+        return new Date().getTime() + "" + StaticUtil.uniqueKey();
     }
 
     public static String uploadFile(byte[] file, String filePath, String fileName) {
         try {
             File targetFile = new File(filePath);
             boolean b = targetFile.canWrite();
-            if(!b)
-                throw new CommonException(DefinedCode.NOTWRITEABLE,"文件夹：" + targetFile.getAbsolutePath() + " 没有写入权限，请给予权限！");
+            if (!b)
+                throw new CommonException(DefinedCode.NOTWRITEABLE, "文件夹：" + targetFile.getAbsolutePath() + " 没有写入权限，请给予权限！");
             if (!targetFile.exists()) {
                 targetFile.mkdirs();
             }
@@ -78,17 +105,34 @@ public class StaticUtil {
         return filePath + fileName;
     }
 
-    public static String convertMailContent(String conent,String km,String orderNo) {
+    public static String convertMailContent(String conent, String km, String orderNo) {
         conent = conent.replace("${km}", " " + km + " ");
         conent = conent.replace("${orderNo}", " " + orderNo + " ");
         return conent;
     }
 
-    public static String md5Hex(String code){
+    public static String md5Hex(String code) {
         return DigestUtils.md5Hex(code);
     }
 
-    public static String sha1512Hex(String code){
+    public static String md5Hex(byte[] code) {
+        return DigestUtils.md5Hex(code);
+    }
+
+    public static String base64Encode(String code) {
+        BaseEncoding baseEncoding = BaseEncoding.base64();
+        String encode = baseEncoding.encode(code.getBytes());
+        return encode;
+    }
+
+    public static String base64Decode(String code) {
+        BaseEncoding baseEncoding = BaseEncoding.base64();
+        byte[] decode = baseEncoding.decode(code);
+        String s = new String(decode);
+        return s;
+    }
+
+    public static String sha1512Hex(String code) {
         return DigestUtils.sha512Hex(code);
     }
 
@@ -100,28 +144,8 @@ public class StaticUtil {
         return multiplicand == 0.0D && multiplier == 0.0D ? 0.0D : multiplier == 0.0D ? 1.0D : BigDecimal.valueOf(multiplicand).multiply(BigDecimal.valueOf(multiplier)).doubleValue();
     }
 
-    public static String compCode(){
-        String localMacAddr = IpHelper.getLocalMacAddr() + CommonConstant.AUTH_KEY;
-        return String.valueOf(Math.abs(localMacAddr.hashCode()));
-
-    }
-    /**
-     * @param price 单价
-     * @param num   数量
-     * @param saleRate 折扣 100
-     * @return 计算价格
-     */
-    public static double computePrice(double price, int num, int saleRate) {
-        if(saleRate <= 0)
-            saleRate = 100;
-        if(num <= 0)
-            num = 1;
-        double sale = 0.0;
-        sale = StaticUtil.divide(Double.valueOf(saleRate),Double.valueOf(100));
-        Double multiply = StaticUtil.multiply(price, Double.valueOf(num));
-        Double allPrice = StaticUtil.multiply(multiply, sale);
-        double v = BigDecimal.valueOf(allPrice).setScale(2,RoundingMode.UP).doubleValue();
-        return v;
+    public static Long multiplyToLong(Double multiplicand, Double multiplier) {
+        return BigDecimal.valueOf(multiplicand).multiply(BigDecimal.valueOf(multiplier)).longValue();
     }
 
     /**
@@ -167,35 +191,161 @@ public class StaticUtil {
         return s;
     }
 
+    /**
+     * @param orderNo
+     * @return 数字匹配
+     */
     public static boolean checkNum(String orderNo) {
         return orderNo.matches("^[0-9]*$");
     }
 
-    public static String joinQuota(List<String> list){
-        if(list.size() == 1){
-            return list.get(0);
+    /**
+     * @param list
+     * @return 加逗号
+     */
+    public static String joinQuota(List<?> list) {
+        if (list.size() == 1) {
+            return "'" + list.get(0) + "'";
+        }
+        if (list.size() == 0) {
+            return "";
         }
         final String[] temp = {""};
-        list.stream().forEach(s -> temp[0] += s + ",");
-        String result = temp[0].substring(0,temp[0].length()-1);
+        list.stream().forEach(s -> temp[0] += "'" + s + "',");
+        String result = temp[0].substring(0, temp[0].length() - 1);
         return result;
     }
 
-    public static boolean checkAuth(String code) {
+
+    /**
+     * @param comment
+     * @return 根据顺序赋值
+     */
+    public static <T> T of(String[] comment, Class<T> clazz) {
         try {
-            String localMacAddr = IpHelper.getLocalMacAddr()+ CommonConstant.AUTH_KEY;
-            String s = StaticUtil.sha1512Hex(String.valueOf(Math.abs(localMacAddr.hashCode()))).toUpperCase();
-            return s.equals(code);
-        }catch (Exception e){
+            T obj = clazz.newInstance();
+            Field[] declaredFields = clazz.getDeclaredFields();
+            // 跳过第一个字段
+            for (int i = 1; i <= declaredFields.length - 1; i++) {
+                Field field = declaredFields[i];
+                String name = field.getName();
+                name = name.substring(0, 1).toUpperCase() + name.substring(1, name.length());
+                Method method = clazz.getDeclaredMethod("set" + name, String.class);
+                try {
+                    String value = comment[i - 1];  // 这里-1 因为i从1开始
+                    if (StringUtils.isBlank(value)) {
+                        method.invoke(obj, "");
+                    } else {
+                        method.invoke(obj, value);
+                    }
+                    System.out.println(comment[1]);
+                } catch (Exception e) {
+                    return obj;
+                }
+            }
+            return obj;
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+
+        return null;
     }
 
-    public static void main(String args[]){
-        for(int i = 0;i <= 100 ;i++){
-            System.out.println(StaticUtil.UUID());
+    public static Map readToMap(String src, String errorMsg) {
+        Map map = new HashMap();
+        try {
+            map = objectMapper.readValue(src, HashMap.class);
+        } catch (IOException e) {
+            throw new CommonException(DefinedCode.JSON_ERROR, errorMsg);
         }
+        return map;
+    }
+
+    public static List readToList(String src, String errorMsg) {
+        List list = Lists.newArrayList();
+        try {
+            list = objectMapper.readValue(src, List.class);
+        } catch (IOException e) {
+            throw new CommonException(DefinedCode.JSON_ERROR, errorMsg);
+        }
+        return list;
+    }
+
+    public static String unicodeToCn(String unicode) {
+        /** 以 \ u 分割，因为java注释也能识别unicode，因此中间加了一个空格*/
+        String[] strs = unicode.split("\\\\u");
+        String returnStr = "";
+        // 由于unicode字符串以 \ u 开头，因此分割出的第一个字符是""。
+        for (int i = 1; i < strs.length; i++) {
+            returnStr += (char) Integer.valueOf(strs[i], 16).intValue();
+        }
+        return returnStr;
+    }
+
+    /**
+     * AES加密字符串
+     *
+     * @param content 需要被加密的字符串
+     * @param KEY     加密需要的密钥
+     * @return 密文
+     */
+    public static String AesEncode(String content, String KEY) {
+        if (StringUtils.isBlank(content)) {
+            return null;
+        }
+        String encrypt = AESUtil.encrypt(content, KEY);
+        return encrypt;
+    }
+
+    /**
+     * 解密AES加密过的字符串
+     *
+     * @param code AES加密过过的内容
+     * @param KEY  加密时的密钥
+     * @return 明文
+     */
+    public static String decrypt(String code, String KEY) {
+        if (StringUtils.isBlank(code)) {
+            return null;
+        }
+        String encrypt = AESUtil.decrypt(code, KEY);
+        return encrypt;
+    }
+
+    /**
+     * 生成六位验证码
+     * length 长度
+     *
+     * @return
+     */
+    public static String genSmsCode(int length) {
+        return StaticUtil.uniqueKey().substring(0, length);
+    }
+
+    public static void validateField(String... args) {
+        List<String> list = Arrays.asList(args);
+        list.stream().forEach(o -> {
+            if (StringUtils.isBlank(o)) {
+                throw new CommonException(DefinedCode.PARAMSERROR, "请填写必填项！");
+            }
+        });
+    }
+
+    public static void validateObject(Object... args) {
+        List<Object> list = Arrays.asList(args);
+        list.stream().forEach(o -> {
+            if (Objects.isNull(o)) {
+                throw new CommonException(DefinedCode.PARAMSERROR, "请填写必填项！");
+            }
+        });
+    }
+
+    public static Map<String, Object> multiSetMap(List<String> keys, List<Object> values) {
+        Map<String, Object> map = Maps.newHashMap();
+        for (int i = 0; i < keys.size(); i++) {
+            map.put(keys.get(i), values.get(i));
+        }
+        return map;
     }
 
 }

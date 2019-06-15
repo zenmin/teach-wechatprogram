@@ -18,13 +18,13 @@ public class CodeGenerator {
      * 注意表中字段不要带下划线 每个字段尽量加上COMMENT
      */
     // 要生成的表名 可以为多个
-    static final String[] tableName = {"employee"};
+    static final String[] tableName = {"follow"};
     // author
     static final String author = "ZengMin";
     // 全包名
-    static final String packageName = "com.zm.project_template";
+    static final String packageName = "com.teach.wecharprogram";
     // 数据库url
-    static final String jdbcUrl = "jdbc:mysql://localhost:3306/test?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8";
+    static final String jdbcUrl = "jdbc:mysql://localhost:3306/teach-dev?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8";
     // 数据库用户名
     static final String username = "root";
     // 数据库密码
