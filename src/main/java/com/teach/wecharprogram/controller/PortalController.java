@@ -20,7 +20,7 @@ public class PortalController {
     @RequestMapping("/")
     public String toApi(){
         if(env.indexOf("dev")!=-1){
-            return "redirect:swagger-ui.html";
+            return "doc";
         }
         return "/";
     }
