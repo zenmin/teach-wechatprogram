@@ -39,7 +39,7 @@
         const ui = SwaggerUIBundle({
             url: "/v2/api-docs",
             dom_id: '#swagger-ui',
-            deepLinking: fa,
+            deepLinking: false,
             presets: [
                 SwaggerUIBundle.presets.apis,
                 SwaggerUIStandalonePreset
@@ -47,7 +47,8 @@
             plugins: [
                 SwaggerUIBundle.plugins.DownloadUrl
             ],
-            layout: "StandaloneLayout"
+            layout: "StandaloneLayout",
+            docExpansion:"none"
         })
         // End Swagger UI call region
         window.ui = ui
