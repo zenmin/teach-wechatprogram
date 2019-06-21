@@ -1,10 +1,17 @@
 package com.teach.wecharprogram.entity;
 
+import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.entity.base.EntityModel;
+
 import java.time.LocalDateTime;
+import java.util.Date;
+
+import com.teach.wecharprogram.entity.vo.WxUserInfoVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.*;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -12,25 +19,21 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 /**
-* Create by Code Generator
-* JPA只用来正向生成数据库表和字段 如果不需要此字段更新 请加上注解@TableField(exist = false)和@Transient
-* @Author ZengMin
-* @Date 2019-06-15 18:17:10
-*/
+ * Create by Code Generator
+ * JPA只用来正向生成数据库表和字段 如果不需要此字段更新 请加上注解@TableField(exist = false)和@Transient
+ *
+ * @Author ZengMin
+ * @Date 2019-06-15 18:17:10
+ */
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value="用户管理")
+@ApiModel(value = "用户管理")
 @Table(name = "user")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 public class User extends EntityModel {
-
-    @ApiModelProperty(value = "按创建时间查询 格式：yyyy-MM-dd HH:mm:ss")
-    @TableField(exist = false)
-    @Transient
-    private String createTimeQuery;
 
     @ApiModelProperty(value = "用户名")
     private String username;
@@ -51,7 +54,7 @@ public class User extends EntityModel {
     private String lastLoginIp;
 
     @ApiModelProperty(value = "最后一次登录时间")
-    private LocalDateTime lastLoginTime;
+    private Date lastLoginTime;
 
     @ApiModelProperty(value = "昵称")
     private String nickName;
@@ -77,7 +80,56 @@ public class User extends EntityModel {
     @ApiModelProperty(value = "状态1启用 2禁用")
     private Integer status;
 
-    @ApiModelProperty(value = "学校id")
+    @ApiModelProperty(value = "学校id",hidden = true)
     private Long schoolId;
 
+    @TableField(exist = false)
+    @Transient
+    private String nowLoginIp;
+
+    public User(Long id, Date lastLoginTime, String lastLoginIp) {
+        super.setId(id);
+        this.lastLoginTime = lastLoginTime;
+        this.lastLoginIp = lastLoginIp;
+    }
+
+    public User(String username, String password, String nickName, Integer status, Long inviteCode, String lastLoginIp, Date lastLoginTime) {
+        this.username = username;
+        this.password = password;
+        this.nickName = nickName;
+        this.status = status;
+        this.lastLoginIp = lastLoginIp;
+        this.lastLoginTime = lastLoginTime;
+        this.roleCode = CommonConstant.ROLE_USER;
+        this.roleName = CommonConstant.ROLE.getName(CommonConstant.ROLE_USER);
+    }
+
+    public User(String username, String password, Integer status, String phone, String nickName, String lastLoginIp, Date lastLoginTime) {
+        this.username = username;
+        this.password = password;
+        this.status = status;
+        this.phone = phone;
+        this.nickName = nickName;
+        this.lastLoginIp = lastLoginIp;
+        this.lastLoginTime = lastLoginTime;
+        this.roleCode = CommonConstant.ROLE_USER;
+        this.roleName = CommonConstant.ROLE.getName(CommonConstant.ROLE_USER);
+    }
+
+
+    public User(WxUserInfoVo wxUserInfoVo, String lastLoginIp, String initPassword, Integer status, String openid) {
+        this.city = wxUserInfoVo.getCity();
+        this.country = wxUserInfoVo.getCountry();
+        this.gender = wxUserInfoVo.getGender();
+        this.language = wxUserInfoVo.getLanguage();
+        this.nickName = wxUserInfoVo.getNickName();
+        this.province = wxUserInfoVo.getProvince();
+        this.openid = openid;
+        this.status = status;
+        this.lastLoginIp = lastLoginIp;
+        this.lastLoginTime = new Date();
+        this.password = initPassword;
+        this.roleCode = CommonConstant.ROLE_USER;
+        this.roleName = CommonConstant.ROLE.getName(CommonConstant.ROLE_USER);
+    }
 }

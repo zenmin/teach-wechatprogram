@@ -5,13 +5,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
 import com.teach.wecharprogram.common.CommonException;
+import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.common.constant.DefinedCode;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -36,6 +35,12 @@ public class StaticUtil {
 
     public static ObjectMapper objectMapper = new ObjectMapper();
 
+    public static final List<String> MEDIA_IAMGE = Lists.newArrayList("jpg", "png", "jpeg", "gmp", "gif");
+
+    public static final List<String> MEDIA_VIDEO = Lists.newArrayList("mp4", "avi", "mpeg", "flv", "wmv", "rmvb");
+
+    public static final List<String> MEDIA_MUSIC = Lists.newArrayList("mp3", "aac", "wav", "wma");
+
     static {
         numberFormat.setMaximumFractionDigits(2);
         numberFormat.setMinimumFractionDigits(2);
@@ -46,7 +51,7 @@ public class StaticUtil {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
-    //UUID的hashcode +随机数  还是有可能重复
+    //UUID的hashcode +随机数
     public static synchronized String uniqueKey() {
         int abs = Math.abs(Integer.parseInt(String.valueOf(StaticUtil.UUID().hashCode())));
         int random = (int) Math.random() * 1000;
@@ -60,7 +65,7 @@ public class StaticUtil {
         return temp;
     }
 
-    // 当前时间的唯一key
+    // 当前时间的唯一key 同一时间不要使用
     public static synchronized String uniqueKeyByTime(Date date) {
         String dateTime = DateUtil.millisToDateTime(date.getTime(), "yyyyMMddHHmmssSSS");
         // 获取当前进程PID
@@ -71,38 +76,28 @@ public class StaticUtil {
         return (dateTime + pid + id + StaticUtil.uniqueKey()).substring(0, 30);
     }
 
-    // 当前时间的唯一key
-    public static synchronized String uniqueKeyByMillis(Date date, int lng) {
+    // 当前时间的唯一key 同一时间不要使用
+    public static synchronized String uniqueKeyByMillis(Date date, Integer lng) {
         long dateTime = date.getTime();
         // 获取当前进程PID
         String name = ManagementFactory.getRuntimeMXBean().getName();
         String pid = name.split("@")[0];
         // 获取当前线程号
         long id = Thread.currentThread().getId();
-        return (dateTime + pid + id + StaticUtil.uniqueKey()).substring(0, lng >= 30 ? 29 : lng);
+        if (Objects.nonNull(lng))
+            return (dateTime + pid + id + StaticUtil.uniqueKey()).substring(0, lng >= 30 ? 29 : lng);
+        else
+            return dateTime + pid + id + StaticUtil.uniqueKey();
+    }
+
+    // 同一时间使用 唯一id
+    public static String getId(Date date) {
+        String dateTime = DateUtil.millisToDateTime(date.getTime(), "yyyyMMddHHmm");
+        return dateTime + "0" + String.valueOf(IdWorker.getId());
     }
 
     public static String getToken() {
         return new Date().getTime() + "" + StaticUtil.uniqueKey();
-    }
-
-    public static String uploadFile(byte[] file, String filePath, String fileName) {
-        try {
-            File targetFile = new File(filePath);
-            boolean b = targetFile.canWrite();
-            if (!b)
-                throw new CommonException(DefinedCode.NOTWRITEABLE, "文件夹：" + targetFile.getAbsolutePath() + " 没有写入权限，请给予权限！");
-            if (!targetFile.exists()) {
-                targetFile.mkdirs();
-            }
-            FileOutputStream out = new FileOutputStream(filePath + fileName);
-            out.write(file);
-            out.flush();
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return filePath + fileName;
     }
 
     public static String convertMailContent(String conent, String km, String orderNo) {
@@ -111,6 +106,10 @@ public class StaticUtil {
         return conent;
     }
 
+    /**
+     * @param code
+     * @return
+     */
     public static String md5Hex(String code) {
         return DigestUtils.md5Hex(code);
     }
@@ -119,27 +118,63 @@ public class StaticUtil {
         return DigestUtils.md5Hex(code);
     }
 
+    /**
+     * base64加密
+     *
+     * @param code
+     * @return
+     */
     public static String base64Encode(String code) {
         BaseEncoding baseEncoding = BaseEncoding.base64();
         String encode = baseEncoding.encode(code.getBytes());
         return encode;
     }
 
+    /**
+     * base64解码
+     *
+     * @param code
+     * @return
+     */
     public static String base64Decode(String code) {
         BaseEncoding baseEncoding = BaseEncoding.base64();
         byte[] decode = baseEncoding.decode(code);
-        String s = new String(decode);
+        String s = null;
+        try {
+            s = new String(decode, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         return s;
+    }
+
+    /**
+     * @param userId
+     * @return
+     */
+    public static String getLoginToken(Long userId) {
+        String userIdHex = StaticUtil.md5Hex(userId + CommonConstant.TOKEN_KEY);
+        return userIdHex;
     }
 
     public static String sha1512Hex(String code) {
         return DigestUtils.sha512Hex(code);
     }
 
+    /**
+     * @param dividend
+     * @param divisor
+     * @return 相除
+     */
     public static Double divide(Double dividend, Double divisor) {
         return dividend == 0.0D && divisor == 0.0D ? 0.0D : divisor == 0.0D ? 1.0D : BigDecimal.valueOf(dividend).divide(BigDecimal.valueOf(divisor), 2, RoundingMode.HALF_UP).doubleValue();
     }
 
+    /**
+     * @param multiplicand
+     * @param multiplier
+     * @return 相乘
+     */
     public static Double multiply(Double multiplicand, Double multiplier) {
         return multiplicand == 0.0D && multiplier == 0.0D ? 0.0D : multiplier == 0.0D ? 1.0D : BigDecimal.valueOf(multiplicand).multiply(BigDecimal.valueOf(multiplier)).doubleValue();
     }
@@ -322,6 +357,11 @@ public class StaticUtil {
         return StaticUtil.uniqueKey().substring(0, length);
     }
 
+    /**
+     * 验证字段
+     *
+     * @param args
+     */
     public static void validateField(String... args) {
         List<String> list = Arrays.asList(args);
         list.stream().forEach(o -> {
@@ -331,6 +371,11 @@ public class StaticUtil {
         });
     }
 
+    /**
+     * 验证对象
+     *
+     * @param args
+     */
     public static void validateObject(Object... args) {
         List<Object> list = Arrays.asList(args);
         list.stream().forEach(o -> {
@@ -340,6 +385,13 @@ public class StaticUtil {
         });
     }
 
+    /**
+     * 按顺序设置map
+     *
+     * @param keys
+     * @param values
+     * @return
+     */
     public static Map<String, Object> multiSetMap(List<String> keys, List<Object> values) {
         Map<String, Object> map = Maps.newHashMap();
         for (int i = 0; i < keys.size(); i++) {

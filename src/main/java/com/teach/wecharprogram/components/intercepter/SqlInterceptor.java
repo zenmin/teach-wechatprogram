@@ -19,7 +19,7 @@ public class SqlInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI();
         String params = requestURI.substring(requestURI.lastIndexOf("/")+1);
         if(inj_str.indexOf(params) != -1){
-            throw new CommonException(DefinedCode.ERROR,"检测到SQL注入攻击，已记录IP，再次攻击将封禁IP，永久不得访问此站！");
+            throw new CommonException(DefinedCode.ERROR,"检测到SQL注入攻击，已记录IP，再次攻击将封禁IP，永久不得访问！");
         }
         return true;
     }
