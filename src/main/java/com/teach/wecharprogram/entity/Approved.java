@@ -9,6 +9,8 @@ import lombok.EqualsAndHashCode;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 /**
 * Create by Code Generator
 * JPA只用来正向生成数据库表和字段 如果不需要此字段更新 请加上注解@TableField(exist = false)和@Transient
@@ -66,6 +68,9 @@ public class Approved extends EntityModel {
 
     @ApiModelProperty("学生id")
     private String studentId;
+
+    @ApiModelProperty("结束时间")
+    private Date endTime;
 
     public Approved(String name, String startUserName, Long startUserId, String roleName, String roleId, String remark, String opinion,Integer type,String classesId,String studentId) {
         this.name = name;

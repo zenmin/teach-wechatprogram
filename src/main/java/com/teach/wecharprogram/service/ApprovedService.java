@@ -25,4 +25,5 @@ public interface ApprovedService {
     boolean delete(String ids);
 
     boolean agree(ApprovedVo approvedVo);
+
 }

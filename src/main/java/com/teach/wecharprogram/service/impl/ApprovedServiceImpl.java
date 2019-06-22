@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -96,30 +97,39 @@ public class ApprovedServiceImpl implements ApprovedService {
                 throw new CommonException(DefinedCode.APPROVED_IS_OK_ERROR, "该审批已经完成，无需再次操作！");
             }
 
-            Integer type = approved.getType();      //  1教师 2教练 3家长
-            Long startUserId = approved.getStartUserId();
-            String roleName = approved.getRoleName();
-            String roleId = approved.getRoleId();
-            String classesId = approved.getClassesId();
-            User user = new User();
-            user.setId(startUserId);
-            user.setStatus(CommonConstant.STATUS_OK);
-            user.setRoleCode(roleId);
-            user.setRoleName(roleName);
+            if (approvedVo.getResultCode() == 1) {
+                Integer type = approved.getType();      //  1教师 2教练 3家长
+                Long startUserId = approved.getStartUserId();
+                String roleName = approved.getRoleName();
+                String roleId = approved.getRoleId();
+                String classesId = approved.getClassesId();
+                User user = new User();
+                user.setId(startUserId);
+                user.setStatus(CommonConstant.STATUS_OK);
+                user.setRoleCode(roleId);
+                user.setRoleName(roleName);
 
-            if (type == 1) {     // 教师
-                relUserTypeIdService.save(new RelUserTypeId(startUserId, Long.valueOf(classesId), 2));
-            } else {     // 教练 / 家长
-                String[] split = classesId.split(",");
-                List<String> ids = Arrays.asList(split);
-                ids.stream().forEach(o -> relUserTypeIdService.save(new RelUserTypeId(startUserId, Long.valueOf(o), 2)));
+                if (type == 1) {     // 教师
+                    relUserTypeIdService.save(new RelUserTypeId(startUserId, Long.valueOf(classesId), 2));
+                } else {     // 教练 / 家长
+                    String[] split = classesId.split(",");
+                    List<String> ids = Arrays.asList(split);
+                    ids.stream().forEach(o -> relUserTypeIdService.save(new RelUserTypeId(startUserId, Long.valueOf(o), 2)));
+                }
+                approved.setResult("通过");
+                approved.setResultCode(1);
+            } else {
+                approved.setResult("不通过");
+                approved.setResultCode(0);
             }
+            approved.setEndTime(new Date());
+            approved.setOpinion(approvedVo.getOpinion());
+            approvedMapper.updateById(approved);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
         return true;
     }
-
 
 }

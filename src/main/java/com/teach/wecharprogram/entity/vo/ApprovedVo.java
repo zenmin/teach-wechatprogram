@@ -17,7 +17,7 @@ public class ApprovedVo {
     private Long id;
 
     @ApiModelProperty(value = "结果 1通过 0不通过")
-    private String resultCode;
+    private Integer resultCode;
 
     @ApiModelProperty(value = "审批意见")
     private String opinion;

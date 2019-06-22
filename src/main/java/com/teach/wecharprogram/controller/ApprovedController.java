@@ -94,8 +94,8 @@ public class ApprovedController {
      * 同意审批
      * @return
      */
-    @ApiOperation(value = "同意审批", response = ResponseEntity.class)
-    @PostMapping("/agree")
+    @ApiOperation(value = "审批", response = ResponseEntity.class)
+    @PostMapping("/approve")
     public ResponseEntity approve(ApprovedVo approvedVo,@ApiParam(hidden = true) @RequestHeader String token){
         User loginUser = userService.getLoginUser(token);
         approvedVo.setApprovedUserName(loginUser.getRealName());
