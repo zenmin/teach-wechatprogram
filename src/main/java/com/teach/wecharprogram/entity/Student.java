@@ -26,19 +26,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Student extends EntityModel {
 
-    @ApiModelProperty(value = "按创建时间查询 格式：yyyy-MM-dd HH:mm:ss")
-    @TableField(exist = false)
-    @Transient
-    private String createTimeQuery;
-
     @ApiModelProperty(value = "名字")
     private String name;
 
     @ApiModelProperty(value = "性别")
     private Integer gender;
-
-    @ApiModelProperty(value = "班级Id")
-    private String classesId;
 
     @ApiModelProperty(value = "备注")
     private String remark;
@@ -52,5 +44,18 @@ public class Student extends EntityModel {
     @ApiModelProperty(value = "出生日期")
     private String birthday;
 
+    @ApiModelProperty(value = "班级Id")
+    private Long classesId;
 
+    @ApiModelProperty(value = "班级名称")
+    private String classesName;
+
+    public Student(String name, Integer gender, Integer status, String birthday, Long classesId, String classesName) {
+        this.name = name;
+        this.gender = gender;
+        this.status = status;
+        this.birthday = birthday;
+        this.classesId = classesId;
+        this.classesName = classesName;
+    }
 }

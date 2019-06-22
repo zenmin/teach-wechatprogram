@@ -78,7 +78,7 @@ public class User extends EntityModel {
     @ApiModelProperty(value = "角色码")
     private String roleCode;
 
-    @ApiModelProperty(value = "角色名称")
+    @ApiModelProperty(value = "角色名称 冗余")
     private String roleName;
 
     @ApiModelProperty(value = "状态1启用 0禁用 2角色信息待验证")

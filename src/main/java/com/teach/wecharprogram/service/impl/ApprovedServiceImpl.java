@@ -114,7 +114,7 @@ public class ApprovedServiceImpl implements ApprovedService {
                 } else {     // 教练 / 家长
                     String[] split = classesId.split(",");
                     List<String> ids = Arrays.asList(split);
-                    ids.stream().forEach(o -> relUserTypeIdService.save(new RelUserTypeId(startUserId, Long.valueOf(o), 2)));
+                    ids.stream().forEach(o -> relUserTypeIdService.save(new RelUserTypeId(startUserId, Long.valueOf(o), type)));
                 }
                 approved.setResult("通过");
                 approved.setResultCode(1);

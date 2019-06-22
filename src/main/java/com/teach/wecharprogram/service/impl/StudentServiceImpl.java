@@ -11,8 +11,6 @@ import com.teach.wecharprogram.mapper.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
-import org.apache.commons.lang3.StringUtils;
-import com.teach.wecharprogram.util.DateUtil;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -37,18 +35,12 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Student> list(Student student) {
-        if(StringUtils.isNotBlank(student.getCreateTimeQuery())){
-            student.setCreateTime(DateUtil.parseToDate(student.getCreateTimeQuery()));
-        }
         List<Student> students = studentMapper.selectList(new QueryWrapper<>(student));
         return students;
     }
 
     @Override
     public Pager listByPage(Pager pager, Student student) {
-        if(StringUtils.isNotBlank(student.getCreateTimeQuery())){
-            student.setCreateTime(DateUtil.parseToDate(student.getCreateTimeQuery()));
-        }
         IPage<Student> studentIPage = studentMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(student));
         return pager.of(studentIPage);
     }
