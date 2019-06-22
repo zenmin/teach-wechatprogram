@@ -130,7 +130,8 @@ public class UserServiceImpl implements UserService {
         if (user.getStatus() == CommonConstant.STATUS_VALID_ERROR) {
             // 提交审批
             approvedService.save(new Approved("角色申请", updateUserVo.getRealName(), user.getId(), updateUserVo.getRoleName()
-                    , updateUserVo.getRoleId(), updateUserVo.getRemark(), "待审批", updateUserVo.getType(), updateUserVo.getClassesId(), updateUserVo.getStudentId()));
+                    , updateUserVo.getRoleId(), updateUserVo.getRemark(), "待审批", updateUserVo.getType(),
+                    updateUserVo.getClassesId(), updateUserVo.getStudentId(), "审批中", 2));
         }
         // 更新用户信息
         user.setRealName(updateUserVo.getRealName());

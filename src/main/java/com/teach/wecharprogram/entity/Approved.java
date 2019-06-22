@@ -3,7 +3,9 @@ package com.teach.wecharprogram.entity;
 import com.teach.wecharprogram.entity.base.EntityModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.*;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.AllArgsConstructor;
@@ -12,15 +14,16 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 /**
-* Create by Code Generator
-* JPA只用来正向生成数据库表和字段 如果不需要此字段更新 请加上注解@TableField(exist = false)和@Transient
-* @Author ZengMin
-* @Date 2019-06-22 16:36:34
-*/
+ * Create by Code Generator
+ * JPA只用来正向生成数据库表和字段 如果不需要此字段更新 请加上注解@TableField(exist = false)和@Transient
+ *
+ * @Author ZengMin
+ * @Date 2019-06-22 16:36:34
+ */
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value="角色审批")
+@ApiModel(value = "角色审批")
 @Table(name = "approved")
 @Entity
 @AllArgsConstructor
@@ -72,7 +75,7 @@ public class Approved extends EntityModel {
     @ApiModelProperty("结束时间")
     private Date endTime;
 
-    public Approved(String name, String startUserName, Long startUserId, String roleName, String roleId, String remark, String opinion,Integer type,String classesId,String studentId) {
+    public Approved(String name, String startUserName, Long startUserId, String roleName, String roleId, String remark, String opinion, Integer type, String classesId, String studentId, String result, Integer resultCode) {
         this.name = name;
         this.startUserName = startUserName;
         this.startUserId = startUserId;
@@ -83,5 +86,7 @@ public class Approved extends EntityModel {
         this.type = type;
         this.classesId = classesId;
         this.studentId = studentId;
+        this.result = result;
+        this.resultCode = resultCode;
     }
 }
