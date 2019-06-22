@@ -10,10 +10,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableSwagger2Doc
 @EnableAsync
-public class WecharprogramApplication {
+public class WechatProgramApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(WecharprogramApplication.class, args);
+        SpringApplication.run(WechatProgramApplication.class, args);
     }
 
 }
