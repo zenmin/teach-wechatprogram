@@ -38,6 +38,9 @@ public class User extends EntityModel {
     @ApiModelProperty(value = "用户名")
     private String username;
 
+    @ApiModelProperty(value = "头像")
+    private String img;
+
     @ApiModelProperty(value = "城市")
     private String city;
 
@@ -124,6 +127,8 @@ public class User extends EntityModel {
         this.language = wxUserInfoVo.getLanguage();
         this.nickName = wxUserInfoVo.getNickName();
         this.province = wxUserInfoVo.getProvince();
+        this.phone = wxUserInfoVo.getPhone();
+        this.img = wxUserInfoVo.getImg();
         this.openid = openid;
         this.status = status;
         this.lastLoginIp = lastLoginIp;

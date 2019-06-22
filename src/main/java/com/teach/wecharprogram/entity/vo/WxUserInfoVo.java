@@ -19,6 +19,12 @@ import java.net.URLEncoder;
 @AllArgsConstructor
 public class WxUserInfoVo {
 
+    @ApiModelProperty(value = "头像")
+    private String img;
+
+    @ApiModelProperty(value = "手机号")
+    private String phone;
+
     @ApiModelProperty(value = "城市")
     private String city;
 
@@ -87,6 +93,22 @@ public class WxUserInfoVo {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getProvince() {
