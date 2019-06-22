@@ -40,9 +40,6 @@ public class WxUserInfoVo {
     @ApiModelProperty(value = "jsCode")
     private String code;
 
-    @ApiModelProperty(value = "邀请码")
-    private String inviteCode;
-
     public String getCity() {
         return city;
     }
@@ -77,7 +74,7 @@ public class WxUserInfoVo {
 
     public String getNickName() {
         try {
-            return URLDecoder.decode(nickName,"UTF-8");
+            return URLDecoder.decode(nickName, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -108,11 +105,4 @@ public class WxUserInfoVo {
         this.code = code;
     }
 
-    public String getInviteCode() {
-        return inviteCode;
-    }
-
-    public void setInviteCode(String inviteCode) {
-        this.inviteCode = inviteCode;
-    }
 }
