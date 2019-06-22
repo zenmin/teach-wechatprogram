@@ -97,19 +97,19 @@ public class RedisUtil {
 
     public void set(final String key, Object value, long expireSeconds) {
         stringRedisTemplate.opsForValue().set(key, JSONUtil.toJSONString(value));
-        redisTemplate.expire(key, expireSeconds, TimeUnit.SECONDS);
+        stringRedisTemplate.expire(key, expireSeconds, TimeUnit.SECONDS);
     }
 
     @Async
     public void setAsync(final String key, String value, Long expireSeconds) {
         stringRedisTemplate.opsForValue().set(key, value);
         if(Objects.nonNull(expireSeconds))
-            redisTemplate.expire(key, expireSeconds, TimeUnit.SECONDS);
+            stringRedisTemplate.expire(key, expireSeconds, TimeUnit.SECONDS);
     }
 
     public void set(final String key, Object value,long time ,TimeUnit timeUnit) {
         stringRedisTemplate.opsForValue().set(key, JSONUtil.toJSONString(value));
-        redisTemplate.expire(key, time, timeUnit);
+        stringRedisTemplate.expire(key, time, timeUnit);
     }
 
     public void expire(final String key, long expireTime) {
@@ -151,7 +151,7 @@ public class RedisUtil {
 
     public boolean deleteLike(String key) {
         Set<String> keys = stringRedisTemplate.keys(key + "*");
-        redisTemplate.delete(keys);
+        stringRedisTemplate.delete(keys);
         return true;
     }
 
