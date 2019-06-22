@@ -18,7 +18,7 @@ public class CodeGenerator {
      * 注意表中字段不要带下划线 每个字段尽量加上COMMENT
      */
     // 要生成的表名 可以为多个
-    static final String[] tableName = {"follow"};
+    static final String[] tableName = {"rel_user_typeid"};
     // author
     static final String author = "ZengMin";
     // 全包名
@@ -50,7 +50,7 @@ public class CodeGenerator {
         DataSourceConfig dsc = new DataSourceConfig();
         dsc.setUrl(jdbcUrl);
         // dsc.setSchemaName("public");
-        dsc.setDriverName("com.mysql.cj.jdbc.Driver");
+        dsc.setDriverName("com.mysql.jdbc.Driver");
         dsc.setUsername(username);
         dsc.setPassword(password);
         mpg.setDataSource(dsc);

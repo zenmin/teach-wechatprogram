@@ -7,11 +7,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CacheConstant;
+import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.common.constant.DefinedCode;
 import com.teach.wecharprogram.components.business.RedisUtil;
+import com.teach.wecharprogram.entity.Approved;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.User;
+import com.teach.wecharprogram.entity.vo.UpdateUserVo;
 import com.teach.wecharprogram.mapper.UserMapper;
+import com.teach.wecharprogram.service.ApprovedService;
 import com.teach.wecharprogram.service.UserService;
 import com.teach.wecharprogram.util.StaticUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -39,6 +44,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     RedisUtil redisUtil;
+
+    @Autowired
+    ApprovedService approvedService;
 
     @Override
     public User getOne(Long id) {
@@ -111,6 +119,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByOpenId(String openid) {
         return userMapper.selectOne(new QueryWrapper<User>().eq("openid", openid));
+    }
+
+    @Override
+    @Transactional
+    public Object updateUserData(UpdateUserVo updateUserVo, String token) {
+        // 检查用户状态
+        User user = this.getOne(updateUserVo.getId());
+        if (user.getStatus() == CommonConstant.STATUS_VALID_ERROR) {
+            // 提交审批
+            approvedService.save(new Approved("角色申请", updateUserVo.getRealName(), user.getId(), updateUserVo.getRoleName()
+                    , updateUserVo.getRoleId(), updateUserVo.getRemark(), "待审批", updateUserVo.getType(), updateUserVo.getClassesId(), updateUserVo.getStudentId()));
+        }
+        // 更新用户信息
+        user.setRealName(updateUserVo.getRealName());
+        user.setPhone(updateUserVo.getPhone());
+        // 更新缓存信息
+        user.setPassword(null);
+        redisUtil.set(token, user, CacheConstant.EXPIRE_LOGON_TIME);
+        return user;
     }
 
     @Transactional

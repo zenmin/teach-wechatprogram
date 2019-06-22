@@ -138,13 +138,14 @@ public class LoginServiceImpl implements LoginService {
         } else {
             // 不存在  新增用户
             // 已过滤特殊字符
-            user = userService.save(new User(wxUserInfoVo, ipAddr, StaticUtil.md5Hex(CommonConstant.INIT_PASSWORD), CommonConstant.STATUS_OK, openid));
+            user = userService.save(new User(wxUserInfoVo, ipAddr, StaticUtil.md5Hex(CommonConstant.INIT_PASSWORD), CommonConstant.STATUS_VALID_ERROR, openid));
         }
         return this.addToken(user, ipAddr);
     }
 
     /**
      * 执行登录逻辑
+     *
      * @param user
      * @param ipAddr
      * @return

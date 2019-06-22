@@ -2,6 +2,7 @@ package com.teach.wecharprogram.service;
 
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.User;
+import com.teach.wecharprogram.entity.vo.UpdateUserVo;
 
 import java.util.List;
 
@@ -32,4 +33,6 @@ public interface UserService {
     void updateLoginTime(User user);
 
     User findByOpenId(String openid);
+
+    Object updateUserData(UpdateUserVo updateUserVo,String token);
 }

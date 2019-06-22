@@ -16,22 +16,13 @@ public class CommonConstant {
 
     public static final int STATUS_ERROR = 0;   // error
 
-    public static final int COMPANY = 1;    //公司
+    public static final int STATUS_VALID_ERROR = 2;   // 角色信息待验证
 
-    public static final int PERSON = 2;     //个人
-
-    public static final String UPLOAD_USER_KEY = "ZA";
-
-    public static final int MEDIA_IMAGE = 1;    //图片
-
-    public static final int MEDIA_VIDEO = 2;    //视频
-
-    public static final int MEDIA_MUSIC = 3;    //音频
-
-    public static final String ROLE_ADMIN = "R_ADMIN";       // 管理员
-    public static final String ROLE_USER = "R_USER";       // 普通用户
-    public static final String ROLE_SUPPLIER = "R_SUPPLIER";   // 供应商
-    public static final String ROLE_ORGADMIN = "R_ORGADMIN";   // 旅行社的管理账号
+    public static final String ROLE_HEADMASTER = "R_HEADMASTER";        //	校长
+    public static final String ROLE_TEACHER = "R_TEACHER";     // 教师
+    public static final String ROLE_TRAIN = "R_TRAIN";    // 教练
+    public static final String ROLE_FAMILY = "R_FAMILY";    // 家长
+    public static final String ROLE_ADMIN = "R_ADMIN";        // 超级管理员
 
 
     public enum MEDIA_TYPE {
@@ -60,10 +51,11 @@ public class CommonConstant {
     }
 
     public enum ROLE {
-        ROLE_ADMIN("R_ADMIN", " 管理员"),
-        ROLE_USER("R_USER", "普通用户"),
-        ROLE_SUPPLIER("R_SUPPLIER", "供应商"),
-        ROLE_ORGADMIN("R_ORGADMIN", "旅行社的管理账号");
+        ROLE_HEADMASTER1(ROLE_HEADMASTER, " 校长"),
+        ROLE_TEACHER2(ROLE_TEACHER, "教师"),
+        ROLE_TRAIN3(ROLE_TRAIN, "教练"),
+        ROLE_FAMILY4(ROLE_FAMILY, "家长"),
+        ROLE_ADMIN5(ROLE_ADMIN, "管理员");
 
         private String code;
 

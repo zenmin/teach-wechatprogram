@@ -14,37 +14,35 @@ import lombok.NoArgsConstructor;
 * Create by Code Generator
 * JPA只用来正向生成数据库表和字段 如果不需要此字段更新 请加上注解@TableField(exist = false)和@Transient
 * @Author ZengMin
-* @Date 2019-06-15 17:59:22
+* @Date 2019-06-22 17:57:58
 */
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(value="")
-@Table(name = "classes")
+@Table(name = "rel_user_typeid")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Classes extends EntityModel {
+public class RelUserTypeId extends EntityModel {
 
     @ApiModelProperty(value = "按创建时间查询 格式：yyyy-MM-dd HH:mm:ss")
     @TableField(exist = false)
     @Transient
     private String createTimeQuery;
 
-    @ApiModelProperty(value = "名称")
-    private String name;
+    @ApiModelProperty(value = "用户id")
+    private Long userId;
 
-    @ApiModelProperty(value = "描述")
-    private String describe;
+    @ApiModelProperty(value = "学校 班级 学生id")
+    private Long otherId;
 
-    @ApiModelProperty(value = "学校名称  冗余")
-    private String schoolName;
+    @ApiModelProperty(value = "1学校 2班级 3学生")
+    private Integer type;
 
-    @ApiModelProperty(value = "所属学校id")
-    private Long schoolId;
-
-    @ApiModelProperty(value = "状态1启用 0禁用")
-    private Integer status;
-
-
+    public RelUserTypeId(Long userId, Long otherId, Integer type) {
+        this.userId = userId;
+        this.otherId = otherId;
+        this.type = type;
+    }
 }

@@ -1,9 +1,7 @@
 package com.teach.wecharprogram.entity;
 
-import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.entity.base.EntityModel;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.teach.wecharprogram.entity.vo.WxUserInfoVo;
@@ -37,6 +35,9 @@ public class User extends EntityModel {
 
     @ApiModelProperty(value = "用户名")
     private String username;
+
+    @ApiModelProperty(value = "真实姓名")
+    private String realName;
 
     @ApiModelProperty(value = "头像")
     private String img;
@@ -80,11 +81,8 @@ public class User extends EntityModel {
     @ApiModelProperty(value = "角色名称")
     private String roleName;
 
-    @ApiModelProperty(value = "状态1启用 2禁用")
+    @ApiModelProperty(value = "状态1启用 0禁用 2角色信息待验证")
     private Integer status;
-
-    @ApiModelProperty(value = "学校id",hidden = true)
-    private Long schoolId;
 
     @TableField(exist = false)
     @Transient
@@ -103,8 +101,6 @@ public class User extends EntityModel {
         this.status = status;
         this.lastLoginIp = lastLoginIp;
         this.lastLoginTime = lastLoginTime;
-        this.roleCode = CommonConstant.ROLE_USER;
-        this.roleName = CommonConstant.ROLE.getName(CommonConstant.ROLE_USER);
     }
 
     public User(String username, String password, Integer status, String phone, String nickName, String lastLoginIp, Date lastLoginTime) {
@@ -115,8 +111,6 @@ public class User extends EntityModel {
         this.nickName = nickName;
         this.lastLoginIp = lastLoginIp;
         this.lastLoginTime = lastLoginTime;
-        this.roleCode = CommonConstant.ROLE_USER;
-        this.roleName = CommonConstant.ROLE.getName(CommonConstant.ROLE_USER);
     }
 
 
@@ -134,7 +128,5 @@ public class User extends EntityModel {
         this.lastLoginIp = lastLoginIp;
         this.lastLoginTime = new Date();
         this.password = initPassword;
-        this.roleCode = CommonConstant.ROLE_USER;
-        this.roleName = CommonConstant.ROLE.getName(CommonConstant.ROLE_USER);
     }
 }

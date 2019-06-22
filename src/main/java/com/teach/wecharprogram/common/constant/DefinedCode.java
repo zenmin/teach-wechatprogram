@@ -25,7 +25,7 @@ public class DefinedCode {
 
     public static final int ORDER_NOT_EXISTS_ERROR = 892;    // 订单不存在
 
-    public static final int ORDER_IS_OK_ERROR = 893;    // 订单已完成
+    public static final int APPROVED_IS_OK_ERROR = 893;    // 审批已完成
 
     public static final int WX_USER_ERROR = 894;   // 微信用户状态统一异常
 

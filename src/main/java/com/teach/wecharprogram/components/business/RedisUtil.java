@@ -150,7 +150,7 @@ public class RedisUtil {
     }
 
     public boolean deleteLike(String key) {
-        Set<String> keys = redisTemplate.keys(key + "*");
+        Set<String> keys = stringRedisTemplate.keys(key + "*");
         redisTemplate.delete(keys);
         return true;
     }
