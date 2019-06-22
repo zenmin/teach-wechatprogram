@@ -1,8 +1,10 @@
 package com.teach.wecharprogram.service.impl;
 
 import com.teach.wecharprogram.common.CommonException;
+import com.teach.wecharprogram.common.constant.CacheConstant;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.common.constant.DefinedCode;
+import com.teach.wecharprogram.components.business.RedisUtil;
 import com.teach.wecharprogram.entity.RelUserTypeId;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.entity.vo.ApprovedVo;
@@ -16,14 +18,12 @@ import com.teach.wecharprogram.entity.Approved;
 import com.teach.wecharprogram.mapper.ApprovedMapper;
 import com.teach.wecharprogram.service.RelUserTypeIdService;
 import com.teach.wecharprogram.service.UserService;
+import com.teach.wecharprogram.util.StaticUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 /**
@@ -44,6 +44,9 @@ public class ApprovedServiceImpl implements ApprovedService {
 
     @Autowired
     RelUserTypeIdService relUserTypeIdService;
+
+    @Autowired
+    RedisUtil redisUtil;
 
     @Override
     public Approved getOne(Long id) {
@@ -96,14 +99,13 @@ public class ApprovedServiceImpl implements ApprovedService {
             if (approved.getResultCode() == CommonConstant.STATUS_VALID_ERROR) {
                 throw new CommonException(DefinedCode.APPROVED_IS_OK_ERROR, "该审批已经完成，无需再次操作！");
             }
-
             if (approvedVo.getResultCode() == 1) {
                 Integer type = approved.getType();      //  1教师 2教练 3家长
                 Long startUserId = approved.getStartUserId();
                 String roleName = approved.getRoleName();
                 String roleId = approved.getRoleId();
                 String classesId = approved.getClassesId();
-                User user = new User();
+                User user = userService.getOne(startUserId);
                 user.setId(startUserId);
                 user.setStatus(CommonConstant.STATUS_OK);
                 user.setRoleCode(roleId);
@@ -118,6 +120,16 @@ public class ApprovedServiceImpl implements ApprovedService {
                 }
                 approved.setResult("通过");
                 approved.setResultCode(1);
+                // 更新用户信息
+                userService.save(user);
+                user.setPassword(null);
+                // 更新用户缓存信息
+                String tokenPrefix = StaticUtil.getLoginToken(user.getId()) + "/";
+                Set<String> keys = redisUtil.getKeys(tokenPrefix);
+                if (keys.size() > 0) {
+                    String token = keys.iterator().next();
+                    redisUtil.set(token, user, CacheConstant.EXPIRE_LOGON_TIME);
+                }
             } else {
                 approved.setResult("不通过");
                 approved.setResultCode(0);

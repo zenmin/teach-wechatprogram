@@ -104,4 +104,18 @@ public class UserController {
         return ResponseEntity.success(userService.updateUserData(updateUserVo, token));
     }
 
+    /**
+     * 带ID更新 不带ID新增
+     *
+     * @return
+     */
+    @ApiOperation(value = "获取当前登录用户信息", response = ResponseEntity.class)
+    @PostMapping("/getMyInfo")
+    public ResponseEntity getMyInfo(@ApiParam(hidden = true) @RequestHeader String token) {
+        User loginUser = userService.getLoginUser(token);
+        loginUser.setOpenid(null);
+        loginUser.setUsername(null);
+        return ResponseEntity.success(loginUser);
+    }
+
 }
