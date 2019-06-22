@@ -96,7 +96,7 @@ public class UserController {
      *
      * @return
      */
-    @ApiOperation(value = "更新用户信息", response = ResponseEntity.class)
+    @ApiOperation(value = "更新用户信息/提交角色审批", response = ResponseEntity.class)
     @PostMapping("/updateUserData")
     public ResponseEntity updateUserData(UpdateUserVo updateUserVo, @ApiParam(hidden = true) @RequestHeader String token) {
         User loginUser = userService.getLoginUser(token);

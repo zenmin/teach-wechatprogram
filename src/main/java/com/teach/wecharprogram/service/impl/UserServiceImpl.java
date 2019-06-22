@@ -19,11 +19,11 @@ import com.teach.wecharprogram.service.ApprovedService;
 import com.teach.wecharprogram.service.UserService;
 import com.teach.wecharprogram.util.StaticUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
     RedisUtil redisUtil;
 
     @Autowired
+    @Lazy
     ApprovedService approvedService;
 
     @Override
