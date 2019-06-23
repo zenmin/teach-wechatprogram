@@ -108,6 +108,8 @@ public class LoginServiceImpl implements LoginService {
         String code = StaticUtil.genSmsCode(6);
         if (!env.equals("dev"))
             smsUtil.sendSms(phone, ImmutableMap.of("code", code));
+        else
+            code = "123456";
         redisUtil.set(key, Integer.parseInt(code), CacheConstant.EXPIRE_SMS_CODE);
         return true;
     }

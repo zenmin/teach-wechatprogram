@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 
 /**
@@ -67,7 +68,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public User save(User user) {
         user.setPassword(StaticUtil.md5Hex(user.getPassword()));
         if (Objects.nonNull(user.getId())) {
@@ -75,11 +75,21 @@ public class UserServiceImpl implements UserService {
         } else {
 
             String username = user.getUsername();
-            Integer count = userMapper.selectCount(new QueryWrapper<User>().eq("username", username));
+            String phone = user.getPhone();
+            Integer count = userMapper.selectCount(new QueryWrapper<User>().eq("username", username).or(o -> o.eq("phone", phone)));
             if (count > 0) {
-                throw new CommonException(DefinedCode.ISEXISTS, "用户名已存在");
+                throw new CommonException(DefinedCode.ISEXISTS, "用户名或手机号已存在");
             }
             userMapper.insert(user);
+        }
+        // 更新用户缓存信息
+        user = this.getOne(user.getId());
+        String tokenPrefix = CacheConstant.USER_TOKEN_CODE + StaticUtil.getLoginToken(user.getId()) + "/";
+        Set<String> keys = redisUtil.getKeys(tokenPrefix);
+        if (keys.size() > 0) {
+            String token = keys.iterator().next();
+            user.setPassword(null);
+            redisUtil.set(token, user, CacheConstant.EXPIRE_LOGON_TIME);
         }
         return user;
     }
@@ -125,13 +135,23 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Object updateUserData(UpdateUserVo updateUserVo, String token) {
+        // 验证验证码
+        String key = CacheConstant.LOGIN_PHONE_CODE + updateUserVo.getPhone();
+        String sendCode = redisUtil.get(key);
+        if (!updateUserVo.getCode().equals(sendCode))
+            throw new CommonException(DefinedCode.LOGIN_ERROR, "验证码有误或已过期，请重新发送！");
+
         // 检查用户状态
         User user = this.getOne(updateUserVo.getId());
         if (user.getStatus() == CommonConstant.STATUS_VALID_ERROR) {
-            // 提交审批
-            approvedService.save(new Approved("角色申请", updateUserVo.getRealName(), user.getId(), updateUserVo.getRoleName()
-                    , updateUserVo.getRoleId(), updateUserVo.getRemark(), "待审批", updateUserVo.getType(),
-                    updateUserVo.getClassesId(), updateUserVo.getStudentId(), "审批中", 2));
+            // 查询此用户是否已有审批
+            List<Approved> list = approvedService.list(new Approved(updateUserVo.getId()));
+            if (list.size() == 0) {
+                // 提交审批
+                approvedService.save(new Approved("角色申请", updateUserVo.getRealName(), user.getId(), updateUserVo.getRoleName()
+                        , updateUserVo.getRoleId(), updateUserVo.getRemark(), "待审批", updateUserVo.getType(),
+                        updateUserVo.getClassesId(), updateUserVo.getStudentId(), "审批中", 2));
+            }
         }
         // 更新用户信息
         user.setRealName(updateUserVo.getRealName());

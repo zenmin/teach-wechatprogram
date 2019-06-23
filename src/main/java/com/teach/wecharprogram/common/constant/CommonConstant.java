@@ -16,7 +16,7 @@ public class CommonConstant {
 
     public static final int STATUS_ERROR = 0;   // error
 
-    public static final int STATUS_VALID_ERROR = 2;   // 角色信息待验证
+    public static final int STATUS_VALID_ERROR = 2;   // 角色信息待验证 / 角色审批不通过
 
     public static final String ROLE_HEADMASTER = "R_HEADMASTER";        //	校长
     public static final String ROLE_TEACHER = "R_TEACHER";     // 教师

@@ -27,7 +27,7 @@ public class CacheConstant {
 
     public static final String LOGIN_PHONE_CODE = "USER:LOGIN:PHONE:";          // 验证码储存
 
-    public static final Long EXPIRE_SMS_CODE = 60L;                      // 验证码有效期 秒
+    public static final Long EXPIRE_SMS_CODE = 65L;                      // 验证码有效期 秒
 
     public static final String WX_ACCESSTOKEN = "WX:ACCESSTOKEN";       // 微信accessToken
 

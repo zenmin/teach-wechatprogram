@@ -111,6 +111,9 @@ public class StaticUtil {
      * @return
      */
     public static String md5Hex(String code) {
+        if(StringUtils.isBlank(code)){
+            return null;
+        }
         return DigestUtils.md5Hex(code);
     }
 

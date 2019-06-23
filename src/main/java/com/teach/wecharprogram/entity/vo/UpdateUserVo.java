@@ -19,6 +19,9 @@ public class UpdateUserVo {
     @ApiModelProperty("手机号")
     private String phone;
 
+    @ApiModelProperty("验证码 开发环境默认123456")
+    private String code;
+
     @ApiModelProperty("真实姓名")
     private String realName;
 

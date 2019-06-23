@@ -89,4 +89,8 @@ public class Approved extends EntityModel {
         this.result = result;
         this.resultCode = resultCode;
     }
+
+    public Approved(Long startUserId) {
+        this.startUserId = startUserId;
+    }
 }

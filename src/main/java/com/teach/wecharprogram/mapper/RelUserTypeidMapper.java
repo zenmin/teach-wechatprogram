@@ -9,6 +9,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Date 2019-06-22 17:57:58
 */
 
-public interface Rel_user_typeidMapper extends BaseMapper<RelUserTypeId> {
+public interface RelUserTypeidMapper extends BaseMapper<RelUserTypeId> {
 
 }

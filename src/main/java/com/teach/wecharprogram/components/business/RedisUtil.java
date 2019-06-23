@@ -69,12 +69,9 @@ public class RedisUtil {
         redisTemplate.opsForHash().putAll(key, map);
     }
 
-    public LinkedHashSet<String> getKeys(String keys) {
-        Object o = redisTemplate.keys(keys + "*");
-        if (Objects.nonNull(o))
-            return (LinkedHashSet<String>) o;
-        else
-            return Sets.newLinkedHashSet();
+    public Set<String> getKeys(String keys) {
+        Set<String> strings = stringRedisTemplate.keys(keys + "*");
+        return strings;
     }
 
     public List<Object> mget(Collection<String> keys) {

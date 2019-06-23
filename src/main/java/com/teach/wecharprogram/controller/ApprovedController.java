@@ -3,6 +3,7 @@ package com.teach.wecharprogram.controller;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.entity.vo.ApprovedVo;
 import com.teach.wecharprogram.service.UserService;
+import com.teach.wecharprogram.util.StaticUtil;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -97,6 +98,7 @@ public class ApprovedController {
     @ApiOperation(value = "审批", response = ResponseEntity.class)
     @PostMapping("/approve")
     public ResponseEntity approve(ApprovedVo approvedVo,@ApiParam(hidden = true) @RequestHeader String token){
+        StaticUtil.validateObject(approvedVo.getId(),approvedVo.getResultCode());
         User loginUser = userService.getLoginUser(token);
         approvedVo.setApprovedUserName(loginUser.getRealName());
         approvedVo.setApprovedUserId(loginUser.getId());

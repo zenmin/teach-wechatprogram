@@ -1,6 +1,7 @@
 package com.teach.wecharprogram.controller;
 
 import com.teach.wecharprogram.entity.vo.UpdateUserVo;
+import com.teach.wecharprogram.util.StaticUtil;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -99,6 +100,8 @@ public class UserController {
     @ApiOperation(value = "更新用户信息/提交角色审批", response = ResponseEntity.class)
     @PostMapping("/updateUserData")
     public ResponseEntity updateUserData(UpdateUserVo updateUserVo, @ApiParam(hidden = true) @RequestHeader String token) {
+        StaticUtil.validateField(updateUserVo.getPhone(),updateUserVo.getCode(),updateUserVo.getRealName(),updateUserVo.getRoleId());
+        StaticUtil.validateObject(updateUserVo.getType());
         User loginUser = userService.getLoginUser(token);
         updateUserVo.setId(loginUser.getId());
         return ResponseEntity.success(userService.updateUserData(updateUserVo, token));
