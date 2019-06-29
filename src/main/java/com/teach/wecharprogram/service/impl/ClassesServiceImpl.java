@@ -1,5 +1,9 @@
 package com.teach.wecharprogram.service.impl;
 
+import com.teach.wecharprogram.entity.RelUserTypeId;
+import com.teach.wecharprogram.entity.Student;
+import com.teach.wecharprogram.mapper.RelUserTypeidMapper;
+import com.teach.wecharprogram.mapper.StudentMapper;
 import com.teach.wecharprogram.service.ClassesService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -16,6 +20,7 @@ import com.teach.wecharprogram.util.DateUtil;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 /**
@@ -29,6 +34,12 @@ public class ClassesServiceImpl implements ClassesService {
 
     @Autowired
     ClassesMapper classesMapper;
+
+    @Autowired
+    RelUserTypeidMapper userTypeidMapper;
+
+    @Autowired
+    StudentMapper studentMapper;
 
     @Override
     public Classes getOne(Long id){
@@ -50,7 +61,7 @@ public class ClassesServiceImpl implements ClassesService {
             classes.setCreateTime(DateUtil.parseToDate(classes.getCreateTimeQuery()));
         }
         IPage<Classes> classesIPage = classesMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(classes));
-        return pager.of(classesIPage);
+        return Pager.of(classesIPage);
     }
 
     @Override
@@ -76,6 +87,20 @@ public class ClassesServiceImpl implements ClassesService {
         }
         int i = classesMapper.deleteBatchIds(list);
         return i > 0;
+    }
+
+    @Override
+    public List<Classes> getClasses(Long userId) {
+        List<RelUserTypeId> relUserTypeIds = userTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>().eq("userId", userId).eq("type", 2));
+        List<Long> collect = relUserTypeIds.stream().map(RelUserTypeId::getOtherId).collect(Collectors.toList());
+        List<Classes> classesList = classesMapper.selectList(new QueryWrapper<Classes>().in("id", collect));
+        return classesList;
+    }
+
+    @Override
+    public List<Student> getStudents(Long userId, Long classesId) {
+        List<Student> students = studentMapper.selectList(new QueryWrapper<Student>().in("classesId", classesId));
+        return students;
     }
 
 
