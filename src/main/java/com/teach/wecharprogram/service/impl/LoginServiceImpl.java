@@ -56,9 +56,6 @@ public class LoginServiceImpl implements LoginService {
             return false;
         }
         User user = JSONObject.parseObject(json, User.class);
-        if (user.getStatus() == CommonConstant.STATUS_ERROR) {
-            throw new CommonException(DefinedCode.USER_STATUS_ERROR, "用户已被禁用！");
-        }
         return true;
     }
 
@@ -83,9 +80,6 @@ public class LoginServiceImpl implements LoginService {
             user = userService.save(new User(null, StaticUtil.md5Hex(CommonConstant.INIT_PASSWORD), CommonConstant.STATUS_OK, phone,
                     "用户" + phone.substring(phone.length() - 4, phone.length()), ipAddr, new Date()));
         } else {
-            if (user.getStatus() == CommonConstant.STATUS_ERROR) {
-                throw new CommonException(DefinedCode.USER_STATUS_ERROR, "用户已被禁用！");
-            }
             user.setLastLoginIp(ipAddr);
             user.setLastLoginTime(new Date());
             userService.updateLoginTime(user);
@@ -131,16 +125,13 @@ public class LoginServiceImpl implements LoginService {
         User user = userService.findByOpenId(openid);
         if (Objects.nonNull(user)) {
             // 存在  执行登录
-            if (user.getStatus() == CommonConstant.STATUS_ERROR) {
-                throw new CommonException(DefinedCode.USER_STATUS_ERROR, "用户已被禁用！");
-            }
             user.setLastLoginIp(ipAddr);
             user.setLastLoginTime(new Date());
             userService.updateLoginTime(user);
         } else {
             // 不存在  新增用户
             // 已过滤特殊字符
-            user = userService.save(new User(wxUserInfoVo, ipAddr, StaticUtil.md5Hex(CommonConstant.INIT_PASSWORD), CommonConstant.STATUS_VALID_ERROR, openid));
+            user = userService.save(new User(wxUserInfoVo, ipAddr, StaticUtil.md5Hex(CommonConstant.INIT_PASSWORD), CommonConstant.STATUS_ERROR, openid));
         }
         return this.addToken(user, ipAddr);
     }
@@ -155,7 +146,7 @@ public class LoginServiceImpl implements LoginService {
     private String addToken(User user, String ipAddr) {
         // 生成token
         String tokenPrefix = StaticUtil.getLoginToken(user.getId()) + "/";
-        String token = tokenPrefix + new Date().getTime();
+        String token = tokenPrefix + System.currentTimeMillis();
         // 执行登录
         user.setPassword(null);
         user.setNowLoginIp(ipAddr);
