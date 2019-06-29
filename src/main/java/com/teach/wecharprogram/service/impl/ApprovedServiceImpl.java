@@ -66,7 +66,7 @@ public class ApprovedServiceImpl implements ApprovedService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     public Approved save(Approved approved) {
         if (Objects.nonNull(approved.getId())) {
             approvedMapper.updateById(approved);
@@ -77,7 +77,7 @@ public class ApprovedServiceImpl implements ApprovedService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     public boolean delete(String ids) {
         List<Long> list = Lists.newArrayList();
         if (ids.indexOf(",") != -1) {
@@ -91,7 +91,7 @@ public class ApprovedServiceImpl implements ApprovedService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     public boolean agree(ApprovedVo approvedVo) {
         // 取审批信息
         Approved approved = this.getOne(approvedVo.getId());
@@ -104,12 +104,14 @@ public class ApprovedServiceImpl implements ApprovedService {
             String roleName = approved.getRoleName();
             String roleId = approved.getRoleId();
             String classesId = approved.getClassesId();
+            String realName = approved.getRealName();
             User user = userService.getOne(startUserId);
             user.setId(startUserId);
             user.setStatus(CommonConstant.STATUS_OK);
             user.setRoleCode(roleId);
             user.setRoleName(roleName);
-
+            user.setRealName(realName);
+            user.setPhone(approved.getPhone());
             if (type == 1) {     // 教师
                 relUserTypeIdService.save(new RelUserTypeId(startUserId, Long.valueOf(classesId), 2));
             } else {     // 教练 / 家长

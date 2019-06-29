@@ -69,13 +69,19 @@ public class Approved extends EntityModel {
     @ApiModelProperty("班级id 多个用,隔开")
     private String classesId;
 
+    @ApiModelProperty("手机号")
+    private String phone;
+
+    @ApiModelProperty("真实姓名")
+    private String realName;
+
     @ApiModelProperty("学生id")
     private String studentId;
 
     @ApiModelProperty("结束时间")
     private Date endTime;
 
-    public Approved(String name, String startUserName, Long startUserId, String roleName, String roleId, String remark, String opinion, Integer type, String classesId, String studentId, String result, Integer resultCode) {
+    public Approved(String name, String startUserName, Long startUserId, String roleName, String roleId, String remark, String opinion, Integer type, String classesId, String studentId, String result, Integer resultCode,String phone,String realName) {
         this.name = name;
         this.startUserName = startUserName;
         this.startUserId = startUserId;
@@ -88,6 +94,8 @@ public class Approved extends EntityModel {
         this.studentId = studentId;
         this.result = result;
         this.resultCode = resultCode;
+        this.phone = phone;
+        this.realName = realName;
     }
 
     public Approved(Long startUserId) {

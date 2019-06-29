@@ -133,14 +133,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
-    public Object updateUserData(UpdateUserVo updateUserVo, String token) {
+    @Transactional(rollbackFor = CommonException.class)
+    public User updateUserData(UpdateUserVo updateUserVo, String token) {
         // 验证验证码
         String key = CacheConstant.LOGIN_PHONE_CODE + updateUserVo.getPhone();
         String sendCode = redisUtil.get(key);
-        if (!updateUserVo.getCode().equals(sendCode))
+        if (!updateUserVo.getCode().equals(sendCode)) {
             throw new CommonException(DefinedCode.LOGIN_ERROR, "验证码有误或已过期，请重新发送！");
-
+        }
         // 检查用户状态
         User user = this.getOne(updateUserVo.getId());
         if (user.getStatus() == CommonConstant.STATUS_VALID_ERROR) {
@@ -150,19 +150,19 @@ public class UserServiceImpl implements UserService {
                 // 提交审批
                 approvedService.save(new Approved("角色申请", updateUserVo.getRealName(), user.getId(), updateUserVo.getRoleName()
                         , updateUserVo.getRoleId(), updateUserVo.getRemark(), "待审批", updateUserVo.getType(),
-                        updateUserVo.getClassesId(), updateUserVo.getStudentId(), "审批中", 2));
+                        updateUserVo.getClassesId(), updateUserVo.getStudentId(), "审批中", 2,updateUserVo.getPhone(),updateUserVo.getRealName()));
             }
         }
         // 更新用户信息
-        user.setRealName(updateUserVo.getRealName());
-        user.setPhone(updateUserVo.getPhone());
+        user.setStatus(CommonConstant.STATUS_VALID_ERROR);
+        userMapper.updateById(user);
         // 更新缓存信息
         user.setPassword(null);
         redisUtil.set(token, user, CacheConstant.EXPIRE_LOGON_TIME);
         return user;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     @Override
     @Async
     public void updateLoginTime(User user) {
