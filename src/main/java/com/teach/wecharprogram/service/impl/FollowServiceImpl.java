@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.service.impl;
 
+import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.service.FollowService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -50,11 +51,11 @@ public class FollowServiceImpl implements FollowService {
             follow.setCreateTime(DateUtil.parseToDate(follow.getCreateTimeQuery()));
         }
         IPage<Follow> followIPage = followMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(follow));
-        return pager.of(followIPage);
+        return Pager.of(followIPage);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     public Follow save(Follow follow) {
         if(Objects.nonNull(follow.getId())){
             followMapper.updateById(follow);
@@ -65,7 +66,7 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     public boolean delete(String ids) {
         List<Long> list = Lists.newArrayList();
         if(ids.indexOf(",") != -1){

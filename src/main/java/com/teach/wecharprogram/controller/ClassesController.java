@@ -13,6 +13,8 @@ import com.teach.wecharprogram.entity.Classes;
 import com.teach.wecharprogram.service.ClassesService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 /**
  * Create by Code Generator
@@ -119,6 +121,19 @@ public class ClassesController {
     public ResponseEntity getStudents(String name,Long classesId, @ApiParam(hidden = true) @RequestHeader String token) {
         User loginUser = userService.getLoginUser(token);
         return ResponseEntity.success(classesService.getStudents(loginUser.getId(), classesId,name));
+    }
+
+    /**
+     * 老师关联班级
+     *
+     * @return
+     */
+    @ApiOperation(value = "老师/教练 关联班级", response = ResponseEntity.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "classesId", value = "班级id,多个用，隔开", required = true),
+            @ApiImplicitParam(name = "userId", value = "用户id")})
+    @PostMapping("/relTeacherToClass")
+    public ResponseEntity relTeacherToClass(Long userId, String classesId, HttpServletRequest request) {
+        return ResponseEntity.success(classesService.relTeacherToClass(userId, classesId));
     }
 
 }

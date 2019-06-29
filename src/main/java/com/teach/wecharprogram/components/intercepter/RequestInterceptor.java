@@ -39,7 +39,7 @@ public class RequestInterceptor implements HandlerInterceptor {
             throw new CommonException(DefinedCode.NOTAUTH, "登陆超时，请重新登录！");
         }
 
-        if (!token.equals(RequestConstant.MAPS_SERVER_TOKEN) && !loginService.checkLogin(token)) {
+        if (!token.equals(RequestConstant.MAPS_SERVER_TOKEN) && !loginService.checkLogin(token,request)) {
             throw new CommonException(DefinedCode.NOTAUTH, "登陆超时，请重新登录！");
         }
         Map<String, String[]> parameterMap = request.getParameterMap();

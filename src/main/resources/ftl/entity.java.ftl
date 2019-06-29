@@ -48,13 +48,6 @@ public class ${entity} extends Model<${entity}> {
 <#else>
 public class ${entity} implements Serializable {
 </#if>
-
-<#if swagger2>
-    @ApiModelProperty(value = "按创建时间查询 格式：yyyy-MM-dd HH:mm:ss")
-</#if>
-    @TableField(exist = false)
-    @Transient
-    private String createTimeQuery;
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list table.fields as field>
     <#if field.keyFlag>

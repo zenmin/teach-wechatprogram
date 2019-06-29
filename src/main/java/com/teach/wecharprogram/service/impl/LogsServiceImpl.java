@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.service.impl;
 
+import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.service.LogsService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -53,18 +54,18 @@ public class LogsServiceImpl implements LogsService {
             logs.setCreateTime(DateUtil.parseToDate(logs.getCreateTimeQuery()));
         }
         IPage<Logs> logsIPage = logsMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(logs));
-        return pager.of(logsIPage);
+        return Pager.of(logsIPage);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     @Async
     public void save(Logs logs) {
         logsMapper.insert(logs);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     public boolean delete(String ids) {
         List<Long> list = Lists.newArrayList();
         if (ids.indexOf(",") != -1) {

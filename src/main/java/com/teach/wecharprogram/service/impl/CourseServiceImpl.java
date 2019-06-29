@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.service.impl;
 
+import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.service.CourseService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -50,11 +51,11 @@ public class CourseServiceImpl implements CourseService {
             course.setCreateTime(DateUtil.parseToDate(course.getCreateTimeQuery()));
         }
         IPage<Course> courseIPage = courseMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(course));
-        return pager.of(courseIPage);
+        return Pager.of(courseIPage);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     public Course save(Course course) {
         if(Objects.nonNull(course.getId())){
             courseMapper.updateById(course);
@@ -65,7 +66,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     public boolean delete(String ids) {
         List<Long> list = Lists.newArrayList();
         if(ids.indexOf(",") != -1){

@@ -23,8 +23,8 @@ import java.lang.reflect.Method;
  * @Author ZengMin
  * @Date 2019/1/13 16:40
  */
-@Component
-@Aspect
+//@Component
+//@Aspect
 @Slf4j
 public class LogAspect {
 

@@ -30,31 +30,9 @@ public class CommonConstant {
 
     public static final int STATUS_VALID_PROCESS = 2;   // 审批中
 
+    public static final int REL_SCHOOL = 1;  // 学校
 
-    public enum MEDIA_TYPE {
-        MEDIA_IMAGE(1, "图片"),
-        MEDIA_VIDEO(2, "视频"),
-        MEDIA_MUSIC(3, "音频");
+    public static final int REL_CLASS = 2;  // 班级
 
-        private Integer code;
-
-        private String value;
-
-        MEDIA_TYPE(Integer code, String value) {
-            this.code = code;
-            this.value = value;
-        }
-
-        public static String getValue(Integer code) {
-            MEDIA_TYPE[] values = MEDIA_TYPE.values();
-            for (MEDIA_TYPE m : values) {
-                if (m.code == code) {
-                    return m.value;
-                }
-            }
-            return null;
-        }
-    }
-
-
+    public static final int REL_STUDENTS = 1;  // 学生
 }

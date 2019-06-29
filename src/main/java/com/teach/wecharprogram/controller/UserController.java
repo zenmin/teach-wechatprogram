@@ -13,6 +13,8 @@ import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 /**
  * Create by Code Generator
@@ -114,11 +116,24 @@ public class UserController {
      */
     @ApiOperation(value = "获取当前登录用户信息", response = ResponseEntity.class)
     @PostMapping("/getMyInfo")
-    public ResponseEntity getMyInfo(@ApiParam(hidden = true) @RequestHeader String token) {
-        User loginUser = userService.getLoginUser(token);
+    public ResponseEntity getMyInfo(HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
         loginUser.setOpenid(null);
         loginUser.setUsername(null);
+        loginUser.setPassword(null);
         return ResponseEntity.success(loginUser);
+    }
+
+    /**
+     * 带ID更新 不带ID新增
+     *
+     * @return
+     */
+    @ApiOperation(value = "获取当前登录用户关联的学校 / 班级 / 学生", response = ResponseEntity.class)
+    @PostMapping("/getMyRelInfo")
+    public ResponseEntity getMyRelInfo(HttpServletRequest request) {
+        User user = userService.getLoginUser(request);
+        return ResponseEntity.success(userService.getMyRelInfo(user));
     }
 
 }

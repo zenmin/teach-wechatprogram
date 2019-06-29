@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CacheConstant;
 import com.teach.wecharprogram.common.constant.CommonConstant;
@@ -7,8 +8,10 @@ import com.teach.wecharprogram.common.constant.DefinedCode;
 import com.teach.wecharprogram.common.constant.RoleConstant;
 import com.teach.wecharprogram.components.business.RedisUtil;
 import com.teach.wecharprogram.entity.RelUserTypeId;
+import com.teach.wecharprogram.entity.Role;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.entity.vo.ApprovedVo;
+import com.teach.wecharprogram.mapper.RelUserTypeidMapper;
 import com.teach.wecharprogram.service.ApprovedService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -18,6 +21,7 @@ import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.Approved;
 import com.teach.wecharprogram.mapper.ApprovedMapper;
 import com.teach.wecharprogram.service.RelUserTypeIdService;
+import com.teach.wecharprogram.service.RoleService;
 import com.teach.wecharprogram.service.UserService;
 import com.teach.wecharprogram.util.StaticUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +52,12 @@ public class ApprovedServiceImpl implements ApprovedService {
 
     @Autowired
     RedisUtil redisUtil;
+
+    @Autowired
+    RelUserTypeidMapper relUserTypeidMapper;
+
+    @Autowired
+    RoleService roleService;
 
     @Override
     public Approved getOne(Long id) {
@@ -105,18 +115,28 @@ public class ApprovedServiceImpl implements ApprovedService {
         User user = userService.getOne(startUserId);
         if (approvedVo.getResultCode() == CommonConstant.STATUS_APPROVED_OK) {      // 通过
             Integer type = approved.getType();      //  1教师 2教练 3家长
-            String roleName = approved.getRoleName();
             String roleId = approved.getRoleId();
             String classesId = approved.getClassesId();
+
+            // 获取权限
+            Role role = roleService.getOne(Long.valueOf(roleId));
+
+            // 设置参数
             user.setId(startUserId);
             user.setStatus(CommonConstant.STATUS_OK);
-            user.setRoleCode(roleId);
-            user.setRoleName(roleName);
+            user.setRoleCode(role.getRoleCode());
+            user.setRoleName(role.getRoleName());
             user.setRealName(realName);
             user.setPhone(approved.getPhone());
-            if (type == RoleConstant.TEACHER) {     // 教师
-                relUserTypeIdService.save(new RelUserTypeId(startUserId, Long.valueOf(classesId), 2));
-            } else {     // 教练 / 家长
+            if (type == RoleConstant.TEACHER) {
+                // 教师关联班级
+                // 先查询记录是否存在
+                RelUserTypeId relUserTypeId = new RelUserTypeId(startUserId, Long.valueOf(classesId), 2);
+                RelUserTypeId one = relUserTypeidMapper.selectOne(new QueryWrapper<>(relUserTypeId));
+                if (Objects.isNull(one)) {
+                    relUserTypeIdService.save(relUserTypeId);
+                }
+            } else {     // 教练关联班级 / 家长关联学生
                 String[] split = classesId.split(",");
                 List<String> ids = Arrays.asList(split);
                 ids.stream().forEach(o -> relUserTypeIdService.save(new RelUserTypeId(startUserId, Long.valueOf(o), type)));

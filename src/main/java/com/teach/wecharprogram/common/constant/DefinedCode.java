@@ -51,9 +51,9 @@ public class DefinedCode {
 
     public static final int INVITECODE_NOT_FOUND = 995; // 邀请码不存在
 
-    public static final int NOADMIN = 996;
+    public static final int NOTAUTH_OPTION = 996;     // 无操作权限
 
-    public static final int NOTAUTH = 997;     // 没有权限操作
+    public static final int NOTAUTH = 997;     // 未登录
 
     public static final int PARAMS_ERROR = 998;    //参数异常
 

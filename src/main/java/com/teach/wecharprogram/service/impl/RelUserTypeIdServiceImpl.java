@@ -1,6 +1,7 @@
 package com.teach.wecharprogram.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.entity.RelUserTypeId;
 import com.teach.wecharprogram.mapper.RelUserTypeidMapper;
 import com.teach.wecharprogram.service.RelUserTypeIdService;
@@ -39,24 +40,18 @@ public class RelUserTypeIdServiceImpl implements RelUserTypeIdService {
 
     @Override
     public List<RelUserTypeId> list(RelUserTypeId RelUserTypeId) {
-        if (StringUtils.isNotBlank(RelUserTypeId.getCreateTimeQuery())) {
-            RelUserTypeId.setCreateTime(DateUtil.parseToDate(RelUserTypeId.getCreateTimeQuery()));
-        }
         List<RelUserTypeId> rel_user_typeids = relUserTypeIdMapper.selectList(new QueryWrapper<>(RelUserTypeId));
         return rel_user_typeids;
     }
 
     @Override
     public Pager listByPage(Pager pager, RelUserTypeId RelUserTypeId) {
-        if (StringUtils.isNotBlank(RelUserTypeId.getCreateTimeQuery())) {
-            RelUserTypeId.setCreateTime(DateUtil.parseToDate(RelUserTypeId.getCreateTimeQuery()));
-        }
         IPage<RelUserTypeId> rel_user_typeidIPage = relUserTypeIdMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(RelUserTypeId));
-        return pager.of(rel_user_typeidIPage);
+        return Pager.of(rel_user_typeidIPage);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     public RelUserTypeId save(RelUserTypeId RelUserTypeId) {
         if (Objects.nonNull(RelUserTypeId.getId())) {
             relUserTypeIdMapper.updateById(RelUserTypeId);
@@ -67,7 +62,7 @@ public class RelUserTypeIdServiceImpl implements RelUserTypeIdService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     public boolean delete(String ids) {
         List<Long> list = Lists.newArrayList();
         if (ids.indexOf(",") != -1) {

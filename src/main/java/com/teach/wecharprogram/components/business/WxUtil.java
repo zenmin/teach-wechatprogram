@@ -65,9 +65,6 @@ public class WxUtil {
         Map map = StaticUtil.readToMap(forObject, "微信服务器异常！");
         Object errCode = map.get("errcode");
         if (Objects.isNull(errCode)) {
-            String openid = map.get("openid").toString();
-            String sessionKey = map.get("session_key").toString();
-            redisUtil.setAsync(CacheConstant.WX_USER_OPENID + openid, sessionKey, 60 * 30L);
             return map;
         } else {
             log.error("微信请求异常：{}", map.get("errmsg").toString());

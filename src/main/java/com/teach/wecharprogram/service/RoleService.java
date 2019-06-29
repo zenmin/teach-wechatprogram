@@ -2,6 +2,8 @@ package com.teach.wecharprogram.service;
 
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.Role;
+import com.teach.wecharprogram.entity.User;
+
 import java.util.List;
 
 /**
@@ -14,7 +16,7 @@ public interface RoleService {
 
     Role getOne(Long id);
 
-    List<Role> list(Role role);
+    List<Role> list(User loginUser, Role role);
 
     Pager listByPage(Pager pager,Role role);
 

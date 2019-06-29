@@ -27,4 +27,7 @@ public interface ClassesService {
     List<Classes> getClasses(Long id);
 
     List<Student> getStudents(Long id, Long classesId, String name);
+
+    Object relTeacherToClass(Long teacher, String classesId);
+
 }

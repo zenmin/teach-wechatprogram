@@ -1,5 +1,9 @@
 package com.teach.wecharprogram.service.impl;
 
+import com.teach.wecharprogram.common.CommonException;
+import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.entity.RelUserTypeId;
+import com.teach.wecharprogram.mapper.RelUserTypeidMapper;
 import com.teach.wecharprogram.service.SchoolService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -30,6 +34,9 @@ public class SchoolServiceImpl implements SchoolService {
     @Autowired
     SchoolMapper schoolMapper;
 
+    @Autowired
+    RelUserTypeidMapper relUserTypeidMapper;
+
     @Override
     public School getOne(Long id){
         return schoolMapper.selectById(id);
@@ -50,11 +57,11 @@ public class SchoolServiceImpl implements SchoolService {
             school.setCreateTime(DateUtil.parseToDate(school.getCreateTimeQuery()));
         }
         IPage<School> schoolIPage = schoolMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(school));
-        return pager.of(schoolIPage);
+        return Pager.of(schoolIPage);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     public School save(School school) {
         if(Objects.nonNull(school.getId())){
             schoolMapper.updateById(school);
@@ -65,7 +72,7 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     public boolean delete(String ids) {
         List<Long> list = Lists.newArrayList();
         if(ids.indexOf(",") != -1){
@@ -76,6 +83,17 @@ public class SchoolServiceImpl implements SchoolService {
         }
         int i = schoolMapper.deleteBatchIds(list);
         return i > 0;
+    }
+
+    @Override
+    public Object relHeadMasterToSchool(Long userId, Long schoolId) {
+        RelUserTypeId relUserTypeId = new RelUserTypeId(userId, null, CommonConstant.REL_SCHOOL);
+        // 删除之前关联的
+        relUserTypeidMapper.delete(new QueryWrapper<>(relUserTypeId));
+        // 新增
+        relUserTypeId.setOtherId(schoolId);
+        relUserTypeidMapper.insert(relUserTypeId);
+        return relUserTypeId;
     }
 
 

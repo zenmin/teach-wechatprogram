@@ -3,6 +3,8 @@ package com.teach.wecharprogram.service;
 
 import com.teach.wecharprogram.entity.vo.WxUserInfoVo;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @Describle This Class Is
  * @Author ZengMin
@@ -10,7 +12,7 @@ import com.teach.wecharprogram.entity.vo.WxUserInfoVo;
  */
 public interface LoginService {
 
-    boolean checkLogin(String token);
+    boolean checkLogin(String token, HttpServletRequest request);
 
     String loginByPhone(String phone, String code, String ipAddr);
 

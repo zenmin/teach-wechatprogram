@@ -50,7 +50,7 @@ public class ${table.serviceImplName} implements ${table.serviceName} {
             ${table.name}.setCreateTime(DateUtil.parseToDate(${table.name}.getCreateTimeQuery()));
         }
         IPage<${entity}> ${table.name}IPage = ${table.name}Mapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(${table.name}));
-        return pager.of(${table.name}IPage);
+        return Pager.of(${table.name}IPage);
     }
 
     @Override

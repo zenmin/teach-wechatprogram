@@ -1,5 +1,7 @@
 package com.teach.wecharprogram.controller;
 
+import com.teach.wecharprogram.entity.User;
+import com.teach.wecharprogram.service.UserService;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,6 +11,9 @@ import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.Student;
 import com.teach.wecharprogram.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 
 /**
@@ -24,6 +29,9 @@ public class StudentController {
 
     @Autowired
     StudentService studentService;
+
+    @Autowired
+    UserService userService;
 
     /**
      * 根据id查询一条数据
@@ -84,4 +92,20 @@ public class StudentController {
     }
 
 
+    /**
+     * 老师关联班级
+     *
+     * @return
+     */
+    @ApiOperation(value = "家长关联学生", response = ResponseEntity.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "studentsId", value = "班级id,多个用，隔开", required = true),
+            @ApiImplicitParam(name = "userId", value = "用户id （本人操作可不传）")})
+    @PostMapping("/relFamilyToStudent")
+    public ResponseEntity relFamilyToStudent(Long userId, String studentsId, HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        if(Objects.isNull(userId)) {
+            userId = loginUser.getId();
+        }
+        return ResponseEntity.success(studentService.relFamilyToStudent(userId, studentsId));
+    }
 }

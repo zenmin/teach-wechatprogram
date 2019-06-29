@@ -27,14 +27,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "rel_user_typeid")
 @TableName("rel_user_typeid")
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 public class RelUserTypeId extends EntityModel {
-
-    @ApiModelProperty(value = "按创建时间查询 格式：yyyy-MM-dd HH:mm:ss")
-    @TableField(exist = false)
-    @Transient
-    private String createTimeQuery;
 
     @ApiModelProperty(value = "用户id")
     private Long userId;

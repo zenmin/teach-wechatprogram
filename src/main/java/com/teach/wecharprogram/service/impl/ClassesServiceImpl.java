@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.service.impl;
 
+import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.entity.RelUserTypeId;
 import com.teach.wecharprogram.entity.Student;
@@ -44,6 +45,9 @@ public class ClassesServiceImpl implements ClassesService {
     @Autowired
     StudentMapper studentMapper;
 
+    @Autowired
+    RelUserTypeidMapper relUserTypeidMapper;
+
     @Override
     public Classes getOne(Long id) {
         return classesMapper.selectById(id);
@@ -68,7 +72,7 @@ public class ClassesServiceImpl implements ClassesService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     public Classes save(Classes classes) {
         if (Objects.nonNull(classes.getId())) {
             classesMapper.updateById(classes);
@@ -79,7 +83,7 @@ public class ClassesServiceImpl implements ClassesService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     public boolean delete(String ids) {
         List<Long> list = Lists.newArrayList();
         if (ids.indexOf(",") != -1) {
@@ -108,6 +112,21 @@ public class ClassesServiceImpl implements ClassesService {
         }
         List<Student> students = studentMapper.selectList(q);
         return students;
+    }
+
+    @Override
+    public Object relTeacherToClass(Long userId, String classesId) {
+        String[] split = classesId.split(",");
+        List<String> asList = Arrays.asList(split);
+        asList.stream().forEach(o -> {
+            RelUserTypeId relUserTypeId = new RelUserTypeId(userId, Long.valueOf(o), CommonConstant.REL_CLASS);
+            RelUserTypeId one = relUserTypeidMapper.selectOne(new QueryWrapper<>(relUserTypeId));
+            if (Objects.isNull(one)) {
+                relUserTypeidMapper.insert(relUserTypeId);
+            }
+        });
+        List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>().eq("userId", userId).eq("type", CommonConstant.REL_CLASS));
+        return relUserTypeIds;
     }
 
 

@@ -22,4 +22,5 @@ public interface SchoolService {
 
     boolean delete(String ids);
 
+    Object relHeadMasterToSchool(Long userId, Long schoolId);
 }

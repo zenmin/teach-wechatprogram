@@ -1,6 +1,7 @@
 package com.teach.wecharprogram.controller;
 
 import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.components.annotation.RequireRole;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.service.UserService;
 import io.swagger.annotations.*;
@@ -59,14 +60,7 @@ public class RoleController {
     @PostMapping("/list")
     public ResponseEntity list(Role role, @ApiParam(hidden = true) @RequestHeader String token) {
         User loginUser = userService.getLoginUser(token);
-        List<Role> list = roleService.list(role);
-        if (loginUser.getRoleCode().equals(CommonConstant.ROLE_HEADMASTER) || loginUser.getRoleCode().equals(CommonConstant.ROLE_ADMIN)) {
-            return ResponseEntity.success(list);
-        } else {
-            List<Role> collect = list.stream().filter(o -> !o.getRoleCode().equals(CommonConstant.ROLE_HEADMASTER) && !o.getRoleCode().equals(CommonConstant.ROLE_ADMIN)).collect(Collectors.toList());
-            return ResponseEntity.success(collect);
-        }
-
+        return ResponseEntity.success(roleService.list(loginUser, role));
     }
 
     /**
@@ -78,6 +72,7 @@ public class RoleController {
      */
     @ApiOperation(value = "查全部 可带条件分页", response = ResponseEntity.class)
     @PostMapping("/listByPage")
+    @RequireRole(CommonConstant.ROLE_HEADMASTER)
     public ResponseEntity listByPage(Pager pager, Role role) {
         return ResponseEntity.success(roleService.listByPage(pager, role));
     }

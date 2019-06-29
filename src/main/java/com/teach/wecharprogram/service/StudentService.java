@@ -22,4 +22,6 @@ public interface StudentService {
 
     boolean delete(String ids);
 
+    Object relFamilyToStudent(Long userId, String studentsId);
+
 }

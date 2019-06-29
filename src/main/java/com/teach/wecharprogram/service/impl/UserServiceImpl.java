@@ -9,14 +9,15 @@ import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CacheConstant;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.common.constant.DefinedCode;
+import com.teach.wecharprogram.common.constant.RoleConstant;
 import com.teach.wecharprogram.components.business.RedisUtil;
-import com.teach.wecharprogram.entity.Approved;
+import com.teach.wecharprogram.entity.*;
 import com.teach.wecharprogram.entity.DO.Pager;
-import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.entity.vo.UpdateUserVo;
-import com.teach.wecharprogram.mapper.UserMapper;
+import com.teach.wecharprogram.mapper.*;
 import com.teach.wecharprogram.service.ApprovedService;
 import com.teach.wecharprogram.service.UserService;
+import com.teach.wecharprogram.util.JSONUtil;
 import com.teach.wecharprogram.util.StaticUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -24,10 +25,13 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -50,6 +54,18 @@ public class UserServiceImpl implements UserService {
     @Lazy
     ApprovedService approvedService;
 
+    @Autowired
+    RelUserTypeidMapper relUserTypeidMapper;
+
+    @Autowired
+    SchoolMapper schoolMapper;
+
+    @Autowired
+    ClassesMapper classesMapper;
+
+    @Autowired
+    StudentMapper studentMapper;
+
     @Override
     public User getOne(Long id) {
         return userMapper.selectById(id);
@@ -64,7 +80,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Pager listByPage(Pager pager, User user) {
         IPage<User> userIPage = userMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(user));
-        return pager.of(userIPage);
+        return Pager.of(userIPage);
     }
 
     @Override
@@ -95,7 +111,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = CommonException.class)
     public boolean delete(String ids) {
         List<Long> list = Lists.newArrayList();
         if (ids.indexOf(",") != -1) {
@@ -116,9 +132,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getLoginUser(String token) {
         String json = redisUtil.get(CacheConstant.USER_TOKEN_CODE + token);
-        if (Objects.isNull(json))
+        if (Objects.isNull(json)) {
             throw new CommonException(DefinedCode.NOTAUTH, "登陆超时，请重新登陆！");
+        }
         User user = JSONObject.parseObject(json, User.class);
+        return user;
+    }
+
+    @Override
+    public User getLoginUser(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        Object attribute = request.getAttribute(token);
+        User user = new User();
+        try {
+            user = StaticUtil.objectMapper.readValue(JSONUtil.toJSONString(attribute), User.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return user;
     }
 
@@ -160,6 +190,41 @@ public class UserServiceImpl implements UserService {
             }
         }
         return user;
+    }
+
+    @Override
+    public Object getMyRelInfo(User user) {
+        String roleCode = user.getRoleCode();
+        Long userId = user.getId();
+        int type = CommonConstant.REL_STUDENTS;
+
+        // 校长
+        if (roleCode.equals(CommonConstant.ROLE_HEADMASTER)) {
+            type = CommonConstant.REL_SCHOOL;
+            List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>().eq("userId", userId).eq("type", type));
+            List<Long> ids = relUserTypeIds.stream().map(RelUserTypeId::getOtherId).collect(Collectors.toList());
+            List<School> schoolList = schoolMapper.selectList(new QueryWrapper<School>().in("id", ids));
+            return schoolList;
+        }
+
+        // 教师或教练
+        if (roleCode.equals(CommonConstant.ROLE_TEACHER) || roleCode.equals(CommonConstant.ROLE_TRAIN)) {
+            type = CommonConstant.REL_CLASS;
+            List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>().eq("userId", userId).eq("type", type));
+            List<Long> ids = relUserTypeIds.stream().map(RelUserTypeId::getOtherId).collect(Collectors.toList());
+            List<Classes> classesList = classesMapper.selectList(new QueryWrapper<Classes>().in("id", ids));
+            return classesList;
+        }
+
+        // 家长
+        if (roleCode.equals(CommonConstant.ROLE_FAMILY)) {
+            type = CommonConstant.REL_CLASS;
+            List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>().eq("userId", userId).eq("type", type));
+            List<Long> ids = relUserTypeIds.stream().map(RelUserTypeId::getOtherId).collect(Collectors.toList());
+            List<Student> students = studentMapper.selectList(new QueryWrapper<Student>().in("id", ids));
+            return students;
+        }
+        throw new CommonException(DefinedCode.NOTFOUND, "你暂时没有关联的班级或学生，请联系管理员！");
     }
 
     @Transactional(rollbackFor = CommonException.class)

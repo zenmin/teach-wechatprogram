@@ -13,13 +13,13 @@ import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.entity.vo.WxUserInfoVo;
 import com.teach.wecharprogram.service.LoginService;
 import com.teach.wecharprogram.service.UserService;
-import com.teach.wecharprogram.util.JWTUtil;
 import com.teach.wecharprogram.util.StaticUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -50,12 +50,13 @@ public class LoginServiceImpl implements LoginService {
 
 
     @Override
-    public boolean checkLogin(String token) {
+    public boolean checkLogin(String token, HttpServletRequest request) {
         String json = redisUtil.get(CacheConstant.USER_TOKEN_CODE + token);
         if (StringUtils.isBlank(json)) {
             return false;
         }
         User user = JSONObject.parseObject(json, User.class);
+        request.setAttribute(token, user);
         return true;
     }
 
