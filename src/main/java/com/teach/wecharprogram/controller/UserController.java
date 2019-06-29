@@ -100,7 +100,7 @@ public class UserController {
     @ApiOperation(value = "更新用户信息/提交角色审批", response = ResponseEntity.class)
     @PostMapping("/updateUserData")
     public ResponseEntity updateUserData(UpdateUserVo updateUserVo, @ApiParam(hidden = true) @RequestHeader String token) {
-        StaticUtil.validateField(updateUserVo.getPhone(),updateUserVo.getCode(),updateUserVo.getRealName(),updateUserVo.getRoleId());
+        StaticUtil.validateField(updateUserVo.getPhone(),updateUserVo.getRealName(),updateUserVo.getRoleId());
         StaticUtil.validateObject(updateUserVo.getType());
         User loginUser = userService.getLoginUser(token);
         updateUserVo.setId(loginUser.getId());

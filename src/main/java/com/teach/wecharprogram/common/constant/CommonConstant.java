@@ -24,6 +24,12 @@ public class CommonConstant {
     public static final String ROLE_FAMILY = "R_FAMILY";    // 家长
     public static final String ROLE_ADMIN = "R_ADMIN";        // 超级管理员
 
+    public static final int STATUS_APPROVED_ERROR = 0;  // 审批不通过
+
+    public static final int STATUS_APPROVED_OK = 1;     // 审批通过
+
+    public static final int STATUS_VALID_PROCESS = 2;   // 审批中
+
 
     public enum MEDIA_TYPE {
         MEDIA_IMAGE(1, "图片"),
@@ -50,41 +56,5 @@ public class CommonConstant {
         }
     }
 
-    public enum ROLE {
-        ROLE_HEADMASTER1(ROLE_HEADMASTER, " 校长"),
-        ROLE_TEACHER2(ROLE_TEACHER, "教师"),
-        ROLE_TRAIN3(ROLE_TRAIN, "教练"),
-        ROLE_FAMILY4(ROLE_FAMILY, "家长"),
-        ROLE_ADMIN5(ROLE_ADMIN, "管理员");
-
-        private String code;
-
-        private String name;
-
-        ROLE(String code, String name) {
-            this.code = code;
-            this.name = name;
-        }
-
-        public static String getName(String code) {
-            ROLE[] values = ROLE.values();
-            for (ROLE m : values) {
-                if (m.code.equals(code)) {
-                    return m.name;
-                }
-            }
-            return null;
-        }
-
-        public static String getCode(String name) {
-            ROLE[] values = ROLE.values();
-            for (ROLE m : values) {
-                if (m.code.equals(name)) {
-                    return m.name;
-                }
-            }
-            return null;
-        }
-    }
 
 }

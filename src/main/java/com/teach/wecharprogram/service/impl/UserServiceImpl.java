@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
         if (keys.size() > 0) {
             String token = keys.iterator().next();
             user.setPassword(null);
-            redisUtil.set(token, user, CacheConstant.EXPIRE_LOGON_TIME);
+            redisUtil.set(CacheConstant.USER_TOKEN_CODE + token, user, CacheConstant.EXPIRE_LOGON_TIME);
         }
         return user;
     }
@@ -136,29 +136,29 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = CommonException.class)
     public User updateUserData(UpdateUserVo updateUserVo, String token) {
         // 验证验证码
-        String key = CacheConstant.LOGIN_PHONE_CODE + updateUserVo.getPhone();
-        String sendCode = redisUtil.get(key);
-        if (!updateUserVo.getCode().equals(sendCode)) {
-            throw new CommonException(DefinedCode.LOGIN_ERROR, "验证码有误或已过期，请重新发送！");
-        }
+//        String key = CacheConstant.LOGIN_PHONE_CODE + updateUserVo.getPhone();
+//        String sendCode = redisUtil.get(key);
+//        if (!updateUserVo.getCode().equals(sendCode)) {
+//            throw new CommonException(DefinedCode.LOGIN_ERROR, "验证码有误或已过期，请重新发送！");
+//        }
         // 检查用户状态
         User user = this.getOne(updateUserVo.getId());
-        if (user.getStatus() == CommonConstant.STATUS_VALID_ERROR) {
+        if (user.getStatus() == CommonConstant.STATUS_ERROR) {
             // 查询此用户是否已有审批
-            List<Approved> list = approvedService.list(new Approved(updateUserVo.getId()));
+            List<Approved> list = approvedService.list(new Approved(updateUserVo.getId(), CommonConstant.STATUS_VALID_PROCESS));
             if (list.size() == 0) {
                 // 提交审批
                 approvedService.save(new Approved("角色申请", updateUserVo.getRealName(), user.getId(), updateUserVo.getRoleName()
                         , updateUserVo.getRoleId(), updateUserVo.getRemark(), "待审批", updateUserVo.getType(),
-                        updateUserVo.getClassesId(), updateUserVo.getStudentId(), "审批中", 2,updateUserVo.getPhone(),updateUserVo.getRealName()));
+                        updateUserVo.getClassesId(), updateUserVo.getStudentId(), "审批中", CommonConstant.STATUS_VALID_PROCESS, updateUserVo.getPhone(), updateUserVo.getRealName()));
+                // 更新用户信息
+                user.setStatus(CommonConstant.STATUS_VALID_ERROR);
+                userMapper.updateById(user);
+                // 更新缓存信息
+                user.setPassword(null);
+                redisUtil.set(CacheConstant.USER_TOKEN_CODE + token, user, CacheConstant.EXPIRE_LOGON_TIME);
             }
         }
-        // 更新用户信息
-        user.setStatus(CommonConstant.STATUS_VALID_ERROR);
-        userMapper.updateById(user);
-        // 更新缓存信息
-        user.setPassword(null);
-        redisUtil.set(token, user, CacheConstant.EXPIRE_LOGON_TIME);
         return user;
     }
 

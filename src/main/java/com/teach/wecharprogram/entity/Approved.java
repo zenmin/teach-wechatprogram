@@ -98,7 +98,8 @@ public class Approved extends EntityModel {
         this.realName = realName;
     }
 
-    public Approved(Long startUserId) {
+    public Approved(Long startUserId,Integer resultCode) {
         this.startUserId = startUserId;
+        this.resultCode = resultCode;
     }
 }

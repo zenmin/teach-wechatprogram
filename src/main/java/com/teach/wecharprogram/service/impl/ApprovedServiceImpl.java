@@ -4,6 +4,7 @@ import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CacheConstant;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.common.constant.DefinedCode;
+import com.teach.wecharprogram.common.constant.RoleConstant;
 import com.teach.wecharprogram.components.business.RedisUtil;
 import com.teach.wecharprogram.entity.RelUserTypeId;
 import com.teach.wecharprogram.entity.User;
@@ -62,7 +63,7 @@ public class ApprovedServiceImpl implements ApprovedService {
     @Override
     public Pager listByPage(Pager pager, Approved approved) {
         IPage<Approved> approvedIPage = approvedMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(approved));
-        return pager.of(approvedIPage);
+        return Pager.of(approvedIPage);
     }
 
     @Override
@@ -95,24 +96,25 @@ public class ApprovedServiceImpl implements ApprovedService {
     public boolean agree(ApprovedVo approvedVo) {
         // 取审批信息
         Approved approved = this.getOne(approvedVo.getId());
-        if (Objects.nonNull(approved.getResultCode()) && approved.getResultCode() != 2) {
+        if (Objects.nonNull(approved.getResultCode()) && approved.getResultCode() != CommonConstant.STATUS_VALID_PROCESS) {
             throw new CommonException(DefinedCode.APPROVED_IS_OK_ERROR, "该审批已经完成，无需再次操作！");
         }
-        if (approvedVo.getResultCode() == 1) {      // 通过
+
+        Long startUserId = approved.getStartUserId();
+        String realName = approved.getRealName();
+        User user = userService.getOne(startUserId);
+        if (approvedVo.getResultCode() == CommonConstant.STATUS_APPROVED_OK) {      // 通过
             Integer type = approved.getType();      //  1教师 2教练 3家长
-            Long startUserId = approved.getStartUserId();
             String roleName = approved.getRoleName();
             String roleId = approved.getRoleId();
             String classesId = approved.getClassesId();
-            String realName = approved.getRealName();
-            User user = userService.getOne(startUserId);
             user.setId(startUserId);
             user.setStatus(CommonConstant.STATUS_OK);
             user.setRoleCode(roleId);
             user.setRoleName(roleName);
             user.setRealName(realName);
             user.setPhone(approved.getPhone());
-            if (type == 1) {     // 教师
+            if (type == RoleConstant.TEACHER) {     // 教师
                 relUserTypeIdService.save(new RelUserTypeId(startUserId, Long.valueOf(classesId), 2));
             } else {     // 教练 / 家长
                 String[] split = classesId.split(",");
@@ -120,7 +122,7 @@ public class ApprovedServiceImpl implements ApprovedService {
                 ids.stream().forEach(o -> relUserTypeIdService.save(new RelUserTypeId(startUserId, Long.valueOf(o), type)));
             }
             approved.setResult("通过");
-            approved.setResultCode(1);
+            approved.setResultCode(CommonConstant.STATUS_OK);
             // 更新用户信息
             userService.save(user);
             user.setPassword(null);
@@ -129,11 +131,16 @@ public class ApprovedServiceImpl implements ApprovedService {
             Set<String> keys = redisUtil.getKeys(tokenPrefix);
             if (keys.size() > 0) {
                 String token = keys.iterator().next();
-                redisUtil.set(token, user, CacheConstant.EXPIRE_LOGON_TIME);
+                redisUtil.set(CacheConstant.USER_TOKEN_CODE + token, user, CacheConstant.EXPIRE_LOGON_TIME);
             }
-        } else {        // 不通过
+        } else {
+            // 不通过
             approved.setResult("不通过");
-            approved.setResultCode(0);
+            approved.setResultCode(CommonConstant.STATUS_APPROVED_ERROR);
+            user.setStatus(CommonConstant.STATUS_ERROR);
+            user.setRealName(realName);
+            user.setPhone(approved.getPhone());
+            userService.save(user);
         }
         approved.setEndTime(new Date());
         approved.setOpinion(approvedVo.getOpinion());

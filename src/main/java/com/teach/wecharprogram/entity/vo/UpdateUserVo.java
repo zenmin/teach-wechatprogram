@@ -37,7 +37,7 @@ public class UpdateUserVo {
     @ApiModelProperty("类型 1教师 2教练 3家长")
     private Integer type;
 
-    @ApiModelProperty("班级id")
+    @ApiModelProperty("班级id 多个用，隔开")
     private String classesId;
 
     @ApiModelProperty("学生id")
