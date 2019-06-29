@@ -113,11 +113,12 @@ public class ClassesController {
      * @return
      */
     @ApiOperation(value = "取班级下的学生", response = ResponseEntity.class)
-    @ApiImplicitParam(name = "classesId", value = "班级id", required = true)
+    @ApiImplicitParams({@ApiImplicitParam(name = "classesId", value = "班级id", required = true),
+                          @ApiImplicitParam(name = "name", value = "学生名称")})
     @PostMapping("/getStudents")
-    public ResponseEntity getStudents(Long classesId, @ApiParam(hidden = true) @RequestHeader String token) {
+    public ResponseEntity getStudents(String name,Long classesId, @ApiParam(hidden = true) @RequestHeader String token) {
         User loginUser = userService.getLoginUser(token);
-        return ResponseEntity.success(classesService.getStudents(loginUser.getId(), classesId));
+        return ResponseEntity.success(classesService.getStudents(loginUser.getId(), classesId,name));
     }
 
 }

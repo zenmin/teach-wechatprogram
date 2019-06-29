@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.service.impl;
 
+import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.entity.RelUserTypeId;
 import com.teach.wecharprogram.entity.Student;
 import com.teach.wecharprogram.mapper.RelUserTypeidMapper;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
 import com.teach.wecharprogram.util.DateUtil;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -24,10 +26,11 @@ import java.util.stream.Collectors;
 
 
 /**
-* Create Code Generator
-* @Author ZengMin
-* @Date 2019-06-15 17:59:22
-*/
+ * Create Code Generator
+ *
+ * @Author ZengMin
+ * @Date 2019-06-15 17:59:22
+ */
 
 @Service
 public class ClassesServiceImpl implements ClassesService {
@@ -42,13 +45,13 @@ public class ClassesServiceImpl implements ClassesService {
     StudentMapper studentMapper;
 
     @Override
-    public Classes getOne(Long id){
+    public Classes getOne(Long id) {
         return classesMapper.selectById(id);
     }
 
     @Override
     public List<Classes> list(Classes classes) {
-        if(StringUtils.isNotBlank(classes.getCreateTimeQuery())){
+        if (StringUtils.isNotBlank(classes.getCreateTimeQuery())) {
             classes.setCreateTime(DateUtil.parseToDate(classes.getCreateTimeQuery()));
         }
         List<Classes> classess = classesMapper.selectList(new QueryWrapper<>(classes));
@@ -57,7 +60,7 @@ public class ClassesServiceImpl implements ClassesService {
 
     @Override
     public Pager listByPage(Pager pager, Classes classes) {
-        if(StringUtils.isNotBlank(classes.getCreateTimeQuery())){
+        if (StringUtils.isNotBlank(classes.getCreateTimeQuery())) {
             classes.setCreateTime(DateUtil.parseToDate(classes.getCreateTimeQuery()));
         }
         IPage<Classes> classesIPage = classesMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(classes));
@@ -67,9 +70,9 @@ public class ClassesServiceImpl implements ClassesService {
     @Override
     @Transactional
     public Classes save(Classes classes) {
-        if(Objects.nonNull(classes.getId())){
+        if (Objects.nonNull(classes.getId())) {
             classesMapper.updateById(classes);
-        }else {
+        } else {
             classesMapper.insert(classes);
         }
         return classes;
@@ -79,10 +82,10 @@ public class ClassesServiceImpl implements ClassesService {
     @Transactional
     public boolean delete(String ids) {
         List<Long> list = Lists.newArrayList();
-        if(ids.indexOf(",") != -1){
+        if (ids.indexOf(",") != -1) {
             List<String> asList = Arrays.asList(ids.split(","));
             asList.stream().forEach(o -> list.add(Long.valueOf(o)));
-        }else {
+        } else {
             list.add(Long.valueOf(ids));
         }
         int i = classesMapper.deleteBatchIds(list);
@@ -98,8 +101,12 @@ public class ClassesServiceImpl implements ClassesService {
     }
 
     @Override
-    public List<Student> getStudents(Long userId, Long classesId) {
-        List<Student> students = studentMapper.selectList(new QueryWrapper<Student>().in("classesId", classesId));
+    public List<Student> getStudents(Long userId, Long classesId, String name) {
+        QueryWrapper<Student> q = new QueryWrapper<Student>().in("classesId", classesId).eq("status", CommonConstant.STATUS_OK);
+        if (StringUtils.isNotBlank(name)) {
+            q.like("name", name);
+        }
+        List<Student> students = studentMapper.selectList(q);
         return students;
     }
 
