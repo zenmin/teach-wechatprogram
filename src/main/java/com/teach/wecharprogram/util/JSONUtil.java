@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.util;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -23,6 +24,16 @@ public final class JSONUtil {
 		} catch (JsonProcessingException e) {
 			return "";
 		}
+	}
+
+	/**
+	 * 不包含空字段
+	 * @param o
+	 * @return
+	 */
+	public static String toJSONStringNotEmpty(Object o) {
+		String jsonString = JSONObject.toJSONString(o);
+		return jsonString;
 	}
 
 	public static <T> T parseObject(String jsonString, Class<T> elementClasses) {

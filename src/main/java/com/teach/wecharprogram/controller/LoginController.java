@@ -33,6 +33,17 @@ public class LoginController {
     @Autowired
     LoginService loginService;
 
+    /**
+     * @return 通过手机号登陆
+     */
+    @ApiOperation(value = "通过用户名密码登录", response = ResponseEntity.class)
+    @PostMapping("/login_general")
+    @ApiImplicitParams({@ApiImplicitParam(value = "用户名", name = "username", required = true),
+                        @ApiImplicitParam(value = "密码", name = "password", required = true)})
+    public ResponseEntity loginByGeneral(String username, String password, HttpServletRequest request) {
+        String ipAddr = IpHelper.getRequestIpAddr(request);
+        return ResponseEntity.success(ImmutableMap.of(RequestConstant.TOKEN, loginService.loginByGeneral(username, password, ipAddr)));
+    }
 
     /**
      * @param code

@@ -19,4 +19,6 @@ public interface LoginService {
     boolean sendCode(String phone);
 
     Object loginByWx(WxUserInfoVo wxUserInfoVo, String ipAddr);
+
+    String loginByGeneral(String username, String password, String ipAddr);
 }

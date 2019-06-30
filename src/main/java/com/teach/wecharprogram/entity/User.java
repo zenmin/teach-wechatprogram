@@ -129,4 +129,15 @@ public class User extends EntityModel {
         this.lastLoginTime = new Date();
         this.password = initPassword;
     }
+
+
+    public User(Long id,String realName, String img, Integer gender, String nickName, String phone, Integer status) {
+        super.setId(id);
+        this.realName = realName;
+        this.img = img;
+        this.gender = gender;
+        this.nickName = nickName;
+        this.phone = phone;
+        this.status = status;
+    }
 }

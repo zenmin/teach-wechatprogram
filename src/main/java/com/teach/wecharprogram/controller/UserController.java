@@ -114,6 +114,8 @@ public class UserController {
         if (loginUser.getStatus() == CommonConstant.STATUS_ERROR) {
             StaticUtil.validateField(updateUserVo.getPhone(), updateUserVo.getRealName(), updateUserVo.getRoleId());
             StaticUtil.validateObject(updateUserVo.getType());
+        } else {
+            updateUserVo.setRealName(loginUser.getRealName());
         }
         return ResponseEntity.success(userService.updateUserData(updateUserVo, token));
     }

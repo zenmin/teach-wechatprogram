@@ -87,6 +87,10 @@ public class Approved extends EntityModel {
     @ApiModelProperty("结束时间")
     private Date endTime;
 
+    @ApiModelProperty("用户详情")
+    @Column(columnDefinition = "text COMMENT '用户详情'")
+    private String userText;
+
     public Approved(String name, String startUserName, Long startUserId, String roleName, String roleId, String remark,
                     String opinion, Integer type, String classesId, String studentId, String result, Integer resultCode,
                     String phone, String realName,String classesName,String studentName) {

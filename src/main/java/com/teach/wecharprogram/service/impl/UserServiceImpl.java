@@ -182,10 +182,12 @@ public class UserServiceImpl implements UserService {
             List<Approved> list = approvedService.list(new Approved(updateUserVo.getId(), CommonConstant.STATUS_VALID_PROCESS));
             if (list.size() == 0) {
                 // 提交审批
-                approvedService.save(new Approved("角色申请", updateUserVo.getRealName(), user.getId(), updateUserVo.getRoleName()
+                Approved approved = new Approved("角色申请", updateUserVo.getRealName(), user.getId(), updateUserVo.getRoleName()
                         , updateUserVo.getRoleId(), updateUserVo.getRemark(), null, updateUserVo.getType(),
                         updateUserVo.getClassesId(), updateUserVo.getStudentId(), "审批中",
-                        CommonConstant.STATUS_VALID_PROCESS, updateUserVo.getPhone(), updateUserVo.getRealName(), updateUserVo.getClassesName(), updateUserVo.getStudentName()));
+                        CommonConstant.STATUS_VALID_PROCESS, updateUserVo.getPhone(), updateUserVo.getRealName(), updateUserVo.getClassesName(), updateUserVo.getStudentName());
+                approved.setUserText(JSONUtil.toJSONStringNotEmpty(new User(user.getId(), user.getRealName(), user.getImg(), user.getGender(), user.getNickName(), user.getPhone(), user.getStatus())));
+                approvedService.save(approved);
                 // 更新用户信息
                 user.setStatus(CommonConstant.STATUS_VALID_ERROR);
                 userMapper.updateById(user);
@@ -194,6 +196,7 @@ public class UserServiceImpl implements UserService {
                 redisUtil.set(CacheConstant.USER_TOKEN_CODE + token, user, CacheConstant.EXPIRE_LOGON_TIME);
             }
         } else {
+            // 非新用户审批可以提交多个  这里不查询是否已有审批
             String title = "关联申请";
             // 提交审批
             if (Objects.nonNull(updateUserVo.getClassesId())) {
@@ -202,10 +205,12 @@ public class UserServiceImpl implements UserService {
             if (Objects.nonNull(updateUserVo.getStudentId())) {
                 title = "学生关联申请";
             }
-            approvedService.save(new Approved(title, updateUserVo.getRealName(), user.getId(), updateUserVo.getRoleName()
+            Approved approved = new Approved(title, updateUserVo.getRealName(), user.getId(), updateUserVo.getRoleName()
                     , updateUserVo.getRoleId(), updateUserVo.getRemark(), null, updateUserVo.getType(),
                     updateUserVo.getClassesId(), updateUserVo.getStudentId(), "审批中",
-                    CommonConstant.STATUS_VALID_PROCESS, updateUserVo.getPhone(), updateUserVo.getRealName(), updateUserVo.getClassesName(), updateUserVo.getStudentName()));
+                    CommonConstant.STATUS_VALID_PROCESS, updateUserVo.getPhone(), updateUserVo.getRealName(), updateUserVo.getClassesName(), updateUserVo.getStudentName());
+            approved.setUserText(JSONUtil.toJSONStringNotEmpty(new User(user.getId(), user.getRealName(), user.getImg(), user.getGender(), user.getNickName(), user.getPhone(), user.getStatus())));
+            approvedService.save(approved);
         }
         return user;
     }

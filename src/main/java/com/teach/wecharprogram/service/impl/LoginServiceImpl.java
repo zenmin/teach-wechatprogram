@@ -137,6 +137,12 @@ public class LoginServiceImpl implements LoginService {
         return this.addToken(user, ipAddr);
     }
 
+    @Override
+    public String loginByGeneral(String username, String password, String ipAddr) {
+
+        return null;
+    }
+
     /**
      * 执行登录逻辑
      *
