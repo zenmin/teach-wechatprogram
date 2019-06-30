@@ -72,7 +72,7 @@ public class RoleController {
      */
     @ApiOperation(value = "查全部 可带条件分页", response = ResponseEntity.class)
     @PostMapping("/listByPage")
-    @RequireRole(CommonConstant.ROLE_HEADMASTER)
+    @RequireRole({CommonConstant.ROLE_HEADMASTER})
     public ResponseEntity listByPage(Pager pager, Role role) {
         return ResponseEntity.success(roleService.listByPage(pager, role));
     }

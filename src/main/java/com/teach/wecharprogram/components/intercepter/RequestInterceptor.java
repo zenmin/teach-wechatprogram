@@ -34,7 +34,7 @@ public class RequestInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws JsonProcessingException {
-        String token = request.getHeader("token");
+        String token = request.getHeader(RequestConstant.TOKEN);
         if (StringUtils.isBlank(token)) {
             throw new CommonException(DefinedCode.NOTAUTH, "登陆超时，请重新登录！");
         }
@@ -45,7 +45,7 @@ public class RequestInterceptor implements HandlerInterceptor {
         Map<String, String[]> parameterMap = request.getParameterMap();
         String params = StaticUtil.objectMapper.writeValueAsString(parameterMap);
         log.info("客户端ip:[{}]请求URL:[{}] ,请求params:[{}]", IpHelper.getRequestIpAddr(request), request.getRequestURL(), params);
-        commonLogService.save(new Logs(IpHelper.getRequestIpAddr(request), request.getRequestURL().toString(), params));
+//        commonLogService.save(new Logs(IpHelper.getRequestIpAddr(request), request.getRequestURL().toString(), params));
         return true;
     }
 

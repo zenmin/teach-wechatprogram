@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.entity.RelUserTypeId;
@@ -93,6 +94,12 @@ public class StudentServiceImpl implements StudentService {
         List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>()
                 .eq("userId", userId).eq("type", CommonConstant.REL_STUDENTS));
         return relUserTypeIds;
+    }
+
+    @Override
+    public boolean delRelFamilyToStudent(Long userId, String studentsId) {
+        int delete = relUserTypeidMapper.delete(new UpdateWrapper<RelUserTypeId>().eq("userId", userId).eq("otherId", studentsId));
+        return delete > 0;
     }
 
 

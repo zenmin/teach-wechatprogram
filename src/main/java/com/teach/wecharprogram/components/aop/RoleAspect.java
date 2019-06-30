@@ -1,7 +1,9 @@
 package com.teach.wecharprogram.components.aop;
 
 import com.teach.wecharprogram.common.CommonException;
+import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.common.constant.DefinedCode;
+import com.teach.wecharprogram.common.constant.RequestConstant;
 import com.teach.wecharprogram.components.annotation.RequireRole;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.util.JSONUtil;
@@ -21,6 +23,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * @Describle This Class Is 全局权限验证切面
@@ -41,21 +44,30 @@ public class RoleAspect {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
         HttpServletRequest request = servletRequestAttributes.getRequest();
-        this.validRole(joinPoint, request);
-        return joinPoint.proceed();
+        boolean b = this.validRole(joinPoint, request);
+        if (b) {
+            return joinPoint.proceed();
+        } else {
+            throw new CommonException(DefinedCode.NOTAUTH_OPTION, "您没有权限操作！");
+        }
     }
 
-    private void validRole(ProceedingJoinPoint joinPoint, HttpServletRequest request) throws IOException {
-        String token = request.getHeader("token");
+    private boolean validRole(ProceedingJoinPoint joinPoint, HttpServletRequest request) throws IOException {
+        String token = request.getHeader(RequestConstant.TOKEN);
         Object attribute = request.getAttribute(token);
         User user = StaticUtil.objectMapper.readValue(JSONUtil.toJSONString(attribute), User.class);
+        String userRoleCode = user.getRoleCode();
+        if (userRoleCode.equals(CommonConstant.ROLE_ADMIN)) {
+            // admin权限不受影响
+            return true;
+        }
         Signature signature = joinPoint.getSignature();
         if (signature instanceof MethodSignature) {
             MethodSignature methodSignature = (MethodSignature) signature;
             Method method = methodSignature.getMethod();
             RequireRole annotation = method.getAnnotation(RequireRole.class);
-            String roleCode = annotation.value();
-            if (!roleCode.equals(user.getRoleCode())) {
+            String[] roleCode = annotation.value();
+            if (!Arrays.asList(roleCode).contains(userRoleCode)) {
                 // 无操作权限
                 throw new CommonException(DefinedCode.NOTAUTH_OPTION, "您没有权限操作！");
             }
@@ -63,7 +75,7 @@ public class RoleAspect {
         } else {
             throw new IllegalArgumentException("该注解仅用于Controller实现方法上！");
         }
-
+        return false;
     }
 
 

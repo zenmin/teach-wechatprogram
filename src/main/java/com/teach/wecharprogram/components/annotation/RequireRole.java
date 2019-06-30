@@ -14,6 +14,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface RequireRole {
 
-    String value() default CommonConstant.ROLE_TEACHER;     // RoleCode 角色编码
+    String[] value() default {CommonConstant.ROLE_TEACHER};     // RoleCode 角色编码
 
 }

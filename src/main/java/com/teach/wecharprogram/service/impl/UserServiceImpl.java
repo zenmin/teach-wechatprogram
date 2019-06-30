@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
 import com.teach.wecharprogram.common.CommonException;
-import com.teach.wecharprogram.common.constant.CacheConstant;
-import com.teach.wecharprogram.common.constant.CommonConstant;
-import com.teach.wecharprogram.common.constant.DefinedCode;
-import com.teach.wecharprogram.common.constant.RoleConstant;
+import com.teach.wecharprogram.common.constant.*;
 import com.teach.wecharprogram.components.business.RedisUtil;
 import com.teach.wecharprogram.entity.*;
 import com.teach.wecharprogram.entity.DO.Pager;
@@ -141,7 +138,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getLoginUser(HttpServletRequest request) {
-        String token = request.getHeader("token");
+        String token = request.getHeader(RequestConstant.TOKEN);
         Object attribute = request.getAttribute(token);
         User user = new User();
         try {
@@ -202,6 +199,9 @@ public class UserServiceImpl implements UserService {
         if (roleCode.equals(CommonConstant.ROLE_HEADMASTER)) {
             type = CommonConstant.REL_SCHOOL;
             List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>().eq("userId", userId).eq("type", type));
+            if (relUserTypeIds.size() == 0) {
+                throw new CommonException(DefinedCode.NOTFOUND, "当前没有关联的学校！");
+            }
             List<Long> ids = relUserTypeIds.stream().map(RelUserTypeId::getOtherId).collect(Collectors.toList());
             List<School> schoolList = schoolMapper.selectList(new QueryWrapper<School>().in("id", ids));
             return schoolList;
@@ -211,6 +211,9 @@ public class UserServiceImpl implements UserService {
         if (roleCode.equals(CommonConstant.ROLE_TEACHER) || roleCode.equals(CommonConstant.ROLE_TRAIN)) {
             type = CommonConstant.REL_CLASS;
             List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>().eq("userId", userId).eq("type", type));
+            if (relUserTypeIds.size() == 0) {
+                throw new CommonException(DefinedCode.NOTFOUND, "当前没有关联的班级！");
+            }
             List<Long> ids = relUserTypeIds.stream().map(RelUserTypeId::getOtherId).collect(Collectors.toList());
             List<Classes> classesList = classesMapper.selectList(new QueryWrapper<Classes>().in("id", ids));
             return classesList;
@@ -218,8 +221,11 @@ public class UserServiceImpl implements UserService {
 
         // 家长
         if (roleCode.equals(CommonConstant.ROLE_FAMILY)) {
-            type = CommonConstant.REL_CLASS;
+            type = CommonConstant.REL_STUDENTS;
             List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>().eq("userId", userId).eq("type", type));
+            if (relUserTypeIds.size() == 0) {
+                throw new CommonException(DefinedCode.NOTFOUND, "当前没有关联的学生！");
+            }
             List<Long> ids = relUserTypeIds.stream().map(RelUserTypeId::getOtherId).collect(Collectors.toList());
             List<Student> students = studentMapper.selectList(new QueryWrapper<Student>().in("id", ids));
             return students;

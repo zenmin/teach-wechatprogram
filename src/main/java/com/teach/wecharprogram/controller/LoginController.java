@@ -2,6 +2,7 @@ package com.teach.wecharprogram.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.teach.wecharprogram.common.ResponseEntity;
+import com.teach.wecharprogram.common.constant.RequestConstant;
 import com.teach.wecharprogram.entity.vo.WxUserInfoVo;
 import com.teach.wecharprogram.service.LoginService;
 import com.teach.wecharprogram.util.IpHelper;
@@ -42,7 +43,7 @@ public class LoginController {
     @ApiImplicitParams({@ApiImplicitParam(value = "手机号", name = "phone", required = true), @ApiImplicitParam(value = "验证码", name = "code", required = true)})
     public ResponseEntity loginByPhone(String phone, String code, HttpServletRequest request) {
         String ipAddr = IpHelper.getRequestIpAddr(request);
-        return ResponseEntity.success(ImmutableMap.of("token", loginService.loginByPhone(phone, code, ipAddr)));
+        return ResponseEntity.success(ImmutableMap.of(RequestConstant.TOKEN, loginService.loginByPhone(phone, code, ipAddr)));
     }
 
     /**
@@ -61,7 +62,7 @@ public class LoginController {
         StaticUtil.validateField(wxUserInfoVo.getCode());
         String ipAddr = IpHelper.getRequestIpAddr(request);
         wxUserInfoVo.setNickName(URLEncoder.encode(wxUserInfoVo.getNickName(), "UTF-8"));
-        return ResponseEntity.success(ImmutableMap.of("token", loginService.loginByWx(wxUserInfoVo, ipAddr)));
+        return ResponseEntity.success(ImmutableMap.of(RequestConstant.TOKEN, loginService.loginByWx(wxUserInfoVo, ipAddr)));
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.teach.wecharprogram.controller;
 
+import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.components.annotation.RequireRole;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.service.UserService;
 import com.teach.wecharprogram.util.StaticUtil;
@@ -81,9 +83,16 @@ public class StudentController {
      */
     @ApiOperation(value = "带ID更新 不带ID新增", response = ResponseEntity.class)
     @PostMapping("/save")
-    public ResponseEntity saveOrUpdate(Student student) {
+    @RequireRole({CommonConstant.ROLE_FAMILY,CommonConstant.ROLE_TEACHER,CommonConstant.ROLE_HEADMASTER})
+    public ResponseEntity saveOrUpdate(Student student, HttpServletRequest servletRequest) {
         StaticUtil.validateField(student.getName());
         StaticUtil.validateObject(student.getStatus());
+        User user = userService.getLoginUser(servletRequest);
+        // 如果当前用户是家长 不允许修改编辑
+        if (user.getRoleCode().equals(CommonConstant.ROLE_FAMILY)) {
+            student.setClassesId(null);
+            student.setClassesName(null);
+        }
         return ResponseEntity.success(studentService.save(student));
     }
 
@@ -116,5 +125,22 @@ public class StudentController {
             userId = loginUser.getId();
         }
         return ResponseEntity.success(studentService.relFamilyToStudent(userId, studentsId));
+    }
+
+    /**
+     * 家长关联学生
+     *
+     * @return
+     */
+    @ApiOperation(value = "家长删除关联学生", response = ResponseEntity.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "studentId", value = "班级id,多个用，隔开", required = true),
+            @ApiImplicitParam(name = "userId", value = "用户id （本人操作可不传）")})
+    @PostMapping("/delRelFamilyToStudent")
+    public ResponseEntity delRelFamilyToStudent(Long userId, String studentId, HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        if (Objects.isNull(userId)) {
+            userId = loginUser.getId();
+        }
+        return ResponseEntity.success(studentService.delRelFamilyToStudent(userId, studentId));
     }
 }
