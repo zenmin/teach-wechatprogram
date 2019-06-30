@@ -143,16 +143,6 @@ public class ApprovedServiceImpl implements ApprovedService {
             }
             approved.setResult("通过");
             approved.setResultCode(CommonConstant.STATUS_OK);
-            // 更新用户信息
-            userService.save(user);
-            user.setPassword(null);
-            // 更新用户缓存信息
-            String tokenPrefix = CacheConstant.USER_TOKEN_CODE + StaticUtil.getLoginToken(user.getId()) + "/";
-            Set<String> keys = redisUtil.getKeys(tokenPrefix);
-            if (keys.size() > 0) {
-                String token = keys.iterator().next();
-                redisUtil.set(token, user, CacheConstant.EXPIRE_LOGON_TIME);
-            }
         } else {
             // 不通过
             approved.setResult("不通过");
@@ -160,8 +150,10 @@ public class ApprovedServiceImpl implements ApprovedService {
             user.setStatus(CommonConstant.STATUS_ERROR);
             user.setRealName(realName);
             user.setPhone(approved.getPhone());
-            userService.save(user);
         }
+        // 更新用户信息
+        userService.save(user);
+        // 更新审批信息
         approved.setEndTime(new Date());
         approved.setOpinion(approvedVo.getOpinion());
         approvedMapper.updateById(approved);

@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService {
         if (keys.size() > 0) {
             String token = keys.iterator().next();
             user.setPassword(null);
-            redisUtil.set(CacheConstant.USER_TOKEN_CODE + token, user, CacheConstant.EXPIRE_LOGON_TIME);
+            redisUtil.set(token, user, CacheConstant.EXPIRE_LOGON_TIME);
         }
         return user;
     }
