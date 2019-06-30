@@ -137,7 +137,7 @@ public class ApprovedServiceImpl implements ApprovedService {
                     relUserTypeIdService.save(relUserTypeId);
                 }
             } else {     // 教练关联班级 / 家长关联学生
-                String[] split = classesId.split(",");
+                String[] split = approved.getStudentId().split(",");
                 List<String> ids = Arrays.asList(split);
                 ids.stream().forEach(o -> relUserTypeIdService.save(new RelUserTypeId(startUserId, Long.valueOf(o), type)));
             }
@@ -147,11 +147,11 @@ public class ApprovedServiceImpl implements ApprovedService {
             userService.save(user);
             user.setPassword(null);
             // 更新用户缓存信息
-            String tokenPrefix = StaticUtil.getLoginToken(user.getId()) + "/";
+            String tokenPrefix = CacheConstant.USER_TOKEN_CODE + StaticUtil.getLoginToken(user.getId()) + "/";
             Set<String> keys = redisUtil.getKeys(tokenPrefix);
             if (keys.size() > 0) {
                 String token = keys.iterator().next();
-                redisUtil.set(CacheConstant.USER_TOKEN_CODE + token, user, CacheConstant.EXPIRE_LOGON_TIME);
+                redisUtil.set(token, user, CacheConstant.EXPIRE_LOGON_TIME);
             }
         } else {
             // 不通过
