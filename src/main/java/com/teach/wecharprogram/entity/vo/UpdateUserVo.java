@@ -49,4 +49,10 @@ public class UpdateUserVo {
     @ApiModelProperty("学生姓名")
     private String studentName;
 
+    @ApiModelProperty("学校id")
+    private String schoolId;
+
+    @ApiModelProperty("学校名称")
+    private String schoolName;
+
 }

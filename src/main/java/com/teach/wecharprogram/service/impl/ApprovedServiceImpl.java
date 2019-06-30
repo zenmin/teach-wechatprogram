@@ -100,9 +100,12 @@ public class ApprovedServiceImpl implements ApprovedService {
     public boolean agree(ApprovedVo approvedVo) {
         // 取审批信息
         Approved approved = this.getOne(approvedVo.getId());
-//        if (Objects.nonNull(approved.getResultCode()) && approved.getResultCode() != CommonConstant.STATUS_VALID_PROCESS) {
-//            throw new CommonException(DefinedCode.APPROVED_IS_OK_ERROR, "该审批已经完成，无需再次操作！");
-//        }
+        if (Objects.isNull(approved)) {
+            throw new CommonException(DefinedCode.DATA_NOT_EXISTS_ERROR, "该申请不存在！");
+        }
+        if (Objects.nonNull(approved.getResultCode()) && approved.getResultCode() != CommonConstant.STATUS_VALID_PROCESS) {
+            throw new CommonException(DefinedCode.APPROVED_IS_OK_ERROR, "该审批已经完成，无需再次操作！");
+        }
         Integer type = approved.getType();      //  1教师 2教练 3家长
         String classesId = approved.getClassesId();
         Long startUserId = approved.getStartUserId();
@@ -164,18 +167,18 @@ public class ApprovedServiceImpl implements ApprovedService {
         if (type == RoleConstant.TEACHER) {
             // 教师关联班级
             // 先查询记录是否存在
-            RelUserTypeId relUserTypeId = new RelUserTypeId(startUserId, Long.valueOf(classesId), 2);
+            RelUserTypeId relUserTypeId = new RelUserTypeId(startUserId, Long.valueOf(classesId), CommonConstant.REL_CLASS);
             RelUserTypeId one = relUserTypeidMapper.selectOne(new QueryWrapper<>(relUserTypeId));
             if (Objects.isNull(one)) {
                 relUserTypeIdService.save(relUserTypeId);
             }
         } else if (type == RoleConstant.TRAIN) {
-            // 教练关联班级
-            String[] split = approved.getClassesId().split(",");
+            // 教练关联学校
+            String[] split = approved.getSchoolId().split(",");
             List<String> ids = Arrays.asList(split);
             ids.stream().forEach(o -> {
                 // 先查询记录是否存在
-                RelUserTypeId relUserTypeId = new RelUserTypeId(startUserId, Long.valueOf(o), type);
+                RelUserTypeId relUserTypeId = new RelUserTypeId(startUserId, Long.valueOf(o), CommonConstant.REL_SCHOOL);
                 List<RelUserTypeId> list = relUserTypeIdService.list(relUserTypeId);
                 if (list.size() == 0) {
                     relUserTypeIdService.save(relUserTypeId);
@@ -186,7 +189,7 @@ public class ApprovedServiceImpl implements ApprovedService {
             List<String> ids = Arrays.asList(split);
             ids.stream().forEach(o -> {
                 // 先查询记录是否存在
-                RelUserTypeId relUserTypeId = new RelUserTypeId(startUserId, Long.valueOf(o), type);
+                RelUserTypeId relUserTypeId = new RelUserTypeId(startUserId, Long.valueOf(o), CommonConstant.REL_STUDENTS);
                 List<RelUserTypeId> list = relUserTypeIdService.list(relUserTypeId);
                 if (list.size() == 0) {
                     relUserTypeIdService.save(relUserTypeId);

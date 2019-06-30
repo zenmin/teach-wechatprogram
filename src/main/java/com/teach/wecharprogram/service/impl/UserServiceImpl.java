@@ -169,6 +169,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = CommonException.class)
     public User updateUserData(UpdateUserVo updateUserVo, String token) {
+        Integer type = updateUserVo.getType();
         // 验证验证码
 //        String key = CacheConstant.LOGIN_PHONE_CODE + updateUserVo.getPhone();
 //        String sendCode = redisUtil.get(key);
@@ -187,6 +188,8 @@ public class UserServiceImpl implements UserService {
                         updateUserVo.getClassesId(), updateUserVo.getStudentId(), "审批中",
                         CommonConstant.STATUS_VALID_PROCESS, updateUserVo.getPhone(), updateUserVo.getRealName(), updateUserVo.getClassesName(), updateUserVo.getStudentName());
                 approved.setUserText(JSONUtil.toJSONStringNotEmpty(new User(user.getId(), user.getRealName(), user.getImg(), user.getGender(), user.getNickName(), user.getPhone(), user.getStatus())));
+                approved.setSchoolId(updateUserVo.getSchoolId());
+                approved.setStudentName(updateUserVo.getSchoolName());
                 approvedService.save(approved);
                 // 更新用户信息
                 user.setStatus(CommonConstant.STATUS_VALID_ERROR);
@@ -199,7 +202,10 @@ public class UserServiceImpl implements UserService {
             // 非新用户审批可以提交多个  这里不查询是否已有审批
             String title = "关联申请";
             // 提交审批
-            if (Objects.nonNull(updateUserVo.getClassesId())) {
+            if (type == CommonConstant.REL_SCHOOL) {
+                title = "学校关联申请";
+            }
+            if (type == CommonConstant.REL_CLASS) {
                 title = "班级关联申请";
             }
             if (Objects.nonNull(updateUserVo.getStudentId())) {
@@ -209,6 +215,8 @@ public class UserServiceImpl implements UserService {
                     , updateUserVo.getRoleId(), updateUserVo.getRemark(), null, updateUserVo.getType(),
                     updateUserVo.getClassesId(), updateUserVo.getStudentId(), "审批中",
                     CommonConstant.STATUS_VALID_PROCESS, updateUserVo.getPhone(), updateUserVo.getRealName(), updateUserVo.getClassesName(), updateUserVo.getStudentName());
+            approved.setSchoolId(updateUserVo.getSchoolId());
+            approved.setStudentName(updateUserVo.getSchoolName());
             approved.setUserText(JSONUtil.toJSONStringNotEmpty(new User(user.getId(), user.getRealName(), user.getImg(), user.getGender(), user.getNickName(), user.getPhone(), user.getStatus())));
             approvedService.save(approved);
         }

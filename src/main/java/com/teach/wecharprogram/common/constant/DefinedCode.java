@@ -23,7 +23,7 @@ public class DefinedCode {
 
     public static final int PAY_ERROR = 893;    // 支付失败
 
-    public static final int ORDER_NOT_EXISTS_ERROR = 892;    // 订单不存在
+    public static final int DATA_NOT_EXISTS_ERROR = 892;    // 数据不存在
 
     public static final int APPROVED_IS_OK_ERROR = 893;    // 审批已完成
 
