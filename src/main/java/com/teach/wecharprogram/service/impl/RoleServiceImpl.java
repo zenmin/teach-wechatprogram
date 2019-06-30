@@ -2,6 +2,7 @@ package com.teach.wecharprogram.service.impl;
 
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.ResponseEntity;
+import com.teach.wecharprogram.common.constant.CacheConstant;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.service.RoleService;
@@ -13,6 +14,9 @@ import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.Role;
 import com.teach.wecharprogram.mapper.RoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +36,7 @@ import java.util.stream.Collectors;
  */
 
 @Service
+@CacheConfig(cacheNames = CacheConstant.ROLE_CACHE)
 public class RoleServiceImpl implements RoleService {
 
     @Autowired
@@ -43,15 +48,17 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Cacheable(key = "#loginUser.roleCode + #role.toString()")
     public List<Role> list(User loginUser, Role role) {
         List<Role> list = roleMapper.selectList(new QueryWrapper<>(role));
         // 如果是校长或者管理员才会返回全部角色
-        if (loginUser.getRoleCode().equals(CommonConstant.ROLE_HEADMASTER) || loginUser.getRoleCode().equals(CommonConstant.ROLE_ADMIN)) {
-            return list;
-        } else {
-            List<Role> collect = list.stream().filter(o -> !o.getRoleCode().equals(CommonConstant.ROLE_HEADMASTER) && !o.getRoleCode().equals(CommonConstant.ROLE_ADMIN)).collect(Collectors.toList());
-            return collect;
+        if (StringUtils.isNotBlank(loginUser.getRoleCode())) {
+            if (loginUser.getRoleCode().equals(CommonConstant.ROLE_HEADMASTER) || loginUser.getRoleCode().equals(CommonConstant.ROLE_ADMIN)) {
+                return list;
+            }
         }
+        List<Role> collect = list.stream().filter(o -> !o.getRoleCode().equals(CommonConstant.ROLE_HEADMASTER) && !o.getRoleCode().equals(CommonConstant.ROLE_ADMIN)).collect(Collectors.toList());
+        return collect;
     }
 
     @Override
@@ -65,6 +72,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(rollbackFor = CommonException.class)
+    @CacheEvict(allEntries = true)
     public Role save(Role role) {
         if (Objects.nonNull(role.getId())) {
             roleMapper.updateById(role);
@@ -76,6 +84,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(rollbackFor = CommonException.class)
+    @CacheEvict(allEntries = true)
     public boolean delete(String ids) {
         List<Long> list = Lists.newArrayList();
         if (ids.indexOf(",") != -1) {
