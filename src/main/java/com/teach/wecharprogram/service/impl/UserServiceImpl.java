@@ -230,7 +230,7 @@ public class UserServiceImpl implements UserService {
         int type = CommonConstant.REL_STUDENTS;
 
         // 校长
-        if (roleCode.equals(CommonConstant.ROLE_HEADMASTER)) {
+        if (roleCode.equals(CommonConstant.ROLE_HEADMASTER) || roleCode.equals(CommonConstant.ROLE_TRAIN)) {
             type = CommonConstant.REL_SCHOOL;
             List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>().eq("userId", userId).eq("type", type));
             if (relUserTypeIds.size() == 0) {
@@ -241,8 +241,8 @@ public class UserServiceImpl implements UserService {
             return schoolList;
         }
 
-        // 教师或教练
-        if (roleCode.equals(CommonConstant.ROLE_TEACHER) || roleCode.equals(CommonConstant.ROLE_TRAIN)) {
+        // 教师
+        if (roleCode.equals(CommonConstant.ROLE_TEACHER)){
             type = CommonConstant.REL_CLASS;
             List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>().eq("userId", userId).eq("type", type));
             if (relUserTypeIds.size() == 0) {
