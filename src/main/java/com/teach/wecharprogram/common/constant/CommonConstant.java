@@ -34,5 +34,5 @@ public class CommonConstant {
 
     public static final int REL_CLASS = 2;  // 班级
 
-    public static final int REL_STUDENTS = 3;  // 学生
+    public static final int REL_STUDENTS = 3;  // 学生 家长
 }

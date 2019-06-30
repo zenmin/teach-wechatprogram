@@ -52,7 +52,7 @@ public class RoleServiceImpl implements RoleService {
     public List<Role> list(User loginUser, Role role) {
         List<Role> list = roleMapper.selectList(new QueryWrapper<>(role));
         // 如果是校长或者管理员才会返回全部角色
-        if (StringUtils.isNotBlank(loginUser.getRoleCode())) {
+        if(StringUtils.isNotBlank(loginUser.getRoleCode())){
             if (loginUser.getRoleCode().equals(CommonConstant.ROLE_HEADMASTER) || loginUser.getRoleCode().equals(CommonConstant.ROLE_ADMIN)) {
                 return list;
             }

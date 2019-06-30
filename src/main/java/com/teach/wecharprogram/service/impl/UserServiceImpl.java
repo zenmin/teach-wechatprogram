@@ -12,8 +12,7 @@ import com.teach.wecharprogram.entity.*;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.vo.UpdateUserVo;
 import com.teach.wecharprogram.mapper.*;
-import com.teach.wecharprogram.service.ApprovedService;
-import com.teach.wecharprogram.service.UserService;
+import com.teach.wecharprogram.service.*;
 import com.teach.wecharprogram.util.JSONUtil;
 import com.teach.wecharprogram.util.StaticUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +62,15 @@ public class UserServiceImpl implements UserService {
     @Autowired
     StudentMapper studentMapper;
 
+    @Autowired
+    StudentService studentService;
+
+    @Autowired
+    ClassesService classesService;
+
+    @Autowired
+    RoleService roleService;
+
     @Override
     public User getOne(Long id) {
         return userMapper.selectById(id);
@@ -86,7 +94,6 @@ public class UserServiceImpl implements UserService {
         if (Objects.nonNull(user.getId())) {
             userMapper.updateById(user);
         } else {
-
             String username = user.getUsername();
             String phone = user.getPhone();
             Integer count = userMapper.selectCount(new QueryWrapper<User>().eq("username", username).or(o -> o.eq("phone", phone)));
@@ -176,8 +183,9 @@ public class UserServiceImpl implements UserService {
             if (list.size() == 0) {
                 // 提交审批
                 approvedService.save(new Approved("角色申请", updateUserVo.getRealName(), user.getId(), updateUserVo.getRoleName()
-                        , updateUserVo.getRoleId(), updateUserVo.getRemark(), "待审批", updateUserVo.getType(),
-                        updateUserVo.getClassesId(), updateUserVo.getStudentId(), "审批中", CommonConstant.STATUS_VALID_PROCESS, updateUserVo.getPhone(), updateUserVo.getRealName()));
+                        , updateUserVo.getRoleId(), updateUserVo.getRemark(), null, updateUserVo.getType(),
+                        updateUserVo.getClassesId(), updateUserVo.getStudentId(), "审批中",
+                        CommonConstant.STATUS_VALID_PROCESS, updateUserVo.getPhone(), updateUserVo.getRealName(), updateUserVo.getClassesName(), updateUserVo.getStudentName()));
                 // 更新用户信息
                 user.setStatus(CommonConstant.STATUS_VALID_ERROR);
                 userMapper.updateById(user);
@@ -185,6 +193,19 @@ public class UserServiceImpl implements UserService {
                 user.setPassword(null);
                 redisUtil.set(CacheConstant.USER_TOKEN_CODE + token, user, CacheConstant.EXPIRE_LOGON_TIME);
             }
+        } else {
+            String title = "关联申请";
+            // 提交审批
+            if (Objects.nonNull(updateUserVo.getClassesId())) {
+                title = "班级关联申请";
+            }
+            if (Objects.nonNull(updateUserVo.getStudentId())) {
+                title = "学生关联申请";
+            }
+            approvedService.save(new Approved(title, updateUserVo.getRealName(), user.getId(), updateUserVo.getRoleName()
+                    , updateUserVo.getRoleId(), updateUserVo.getRemark(), null, updateUserVo.getType(),
+                    updateUserVo.getClassesId(), updateUserVo.getStudentId(), "审批中",
+                    CommonConstant.STATUS_VALID_PROCESS, updateUserVo.getPhone(), updateUserVo.getRealName(), updateUserVo.getClassesName(), updateUserVo.getStudentName()));
         }
         return user;
     }
@@ -231,6 +252,16 @@ public class UserServiceImpl implements UserService {
             return students;
         }
         throw new CommonException(DefinedCode.NOTFOUND, "你暂时没有关联的班级或学生，请联系管理员！");
+    }
+
+    @Override
+    public boolean selectRole(Long roleId, Long userId) {
+        Role one = roleService.getOne(roleId);
+        User user = this.getOne(userId);
+        user.setRoleCode(one.getRoleCode());
+        user.setRoleName(one.getRoleName());
+        User save = this.save(user);
+        return save != null;
     }
 
     @Transactional(rollbackFor = CommonException.class)

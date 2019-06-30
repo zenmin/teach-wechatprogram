@@ -26,4 +26,6 @@ public interface ApprovedService {
 
     boolean agree(ApprovedVo approvedVo);
 
+    long count(Approved approved);
+
 }

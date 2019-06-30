@@ -40,7 +40,13 @@ public class UpdateUserVo {
     @ApiModelProperty("班级id 多个用，隔开")
     private String classesId;
 
+    @ApiModelProperty("班级名称")
+    private String classesName;
+
     @ApiModelProperty("学生id")
     private String studentId;
+
+    @ApiModelProperty("学生姓名")
+    private String studentName;
 
 }

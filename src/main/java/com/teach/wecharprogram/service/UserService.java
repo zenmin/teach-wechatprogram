@@ -41,4 +41,6 @@ public interface UserService {
 
     Object getMyRelInfo(User user);
 
+    boolean selectRole(Long roleId, Long userId);
+
 }

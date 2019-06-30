@@ -1,8 +1,12 @@
 package com.teach.wecharprogram.controller;
 
+import com.teach.wecharprogram.common.CommonException;
+import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.common.constant.DefinedCode;
 import com.teach.wecharprogram.entity.vo.UpdateUserVo;
 import com.teach.wecharprogram.util.StaticUtil;
 import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +34,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Value("${spring.profiles.active}")
+    String env;
 
     /**
      * 根据id查询一条数据
@@ -99,13 +106,15 @@ public class UserController {
      *
      * @return
      */
-    @ApiOperation(value = "更新用户信息/提交角色审批", response = ResponseEntity.class)
+    @ApiOperation(value = "更新用户信息/提交关联审批", response = ResponseEntity.class)
     @PostMapping("/updateUserData")
     public ResponseEntity updateUserData(UpdateUserVo updateUserVo, @ApiParam(hidden = true) @RequestHeader String token) {
-        StaticUtil.validateField(updateUserVo.getPhone(),updateUserVo.getRealName(),updateUserVo.getRoleId());
-        StaticUtil.validateObject(updateUserVo.getType());
         User loginUser = userService.getLoginUser(token);
         updateUserVo.setId(loginUser.getId());
+        if (loginUser.getStatus() == CommonConstant.STATUS_ERROR) {
+            StaticUtil.validateField(updateUserVo.getPhone(), updateUserVo.getRealName(), updateUserVo.getRoleId());
+            StaticUtil.validateObject(updateUserVo.getType());
+        }
         return ResponseEntity.success(userService.updateUserData(updateUserVo, token));
     }
 
@@ -134,6 +143,22 @@ public class UserController {
     public ResponseEntity getMyRelInfo(HttpServletRequest request) {
         User user = userService.getLoginUser(request);
         return ResponseEntity.success(userService.getMyRelInfo(user));
+    }
+
+    /**
+     * 带ID更新 不带ID新增
+     *
+     * @return
+     */
+    @ApiOperation(value = "切换当前用户角色(开发环境)", response = ResponseEntity.class)
+    @PostMapping("/selectRole")
+    public ResponseEntity selectRole(Long roleId, HttpServletRequest request) {
+        if ("dev".equals(env)) {
+            User user = userService.getLoginUser(request);
+            return ResponseEntity.success(userService.selectRole(roleId, user.getId()));
+        } else {
+            throw new CommonException(DefinedCode.NOTAUTH_OPTION, "非开发环境不允许切换角色！");
+        }
     }
 
 }

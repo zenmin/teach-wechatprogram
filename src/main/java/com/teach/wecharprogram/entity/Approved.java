@@ -33,22 +33,22 @@ public class Approved extends EntityModel {
     @ApiModelProperty(value = "审批名称")
     private String name;
 
-    @ApiModelProperty(value = "创建人名称")
+    @ApiModelProperty(value = "申请人名称",hidden = true)
     private String startUserName;
 
-    @ApiModelProperty(value = "创建人id")
+    @ApiModelProperty(value = "申请人id",hidden = true)
     private Long startUserId;
 
     @ApiModelProperty(value = "结果")
     private String result;
 
-    @ApiModelProperty(value = "1通过 0不通过 2审批中")
+    @ApiModelProperty(value = "1通过 0不通过 2审批中",hidden = true)
     private Integer resultCode;
 
-    @ApiModelProperty(value = "审批人名称")
+    @ApiModelProperty(value = "审批人名称",hidden = true)
     private String approvedUserName;
 
-    @ApiModelProperty(value = "审批人id")
+    @ApiModelProperty(value = "审批人id",hidden = true)
     private Long approvedUserId;
 
     @ApiModelProperty(value = "角色名称")
@@ -69,6 +69,9 @@ public class Approved extends EntityModel {
     @ApiModelProperty("班级id 多个用,隔开")
     private String classesId;
 
+    @ApiModelProperty("班级id 多个用,隔开")
+    private String classesName;
+
     @ApiModelProperty("手机号")
     private String phone;
 
@@ -78,10 +81,15 @@ public class Approved extends EntityModel {
     @ApiModelProperty("学生id")
     private String studentId;
 
+    @ApiModelProperty("学生姓名")
+    private String studentName;
+
     @ApiModelProperty("结束时间")
     private Date endTime;
 
-    public Approved(String name, String startUserName, Long startUserId, String roleName, String roleId, String remark, String opinion, Integer type, String classesId, String studentId, String result, Integer resultCode,String phone,String realName) {
+    public Approved(String name, String startUserName, Long startUserId, String roleName, String roleId, String remark,
+                    String opinion, Integer type, String classesId, String studentId, String result, Integer resultCode,
+                    String phone, String realName,String classesName,String studentName) {
         this.name = name;
         this.startUserName = startUserName;
         this.startUserId = startUserId;
@@ -96,9 +104,11 @@ public class Approved extends EntityModel {
         this.resultCode = resultCode;
         this.phone = phone;
         this.realName = realName;
+        this.classesName = classesName;
+        this.studentName = studentName;
     }
 
-    public Approved(Long startUserId,Integer resultCode) {
+    public Approved(Long startUserId, Integer resultCode) {
         this.startUserId = startUserId;
         this.resultCode = resultCode;
     }

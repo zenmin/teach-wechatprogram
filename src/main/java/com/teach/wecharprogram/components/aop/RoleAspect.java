@@ -71,11 +71,10 @@ public class RoleAspect {
                 // 无操作权限
                 throw new CommonException(DefinedCode.NOTAUTH_OPTION, "您没有权限操作！");
             }
-
+            return true;
         } else {
             throw new IllegalArgumentException("该注解仅用于Controller实现方法上！");
         }
-        return false;
     }
 
 

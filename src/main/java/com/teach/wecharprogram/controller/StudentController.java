@@ -83,7 +83,7 @@ public class StudentController {
      */
     @ApiOperation(value = "带ID更新 不带ID新增", response = ResponseEntity.class)
     @PostMapping("/save")
-    @RequireRole({CommonConstant.ROLE_FAMILY,CommonConstant.ROLE_TEACHER,CommonConstant.ROLE_HEADMASTER})
+    @RequireRole({CommonConstant.ROLE_FAMILY, CommonConstant.ROLE_TEACHER, CommonConstant.ROLE_HEADMASTER})
     public ResponseEntity saveOrUpdate(Student student, HttpServletRequest servletRequest) {
         StaticUtil.validateField(student.getName());
         StaticUtil.validateObject(student.getStatus());
@@ -133,10 +133,12 @@ public class StudentController {
      * @return
      */
     @ApiOperation(value = "家长删除关联学生", response = ResponseEntity.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "studentId", value = "班级id,多个用，隔开", required = true),
+    @ApiImplicitParams({@ApiImplicitParam(name = "studentId", value = "学生id", required = true),
             @ApiImplicitParam(name = "userId", value = "用户id （本人操作可不传）")})
     @PostMapping("/delRelFamilyToStudent")
+    @RequireRole({CommonConstant.ROLE_FAMILY, CommonConstant.ROLE_TEACHER})
     public ResponseEntity delRelFamilyToStudent(Long userId, String studentId, HttpServletRequest request) {
+        StaticUtil.validateField(studentId);
         User loginUser = userService.getLoginUser(request);
         if (Objects.isNull(userId)) {
             userId = loginUser.getId();
