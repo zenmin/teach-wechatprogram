@@ -1,6 +1,7 @@
 package com.teach.wecharprogram.service;
 
 
+import com.teach.wecharprogram.entity.vo.AdminUserVo;
 import com.teach.wecharprogram.entity.vo.WxUserInfoVo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,5 +21,5 @@ public interface LoginService {
 
     Object loginByWx(WxUserInfoVo wxUserInfoVo, String ipAddr);
 
-    String loginByGeneral(String username, String password, String ipAddr);
+    AdminUserVo loginByGeneral(String username, String password, String ipAddr);
 }

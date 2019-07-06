@@ -15,9 +15,6 @@ public class Test1 {
 
     @Test
     public void test1() {
-        String tokenPrefix = StaticUtil.getLoginToken(1142326137901330433L) + "/";
-        // 删除用户之前的token
-//        redisUtil.deleteLike(CacheConstant.USER_TOKEN_CODE + tokenPrefix);
-        System.out.println(CacheConstant.USER_TOKEN_CODE + tokenPrefix);
+        System.out.println(StaticUtil.md5Hex("123"));
     }
 }

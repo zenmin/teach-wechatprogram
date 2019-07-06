@@ -2,9 +2,13 @@ package com.teach.wecharprogram.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.teach.wecharprogram.common.ResponseEntity;
+import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.common.constant.RequestConstant;
+import com.teach.wecharprogram.entity.User;
+import com.teach.wecharprogram.entity.vo.AdminUserVo;
 import com.teach.wecharprogram.entity.vo.WxUserInfoVo;
 import com.teach.wecharprogram.service.LoginService;
+import com.teach.wecharprogram.service.UserService;
 import com.teach.wecharprogram.util.IpHelper;
 import com.teach.wecharprogram.util.StaticUtil;
 import io.swagger.annotations.Api;
@@ -13,6 +17,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,16 +38,20 @@ public class LoginController {
     @Autowired
     LoginService loginService;
 
+    @Autowired
+    UserService userService;
+
+
     /**
      * @return 通过手机号登陆
      */
     @ApiOperation(value = "通过用户名密码登录", response = ResponseEntity.class)
     @PostMapping("/login_general")
     @ApiImplicitParams({@ApiImplicitParam(value = "用户名", name = "username", required = true),
-                        @ApiImplicitParam(value = "密码", name = "password", required = true)})
+            @ApiImplicitParam(value = "密码", name = "password", required = true)})
     public ResponseEntity loginByGeneral(String username, String password, HttpServletRequest request) {
         String ipAddr = IpHelper.getRequestIpAddr(request);
-        return ResponseEntity.success(ImmutableMap.of(RequestConstant.TOKEN, loginService.loginByGeneral(username, password, ipAddr)));
+        return ResponseEntity.success(loginService.loginByGeneral(username, password, ipAddr));
     }
 
     /**
@@ -86,4 +95,13 @@ public class LoginController {
         return ResponseEntity.success(loginService.sendCode(phone));
     }
 
+    /**
+     * @return 管理员信息
+     */
+    @ApiOperation(value = "管理员信息", response = ResponseEntity.class)
+    @PostMapping("/userInfo")
+    public AdminUserVo userInfo(@RequestHeader String token) {
+        User user = userService.getLoginUser(token);
+        return new AdminUserVo(user.getId().toString(), user.getRealName(), token, user.getStatus(), user.getRoleCode().equals(CommonConstant.ROLE_ADMIN));
+    }
 }

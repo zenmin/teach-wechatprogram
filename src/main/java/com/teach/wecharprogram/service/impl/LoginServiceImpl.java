@@ -10,6 +10,7 @@ import com.teach.wecharprogram.components.business.RedisUtil;
 import com.teach.wecharprogram.components.business.SmsUtil;
 import com.teach.wecharprogram.components.business.WxUtil;
 import com.teach.wecharprogram.entity.User;
+import com.teach.wecharprogram.entity.vo.AdminUserVo;
 import com.teach.wecharprogram.entity.vo.WxUserInfoVo;
 import com.teach.wecharprogram.service.LoginService;
 import com.teach.wecharprogram.service.UserService;
@@ -138,9 +139,16 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public String loginByGeneral(String username, String password, String ipAddr) {
+    public AdminUserVo loginByGeneral(String username, String password, String ipAddr) {
 
-        return null;
+        User user = userService.findByUserNameAndPwd(username, password);
+        if (Objects.nonNull(user)) {
+            String token = this.addToken(user, ipAddr);
+            AdminUserVo adminUserVo = new AdminUserVo(user.getId().toString(), user.getRealName(), token, user.getStatus(), user.getRoleCode().equals(CommonConstant.ROLE_ADMIN));
+            return adminUserVo;
+        } else {
+            throw new CommonException(DefinedCode.NOTAUTH, "用户名或密码错误！");
+        }
     }
 
     /**

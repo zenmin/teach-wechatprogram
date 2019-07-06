@@ -43,4 +43,6 @@ public interface UserService {
 
     boolean selectRole(Long roleId, Long userId);
 
+    User findByUserNameAndPwd(String username,String password);
+
 }

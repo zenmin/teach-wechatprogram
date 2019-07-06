@@ -8,7 +8,7 @@ package com.teach.wecharprogram.common.constant;
  */
 public class CommonConstant {
 
-    public static final String TOKEN_KEY = "ZhuoAn";
+    public static final String TOKEN_KEY = "TEACH";
 
     public static final String INIT_PASSWORD = "123456";
 

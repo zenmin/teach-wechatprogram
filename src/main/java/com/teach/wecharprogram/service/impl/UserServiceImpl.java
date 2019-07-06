@@ -277,6 +277,12 @@ public class UserServiceImpl implements UserService {
         return save != null;
     }
 
+    @Override
+    public User findByUserNameAndPwd(String username, String password) {
+        User user = userMapper.selectOne(new QueryWrapper<User>().eq("username", username).eq("password", StaticUtil.md5Hex(password)));
+        return user;
+    }
+
     @Transactional(rollbackFor = CommonException.class)
     @Override
     @Async
