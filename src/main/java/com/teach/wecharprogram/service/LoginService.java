@@ -22,4 +22,7 @@ public interface LoginService {
     Object loginByWx(WxUserInfoVo wxUserInfoVo, String ipAddr);
 
     AdminUserVo loginByGeneral(String username, String password, String ipAddr);
+
+    void logOut(String token);
+
 }

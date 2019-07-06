@@ -151,6 +151,11 @@ public class LoginServiceImpl implements LoginService {
         }
     }
 
+    @Override
+    public void logOut(String token) {
+        redisUtil.delete(CacheConstant.USER_TOKEN_CODE + token);
+    }
+
     /**
      * 执行登录逻辑
      *

@@ -104,4 +104,14 @@ public class LoginController {
         User user = userService.getLoginUser(token);
         return new AdminUserVo(user.getId().toString(), user.getRealName(), token, user.getStatus(), user.getRoleCode().equals(CommonConstant.ROLE_ADMIN));
     }
+
+    /**
+     * @return 通过手机号登陆
+     */
+    @ApiOperation(value = "登出", response = ResponseEntity.class)
+    @PostMapping("/logOut")
+    public ResponseEntity logOut(@RequestHeader String token) {
+        loginService.logOut(token);
+        return ResponseEntity.success(true);
+    }
 }

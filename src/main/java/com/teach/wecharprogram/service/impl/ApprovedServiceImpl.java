@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.mapper.ApprovedMapper;
 import com.teach.wecharprogram.util.StaticUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -66,7 +67,12 @@ public class ApprovedServiceImpl implements ApprovedService {
 
     @Override
     public Pager listByPage(Pager pager, Approved approved) {
-        IPage<Approved> approvedIPage = approvedMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(approved).orderByDesc("createTime"));
+        QueryWrapper<Approved> queryWrapper = new QueryWrapper<>(approved).orderByDesc("createTime","resultCode");
+        String realName = approved.getRealName();
+        if (StringUtils.isNotBlank(realName)) {
+            queryWrapper.like("realName", realName);
+        }
+        IPage<Approved> approvedIPage = approvedMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), queryWrapper);
         return Pager.of(approvedIPage);
     }
 
