@@ -242,7 +242,7 @@ public class UserServiceImpl implements UserService {
         Long userId = user.getId();
         int type = CommonConstant.REL_STUDENTS;
 
-        // 校长
+        // 校长 / 教练
         if (roleCode.equals(CommonConstant.ROLE_HEADMASTER) || roleCode.equals(CommonConstant.ROLE_TRAIN)) {
             type = CommonConstant.REL_SCHOOL;
             List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>().eq("userId", userId).eq("type", type));

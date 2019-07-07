@@ -99,14 +99,14 @@ public class SchoolController {
 
 
     /**
-     * 老师关联班级
+     * 校长关联学校
      *
      * @return
      */
-    @ApiOperation(value = "校长关联学校", response = ResponseEntity.class)
+    @ApiOperation(value = "校长/教练 关联学校", response = ResponseEntity.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "schoolId", value = "学校id", required = true),
             @ApiImplicitParam(name = "userId", value = "用户id（本人操作可不传）")})
-    @PostMapping("/relHeadMasterToSchool")
+    @PostMapping("/relToSchool")
     public ResponseEntity relHeadMasterToSchool(Long userId, Long schoolId, HttpServletRequest request) {
         if (Objects.isNull(userId)) {
             User loginUser = userService.getLoginUser(request);
@@ -114,4 +114,5 @@ public class SchoolController {
         }
         return ResponseEntity.success(schoolService.relHeadMasterToSchool(userId, schoolId));
     }
+
 }
