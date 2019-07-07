@@ -118,7 +118,7 @@ public class ApprovedServiceImpl implements ApprovedService {
         String realName = approved.getRealName();
         User user = userService.getOne(startUserId);
         // 如果是新用户  才会更新用户信息
-        if (user.getStatus() == CommonConstant.STATUS_ERROR) {
+        if (user.getStatus() == CommonConstant.STATUS_VALID_PROCESS) {
             if (approvedVo.getResultCode() == CommonConstant.STATUS_APPROVED_OK) {      // 通过
                 String roleId = approved.getRoleId();
                 // 获取权限
