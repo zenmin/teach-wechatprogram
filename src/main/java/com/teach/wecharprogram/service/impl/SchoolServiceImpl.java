@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.entity.RelUserTypeId;
@@ -12,6 +13,7 @@ import com.google.common.collect.Lists;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.School;
 import com.teach.wecharprogram.mapper.SchoolMapper;
+import com.teach.wecharprogram.util.StaticUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -70,6 +72,10 @@ public class SchoolServiceImpl implements SchoolService {
         if (Objects.nonNull(school.getId())) {
             schoolMapper.updateById(school);
         } else {
+            StaticUtil.validateField(school.getName());
+            if (Objects.isNull(school.getStatus())) {
+                school.setStatus(CommonConstant.STATUS_OK);
+            }
             schoolMapper.insert(school);
         }
         return school;
@@ -91,17 +97,13 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     public Object relHeadMasterToSchool(Long userId, String schoolId) {
+        // 删之前的关联
+        relUserTypeidMapper.delete(new UpdateWrapper<>(new RelUserTypeId(userId, null, CommonConstant.REL_SCHOOL)));
         String[] split = schoolId.split(",");
         List<String> asList = Arrays.asList(split);
         asList.stream().forEach(o -> {
             RelUserTypeId relUserTypeId = new RelUserTypeId(userId, Long.valueOf(o), CommonConstant.REL_SCHOOL);
-            // 删除之前关联的
-            RelUserTypeId one = relUserTypeidMapper.selectOne(new QueryWrapper<>(relUserTypeId));
-            if (Objects.isNull(one)) {
-                // 新增
-                relUserTypeId.setOtherId(Long.valueOf(o));
-                relUserTypeidMapper.insert(relUserTypeId);
-            }
+            relUserTypeidMapper.insert(relUserTypeId);
         });
         List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>().eq("userId", userId).eq("type", CommonConstant.REL_SCHOOL));
         return relUserTypeIds;

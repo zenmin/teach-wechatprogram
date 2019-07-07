@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.entity.RelUserTypeId;
@@ -14,6 +15,7 @@ import com.google.common.collect.Lists;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.Classes;
 import com.teach.wecharprogram.mapper.ClassesMapper;
+import com.teach.wecharprogram.util.StaticUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -66,9 +68,9 @@ public class ClassesServiceImpl implements ClassesService {
     public Pager listByPage(Pager pager, Classes classes) {
         QueryWrapper<Classes> classesQueryWrapper = new QueryWrapper<>(classes);
         if (StringUtils.isNotBlank(classes.getName())) {
-            classesQueryWrapper.like("name",classes.getName());
+            classesQueryWrapper.like("name", classes.getName());
         }
-        IPage<Classes> classesIPage = classesMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()),classesQueryWrapper);
+        IPage<Classes> classesIPage = classesMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), classesQueryWrapper);
         return Pager.of(classesIPage);
     }
 
@@ -78,6 +80,11 @@ public class ClassesServiceImpl implements ClassesService {
         if (Objects.nonNull(classes.getId())) {
             classesMapper.updateById(classes);
         } else {
+            StaticUtil.validateField(classes.getName());
+            StaticUtil.validateObject(classes.getSchoolId());
+            if (Objects.isNull(classes.getStatus())) {
+                classes.setStatus(CommonConstant.STATUS_OK);
+            }
             classesMapper.insert(classes);
         }
         return classes;
@@ -116,15 +123,16 @@ public class ClassesServiceImpl implements ClassesService {
     }
 
     @Override
+    @Transactional
     public Object relTeacherToClass(Long userId, String classesId) {
+        // 删之前的关联
+        relUserTypeidMapper.delete(new UpdateWrapper<>(new RelUserTypeId(userId, null, CommonConstant.REL_CLASS)));
         String[] split = classesId.split(",");
         List<String> asList = Arrays.asList(split);
         asList.stream().forEach(o -> {
             RelUserTypeId relUserTypeId = new RelUserTypeId(userId, Long.valueOf(o), CommonConstant.REL_CLASS);
-            RelUserTypeId one = relUserTypeidMapper.selectOne(new QueryWrapper<>(relUserTypeId));
-            if (Objects.isNull(one)) {
-                relUserTypeidMapper.insert(relUserTypeId);
-            }
+            relUserTypeidMapper.insert(relUserTypeId);
+
         });
         List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>().eq("userId", userId).eq("type", CommonConstant.REL_CLASS));
         return relUserTypeIds;

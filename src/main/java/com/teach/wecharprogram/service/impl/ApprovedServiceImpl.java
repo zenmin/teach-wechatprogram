@@ -130,7 +130,7 @@ public class ApprovedServiceImpl implements ApprovedService {
                 user.setRoleName(role.getRoleName());
                 user.setRealName(realName);
                 user.setPhone(approved.getPhone());
-                if (user.getRoleCode().equals(CommonConstant.ROLE_TEACHER) || user.getRoleCode().equals(CommonConstant.ROLE_HEADMASTER)) {
+                if (user.getRoleCode().equals(CommonConstant.ROLE_TEACHER) || user.getRoleCode().equals(CommonConstant.ROLE_HEADMASTER) || user.getRoleCode().equals(CommonConstant.ROLE_FAMILY)) {
                     user.setSchoolId(approved.getSchoolId());
                 }
                 // 执行关联

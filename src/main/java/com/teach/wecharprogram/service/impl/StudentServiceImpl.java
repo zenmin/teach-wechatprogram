@@ -88,14 +88,13 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Object relFamilyToStudent(Long userId, String studentsId) {
+        // 删之前的关联
+        relUserTypeidMapper.delete(new UpdateWrapper<>(new RelUserTypeId(userId, null, CommonConstant.REL_STUDENTS)));
         String[] split = studentsId.split(",");
         List<String> asList = Arrays.asList(split);
         asList.stream().forEach(o -> {
             RelUserTypeId relUserTypeId = new RelUserTypeId(userId, Long.valueOf(o), CommonConstant.REL_STUDENTS);
-            RelUserTypeId one = relUserTypeidMapper.selectOne(new QueryWrapper<>(relUserTypeId));
-            if (Objects.isNull(one)) {
-                relUserTypeidMapper.insert(relUserTypeId);
-            }
+            relUserTypeidMapper.insert(relUserTypeId);
         });
         List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>()
                 .eq("userId", userId).eq("type", CommonConstant.REL_STUDENTS));
