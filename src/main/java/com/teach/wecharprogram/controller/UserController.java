@@ -19,6 +19,7 @@ import com.teach.wecharprogram.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 
 /**
@@ -130,10 +131,19 @@ public class UserController {
      *
      * @return
      */
-    @ApiOperation(value = "获取当前登录用户关联的学校 / 班级 / 学生", response = ResponseEntity.class)
+    @ApiOperation(value = "获取当前用户关联的学校 / 班级 / 学生", response = ResponseEntity.class)
+    @ApiImplicitParam(name = "userId", value = "用户id", required = true)
     @PostMapping("/getMyRelInfo")
-    public ResponseEntity getMyRelInfo(HttpServletRequest request) {
-        User user = userService.getLoginUser(request);
+    public ResponseEntity getMyRelInfo(HttpServletRequest request, Long userId) {
+        User user = null;
+        if (Objects.nonNull(userId)) {
+            user = userService.getOne(userId);
+        } else {
+            user = userService.getLoginUser(request);
+        }
+        if (Objects.isNull(user)) {
+            throw new CommonException(DefinedCode.DATA_NOT_EXISTS_ERROR, "用户不存在！");
+        }
         return ResponseEntity.success(userService.getMyRelInfo(user));
     }
 
