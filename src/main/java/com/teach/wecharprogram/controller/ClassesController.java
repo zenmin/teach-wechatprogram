@@ -50,6 +50,18 @@ public class ClassesController {
     /**
      * 查全部 可带条件分页
      *
+     * @param classes
+     * @return
+     */
+    @ApiOperation(value = "查全部 可带条件", response = ResponseEntity.class)
+    @PostMapping("/list")
+    public ResponseEntity list(Classes classes) {
+        return ResponseEntity.success(classesService.list(classes));
+    }
+
+    /**
+     * 查全部 可带条件分页
+     *
      * @param pager
      * @param classes
      * @return
@@ -104,11 +116,11 @@ public class ClassesController {
      */
     @ApiOperation(value = "取班级下的学生", response = ResponseEntity.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "classesId", value = "班级id", required = true),
-                          @ApiImplicitParam(name = "name", value = "学生名称")})
+            @ApiImplicitParam(name = "name", value = "学生名称")})
     @PostMapping("/getStudents")
-    public ResponseEntity getStudents(String name,Long classesId, @ApiParam(hidden = true) @RequestHeader String token) {
+    public ResponseEntity getStudents(String name, Long classesId, @ApiParam(hidden = true) @RequestHeader String token) {
         User loginUser = userService.getLoginUser(token);
-        return ResponseEntity.success(classesService.getStudents(loginUser.getId(), classesId,name));
+        return ResponseEntity.success(classesService.getStudents(loginUser.getId(), classesId, name));
     }
 
     /**
