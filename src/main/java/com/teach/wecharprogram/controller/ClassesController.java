@@ -102,7 +102,7 @@ public class ClassesController {
      *
      * @return
      */
-    @ApiOperation(value = "查询教师或教练关联的班级", response = ResponseEntity.class)
+    @ApiOperation(value = "查询教师关联的班级", response = ResponseEntity.class)
     @PostMapping("/getClasses")
     public ResponseEntity getClasses(@ApiParam(hidden = true) @RequestHeader String token) {
         User loginUser = userService.getLoginUser(token);
@@ -128,7 +128,7 @@ public class ClassesController {
      *
      * @return
      */
-    @ApiOperation(value = "老师/教练 关联班级", response = ResponseEntity.class)
+    @ApiOperation(value = "老师 关联班级", response = ResponseEntity.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "classesId", value = "班级id,多个用，隔开", required = true),
             @ApiImplicitParam(name = "userId", value = "用户id")})
     @PostMapping("/relTeacherToClass")
