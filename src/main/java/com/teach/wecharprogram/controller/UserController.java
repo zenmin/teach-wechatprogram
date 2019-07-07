@@ -132,7 +132,7 @@ public class UserController {
      * @return
      */
     @ApiOperation(value = "获取当前用户关联的学校 / 班级 / 学生", response = ResponseEntity.class)
-    @ApiImplicitParam(name = "userId", value = "用户id", required = true)
+    @ApiImplicitParam(name = "userId", value = "用户id")
     @PostMapping("/getMyRelInfo")
     public ResponseEntity getMyRelInfo(HttpServletRequest request, Long userId) {
         User user = null;
