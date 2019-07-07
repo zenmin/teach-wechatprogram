@@ -3,6 +3,7 @@ package com.teach.wecharprogram.controller;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.common.constant.DefinedCode;
+import com.teach.wecharprogram.components.annotation.RequireRole;
 import com.teach.wecharprogram.entity.vo.UpdateUserVo;
 import com.teach.wecharprogram.util.StaticUtil;
 import io.swagger.annotations.*;
@@ -52,18 +53,6 @@ public class UserController {
     }
 
     /**
-     * 查询全部 可带条件
-     *
-     * @param user
-     * @return
-     */
-    @ApiOperation(value = "查询全部 可带条件", response = ResponseEntity.class)
-    @PostMapping("/list")
-    public ResponseEntity list(User user) {
-        return ResponseEntity.success(userService.list(user));
-    }
-
-    /**
      * 查全部 可带条件分页
      *
      * @param pager
@@ -72,6 +61,7 @@ public class UserController {
      */
     @ApiOperation(value = "查全部 可带条件分页", response = ResponseEntity.class)
     @PostMapping("/listByPage")
+    @RequireRole({CommonConstant.ROLE_ADMIN})
     public ResponseEntity listByPage(Pager pager, User user) {
         return ResponseEntity.success(userService.listByPage(pager, user));
     }

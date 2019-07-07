@@ -15,6 +15,7 @@ import com.teach.wecharprogram.mapper.*;
 import com.teach.wecharprogram.service.*;
 import com.teach.wecharprogram.util.JSONUtil;
 import com.teach.wecharprogram.util.StaticUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
@@ -85,21 +86,33 @@ public class UserServiceImpl implements UserService {
     @Override
     public Pager listByPage(Pager pager, User user) {
         IPage<User> userIPage = userMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(user));
+        userIPage.getRecords().stream().forEach(o -> {
+            o.setOpenid(null);
+            o.setPassword(null);
+        });
         return Pager.of(userIPage);
     }
 
     @Override
     public User save(User user) {
-        user.setPassword(StaticUtil.md5Hex(user.getPassword()));
         if (Objects.nonNull(user.getId())) {
+            if (Objects.nonNull(user.getResetPassword()) && user.getResetPassword()) {
+                user.setPassword(StaticUtil.md5Hex(CommonConstant.INIT_PASSWORD));
+            }
             userMapper.updateById(user);
         } else {
+            if (StringUtils.isNotBlank(user.getPassword())) {
+                if (StringUtils.isNotBlank(user.getPassword().trim())) {
+                    user.setPassword(StaticUtil.md5Hex(user.getPassword()));
+                }
+            }
             String username = user.getUsername();
             String phone = user.getPhone();
             Integer count = userMapper.selectCount(new QueryWrapper<User>().eq("username", username).or(o -> o.eq("phone", phone)));
             if (count > 0) {
                 throw new CommonException(DefinedCode.ISEXISTS, "用户名或手机号已存在");
             }
+            user.setRoleName(RoleConstant.ROLE.getName(user.getRoleCode()));
             userMapper.insert(user);
         }
         // 更新用户缓存信息
@@ -242,7 +255,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // 教师
-        if (roleCode.equals(CommonConstant.ROLE_TEACHER)){
+        if (roleCode.equals(CommonConstant.ROLE_TEACHER)) {
             type = CommonConstant.REL_CLASS;
             List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>().eq("userId", userId).eq("type", type));
             if (relUserTypeIds.size() == 0) {

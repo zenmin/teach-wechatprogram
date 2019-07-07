@@ -88,6 +88,11 @@ public class User extends EntityModel {
     @Transient
     private String nowLoginIp;
 
+    @ApiModelProperty(value = "是否重置密码")
+    @TableField(exist = false)
+    @Transient
+    private Boolean resetPassword;
+
     public User(Long id, Date lastLoginTime, String lastLoginIp) {
         super.setId(id);
         this.lastLoginTime = lastLoginTime;
