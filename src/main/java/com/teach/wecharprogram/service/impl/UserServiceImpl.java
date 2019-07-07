@@ -199,7 +199,7 @@ public class UserServiceImpl implements UserService {
         if (user.getStatus() == CommonConstant.STATUS_ERROR) {
             // 查询此用户是否已有审批
             List<Approved> list = approvedService.list(new Approved(updateUserVo.getId(), CommonConstant.STATUS_VALID_PROCESS));
-            if (list.size() == 0) {
+            if (list.size() <= 0) {
                 // 提交审批
                 Approved approved = new Approved("角色申请", updateUserVo.getRealName(), user.getId(), updateUserVo.getRoleName()
                         , updateUserVo.getRoleId(), updateUserVo.getRemark(), null, updateUserVo.getType(),
@@ -208,6 +208,9 @@ public class UserServiceImpl implements UserService {
                 approved.setUserText(JSONUtil.toJSONStringNotEmpty(new User(user.getId(), user.getRealName(), user.getImg(), user.getGender(), user.getNickName(), user.getPhone(), user.getStatus())));
                 approved.setSchoolId(updateUserVo.getSchoolId());
                 approved.setStudentName(updateUserVo.getSchoolName());
+                if (StringUtils.isBlank(approved.getPhone())) {
+                    approved.setPhone(user.getPhone());
+                }
                 approvedService.save(approved);
                 // 更新用户信息
                 user.setStatus(CommonConstant.STATUS_VALID_ERROR);

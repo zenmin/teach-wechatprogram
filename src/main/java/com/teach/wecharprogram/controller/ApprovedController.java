@@ -1,6 +1,7 @@
 package com.teach.wecharprogram.controller;
 
 import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.components.annotation.RequireRole;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.entity.vo.ApprovedVo;
 import com.teach.wecharprogram.service.UserService;
@@ -95,6 +96,7 @@ public class ApprovedController {
      */
     @ApiOperation(value = "审批", response = ResponseEntity.class)
     @PostMapping("/approve")
+    @RequireRole({CommonConstant.ROLE_TEACHER, CommonConstant.ROLE_HEADMASTER, CommonConstant.ROLE_ADMIN})
     public ResponseEntity approve(ApprovedVo approvedVo, @ApiParam(hidden = true) @RequestHeader String token) {
         StaticUtil.validateObject(approvedVo.getId(), approvedVo.getResultCode());
         User loginUser = userService.getLoginUser(token);
@@ -110,7 +112,7 @@ public class ApprovedController {
      */
     @ApiOperation(value = "获取当前待审批列表", response = ResponseEntity.class)
     @PostMapping("/getMyApprove")
-    public ResponseEntity getMyApprove(Pager pager,HttpServletRequest request) {
+    public ResponseEntity getMyApprove(Pager pager, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
         String userRoleCode = loginUser.getRoleCode();
         Approved approved = new Approved();
