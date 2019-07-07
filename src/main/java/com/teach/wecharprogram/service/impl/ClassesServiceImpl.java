@@ -64,10 +64,11 @@ public class ClassesServiceImpl implements ClassesService {
 
     @Override
     public Pager listByPage(Pager pager, Classes classes) {
-        if (StringUtils.isNotBlank(classes.getCreateTimeQuery())) {
-            classes.setCreateTime(DateUtil.parseToDate(classes.getCreateTimeQuery()));
+        QueryWrapper<Classes> classesQueryWrapper = new QueryWrapper<>(classes);
+        if (StringUtils.isNotBlank(classes.getName())) {
+            classesQueryWrapper.like("name",classes.getName());
         }
-        IPage<Classes> classesIPage = classesMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(classes));
+        IPage<Classes> classesIPage = classesMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()),classesQueryWrapper);
         return Pager.of(classesIPage);
     }
 

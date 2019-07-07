@@ -85,7 +85,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Pager listByPage(Pager pager, User user) {
-        IPage<User> userIPage = userMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(user));
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>(user);
+        String realName = user.getRealName();
+        if (StringUtils.isNotBlank(realName)) {
+            userQueryWrapper.like("realName", realName);
+        }
+        IPage<User> userIPage = userMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), userQueryWrapper);
         userIPage.getRecords().stream().forEach(o -> {
             o.setOpenid(null);
             o.setPassword(null);

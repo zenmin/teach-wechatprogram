@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.Student;
 import com.teach.wecharprogram.mapper.StudentMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -51,7 +52,12 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Pager listByPage(Pager pager, Student student) {
-        IPage<Student> studentIPage = studentMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(student));
+        QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>(student);
+        String name = student.getName();
+        if (StringUtils.isNotBlank(name)) {
+            studentQueryWrapper.like("name", name);
+        }
+        IPage<Student> studentIPage = studentMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), studentQueryWrapper);
         return Pager.of(studentIPage);
     }
 

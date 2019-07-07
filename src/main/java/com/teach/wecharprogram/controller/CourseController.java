@@ -38,17 +38,6 @@ public class CourseController {
     }
 
     /**
-     * 查询全部 可带条件
-     * @param course
-     * @return
-     */
-    @ApiOperation(value = "查询全部 可带条件", response = ResponseEntity.class)
-    @PostMapping("/list")
-    public ResponseEntity list(Course course){
-        return ResponseEntity.success(courseService.list(course));
-    }
-
-    /**
      * 查全部 可带条件分页
      * @param pager
      * @param course

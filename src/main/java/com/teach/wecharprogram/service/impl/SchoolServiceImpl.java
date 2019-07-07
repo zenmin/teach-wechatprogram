@@ -17,16 +17,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
 import com.teach.wecharprogram.util.DateUtil;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 
 /**
-* Create Code Generator
-* @Author ZengMin
-* @Date 2019-06-15 17:59:30
-*/
+ * Create Code Generator
+ *
+ * @Author ZengMin
+ * @Date 2019-06-15 17:59:30
+ */
 
 @Service
 public class SchoolServiceImpl implements SchoolService {
@@ -38,13 +40,13 @@ public class SchoolServiceImpl implements SchoolService {
     RelUserTypeidMapper relUserTypeidMapper;
 
     @Override
-    public School getOne(Long id){
+    public School getOne(Long id) {
         return schoolMapper.selectById(id);
     }
 
     @Override
     public List<School> list(School school) {
-        if(StringUtils.isNotBlank(school.getCreateTimeQuery())){
+        if (StringUtils.isNotBlank(school.getCreateTimeQuery())) {
             school.setCreateTime(DateUtil.parseToDate(school.getCreateTimeQuery()));
         }
         List<School> schools = schoolMapper.selectList(new QueryWrapper<>(school));
@@ -53,19 +55,21 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     public Pager listByPage(Pager pager, School school) {
-        if(StringUtils.isNotBlank(school.getCreateTimeQuery())){
-            school.setCreateTime(DateUtil.parseToDate(school.getCreateTimeQuery()));
+        QueryWrapper<School> schoolQueryWrapper = new QueryWrapper<>(school);
+        String name = school.getName();
+        if (StringUtils.isNotBlank(name)) {
+            schoolQueryWrapper.like("name", name);
         }
-        IPage<School> schoolIPage = schoolMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(school));
+        IPage<School> schoolIPage = schoolMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), schoolQueryWrapper);
         return Pager.of(schoolIPage);
     }
 
     @Override
     @Transactional(rollbackFor = CommonException.class)
     public School save(School school) {
-        if(Objects.nonNull(school.getId())){
+        if (Objects.nonNull(school.getId())) {
             schoolMapper.updateById(school);
-        }else {
+        } else {
             schoolMapper.insert(school);
         }
         return school;
@@ -75,10 +79,10 @@ public class SchoolServiceImpl implements SchoolService {
     @Transactional(rollbackFor = CommonException.class)
     public boolean delete(String ids) {
         List<Long> list = Lists.newArrayList();
-        if(ids.indexOf(",") != -1){
+        if (ids.indexOf(",") != -1) {
             List<String> asList = Arrays.asList(ids.split(","));
             asList.stream().forEach(o -> list.add(Long.valueOf(o)));
-        }else {
+        } else {
             list.add(Long.valueOf(ids));
         }
         int i = schoolMapper.deleteBatchIds(list);

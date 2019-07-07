@@ -48,18 +48,6 @@ public class ClassesController {
     }
 
     /**
-     * 查询全部 可带条件
-     *
-     * @param classes
-     * @return
-     */
-    @ApiOperation(value = "查询全部 可带条件", response = ResponseEntity.class)
-    @PostMapping("/list")
-    public ResponseEntity list(Classes classes) {
-        return ResponseEntity.success(classesService.list(classes));
-    }
-
-    /**
      * 查全部 可带条件分页
      *
      * @param pager

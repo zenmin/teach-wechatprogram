@@ -51,18 +51,6 @@ public class StudentController {
     }
 
     /**
-     * 查询全部 可带条件
-     *
-     * @param student
-     * @return
-     */
-    @ApiOperation(value = "查询全部 可带条件", response = ResponseEntity.class)
-    @PostMapping("/list")
-    public ResponseEntity list(Student student) {
-        return ResponseEntity.success(studentService.list(student));
-    }
-
-    /**
      * 查全部 可带条件分页
      *
      * @param pager

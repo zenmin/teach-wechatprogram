@@ -38,17 +38,6 @@ public class LogsController {
     }
 
     /**
-     * 查询全部 可带条件
-     * @param logs
-     * @return
-     */
-    @ApiOperation(value = "查询全部 可带条件", response = ResponseEntity.class)
-    @PostMapping("/list")
-    public ResponseEntity list(Logs logs){
-        return ResponseEntity.success(logsService.list(logs));
-    }
-
-    /**
      * 查全部 可带条件分页
      * @param pager
      * @param logs
