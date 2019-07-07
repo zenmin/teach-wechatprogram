@@ -230,6 +230,13 @@ public class UserServiceImpl implements UserService {
                 title = "班级关联申请";
             }
             if (type == CommonConstant.REL_STUDENTS) {
+                Student student = studentService.getOne(Long.valueOf(updateUserVo.getStudentId()));
+                if (Objects.isNull(student)) {
+                    throw new CommonException(DefinedCode.DATA_NOT_EXISTS_ERROR, "学生不存在！");
+                }
+                updateUserVo.setStudentName(student.getName());
+                updateUserVo.setSchoolName(updateUserVo.getSchoolName());
+                updateUserVo.setPhone(user.getPhone());
                 title = "学生关联申请";
             }
             Approved approved = new Approved(title, updateUserVo.getRealName(), user.getId(), updateUserVo.getRoleName()
