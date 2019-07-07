@@ -130,7 +130,7 @@ public class ApprovedServiceImpl implements ApprovedService {
                 user.setRoleName(role.getRoleName());
                 user.setRealName(realName);
                 user.setPhone(approved.getPhone());
-                if (role.getRoleName().equals(CommonConstant.ROLE_TEACHER) || role.getRoleName().equals(CommonConstant.ROLE_HEADMASTER)) {
+                if (user.getRoleCode().equals(CommonConstant.ROLE_TEACHER) || user.getRoleCode().equals(CommonConstant.ROLE_HEADMASTER)) {
                     user.setSchoolId(approved.getSchoolId());
                 }
                 // 执行关联
@@ -161,6 +161,8 @@ public class ApprovedServiceImpl implements ApprovedService {
         }
         // 更新审批信息
         approved.setEndTime(new Date());
+        approved.setApprovedUserName(approvedVo.getApprovedUserName());
+        approved.setApprovedUserId(approvedVo.getApprovedUserId());
         approved.setOpinion(approvedVo.getOpinion());
         approvedMapper.updateById(approved);
         return true;
