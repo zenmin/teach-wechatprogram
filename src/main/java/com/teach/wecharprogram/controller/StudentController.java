@@ -76,6 +76,18 @@ public class StudentController {
     }
 
     /**
+     * 查全部 可带条件分页
+     *
+     * @param pager
+     * @return
+     */
+    @ApiOperation(value = "查全部 可带条件分页", response = ResponseEntity.class)
+    @PostMapping("/getStudentsBySchool")
+    public ResponseEntity getStudentsBySchool(Pager pager, Long schoolId) {
+        return ResponseEntity.success(studentService.getStudentsBySchool(pager, schoolId));
+    }
+
+    /**
      * 带ID更新 不带ID新增
      *
      * @param student
@@ -116,7 +128,7 @@ public class StudentController {
      * @return
      */
     @ApiOperation(value = "家长关联学生", response = ResponseEntity.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "studentsId", value = "班级id,多个用，隔开", required = true),
+    @ApiImplicitParams({@ApiImplicitParam(name = "studentsId", value = "学生id,多个用，隔开", required = true),
             @ApiImplicitParam(name = "userId", value = "用户id （本人操作可不传）")})
     @PostMapping("/relFamilyToStudent")
     public ResponseEntity relFamilyToStudent(Long userId, String studentsId, HttpServletRequest request) {

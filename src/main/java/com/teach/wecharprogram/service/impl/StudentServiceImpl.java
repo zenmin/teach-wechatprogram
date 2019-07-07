@@ -107,5 +107,11 @@ public class StudentServiceImpl implements StudentService {
         return delete > 0;
     }
 
+    @Override
+    public Object getStudentsBySchool(Pager pager, Long schoolId) {
+        IPage<Student> studentIPage = studentMapper.getStudentsBySchool(new Page<>(pager.getNum(), pager.getSize()),schoolId);
+        return Pager.of(studentIPage);
+    }
+
 
 }

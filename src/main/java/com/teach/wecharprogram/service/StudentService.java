@@ -25,4 +25,6 @@ public interface StudentService {
     Object relFamilyToStudent(Long userId, String studentsId);
 
     boolean delRelFamilyToStudent(Long userId, String studentsId);
+
+    Object getStudentsBySchool(Pager pager, Long schoolId);
 }

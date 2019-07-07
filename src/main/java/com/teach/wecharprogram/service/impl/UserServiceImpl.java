@@ -229,7 +229,7 @@ public class UserServiceImpl implements UserService {
             if (type == CommonConstant.REL_CLASS) {
                 title = "班级关联申请";
             }
-            if (Objects.nonNull(updateUserVo.getStudentId())) {
+            if (type == CommonConstant.REL_STUDENTS) {
                 title = "学生关联申请";
             }
             Approved approved = new Approved(title, updateUserVo.getRealName(), user.getId(), updateUserVo.getRoleName()
@@ -237,7 +237,6 @@ public class UserServiceImpl implements UserService {
                     updateUserVo.getClassesId(), updateUserVo.getStudentId(), "审批中",
                     CommonConstant.STATUS_VALID_PROCESS, updateUserVo.getPhone(), updateUserVo.getRealName(), updateUserVo.getClassesName(), updateUserVo.getStudentName());
             approved.setSchoolId(updateUserVo.getSchoolId());
-            approved.setStudentName(updateUserVo.getSchoolName());
             approved.setUserText(JSONUtil.toJSONStringNotEmpty(new User(user.getId(), user.getRealName(), user.getImg(), user.getGender(), user.getNickName(), user.getPhone(), user.getStatus())));
             approvedService.save(approved);
         }
