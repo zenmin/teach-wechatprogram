@@ -93,19 +93,13 @@ public class User extends EntityModel {
     @Transient
     private Boolean resetPassword;
 
+    @ApiModelProperty(value = "学校id")
+    private String schoolId;
+
     public User(Long id, Date lastLoginTime, String lastLoginIp) {
         super.setId(id);
         this.lastLoginTime = lastLoginTime;
         this.lastLoginIp = lastLoginIp;
-    }
-
-    public User(String username, String password, String nickName, Integer status, Long inviteCode, String lastLoginIp, Date lastLoginTime) {
-        this.username = username;
-        this.password = password;
-        this.nickName = nickName;
-        this.status = status;
-        this.lastLoginIp = lastLoginIp;
-        this.lastLoginTime = lastLoginTime;
     }
 
     public User(String username, String password, Integer status, String phone, String nickName, String lastLoginIp, Date lastLoginTime) {

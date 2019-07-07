@@ -67,7 +67,7 @@ public class ApprovedServiceImpl implements ApprovedService {
 
     @Override
     public Pager listByPage(Pager pager, Approved approved) {
-        QueryWrapper<Approved> queryWrapper = new QueryWrapper<>(approved).orderByDesc("createTime","resultCode");
+        QueryWrapper<Approved> queryWrapper = new QueryWrapper<>(approved).orderByDesc("createTime", "resultCode");
         String realName = approved.getRealName();
         if (StringUtils.isNotBlank(realName)) {
             queryWrapper.like("realName", realName);
@@ -123,7 +123,6 @@ public class ApprovedServiceImpl implements ApprovedService {
                 String roleId = approved.getRoleId();
                 // 获取权限
                 Role role = roleService.getOne(Long.valueOf(roleId));
-
                 // 设置参数
                 user.setId(startUserId);
                 user.setStatus(CommonConstant.STATUS_OK);
@@ -131,6 +130,9 @@ public class ApprovedServiceImpl implements ApprovedService {
                 user.setRoleName(role.getRoleName());
                 user.setRealName(realName);
                 user.setPhone(approved.getPhone());
+                if (role.getRoleName().equals(CommonConstant.ROLE_TEACHER) || role.getRoleName().equals(CommonConstant.ROLE_HEADMASTER)) {
+                    user.setSchoolId(approved.getSchoolId());
+                }
                 // 执行关联
                 approved = this.relUserToOtherId(type, startUserId, classesId, approved);
                 approved.setResult("通过");
