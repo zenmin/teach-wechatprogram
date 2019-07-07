@@ -90,14 +90,21 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    public Object relHeadMasterToSchool(Long userId, Long schoolId) {
-        RelUserTypeId relUserTypeId = new RelUserTypeId(userId, null, CommonConstant.REL_SCHOOL);
-        // 删除之前关联的
-        relUserTypeidMapper.delete(new QueryWrapper<>(relUserTypeId));
-        // 新增
-        relUserTypeId.setOtherId(schoolId);
-        relUserTypeidMapper.insert(relUserTypeId);
-        return relUserTypeId;
+    public Object relHeadMasterToSchool(Long userId, String schoolId) {
+        String[] split = schoolId.split(",");
+        List<String> asList = Arrays.asList(split);
+        asList.stream().forEach(o -> {
+            RelUserTypeId relUserTypeId = new RelUserTypeId(userId, Long.valueOf(o), CommonConstant.REL_SCHOOL);
+            // 删除之前关联的
+            RelUserTypeId one = relUserTypeidMapper.selectOne(new QueryWrapper<>(relUserTypeId));
+            if (Objects.isNull(one)) {
+                // 新增
+                relUserTypeId.setOtherId(Long.valueOf(o));
+                relUserTypeidMapper.insert(relUserTypeId);
+            }
+        });
+        List<RelUserTypeId> relUserTypeIds = relUserTypeidMapper.selectList(new QueryWrapper<RelUserTypeId>().eq("userId", userId).eq("type", CommonConstant.REL_SCHOOL));
+        return relUserTypeIds;
     }
 
 

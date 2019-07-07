@@ -92,10 +92,10 @@ public class SchoolController {
      * @return
      */
     @ApiOperation(value = "校长/教练 关联学校", response = ResponseEntity.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "schoolId", value = "学校id", required = true),
+    @ApiImplicitParams({@ApiImplicitParam(name = "schoolId", value = "学校id 多个用，隔开", required = true),
             @ApiImplicitParam(name = "userId", value = "用户id（本人操作可不传）")})
     @PostMapping("/relToSchool")
-    public ResponseEntity relHeadMasterToSchool(Long userId, Long schoolId, HttpServletRequest request) {
+    public ResponseEntity relHeadMasterToSchool(Long userId, String schoolId, HttpServletRequest request) {
         if (Objects.isNull(userId)) {
             User loginUser = userService.getLoginUser(request);
             userId = loginUser.getId();
