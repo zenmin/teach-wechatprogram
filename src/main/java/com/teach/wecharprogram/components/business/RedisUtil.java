@@ -109,6 +109,7 @@ public class RedisUtil {
         stringRedisTemplate.expire(key, time, timeUnit);
     }
 
+    @Async
     public void expire(final String key, long expireTime) {
         redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
     }

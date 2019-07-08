@@ -52,12 +52,14 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public boolean checkLogin(String token, HttpServletRequest request) {
-        String json = redisUtil.get(CacheConstant.USER_TOKEN_CODE + token);
+        String key = CacheConstant.USER_TOKEN_CODE + token;
+        String json = redisUtil.get(key);
         if (StringUtils.isBlank(json)) {
             return false;
         }
         User user = JSONObject.parseObject(json, User.class);
         request.setAttribute(token, user);
+        redisUtil.expire(key, CacheConstant.EXPIRE_LOGON_TIME);
         return true;
     }
 

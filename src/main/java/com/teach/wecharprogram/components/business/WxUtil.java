@@ -78,6 +78,8 @@ public class WxUtil {
                     break;
                 case "40163":
                     errorMsg = "验签已过期，请刷新重试！";
+                default:
+                    break;
             }
             throw new CommonException(DefinedCode.WX_LOGIN_ERROR, errorMsg);
         }
