@@ -9,6 +9,11 @@ import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.common.constant.DefinedCode;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
@@ -289,6 +294,16 @@ public class StaticUtil {
         return null;
     }
 
+    public static <T> T readToClass(String src, Class<T> tClass) {
+        try {
+            T t = objectMapper.readValue(src, tClass);
+            return t;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new CommonException(DefinedCode.JSON_ERROR, "JavaType转换异常！");
+        }
+    }
+
     public static Map readToMap(String src, String errorMsg) {
         Map map = new HashMap();
         try {
@@ -401,6 +416,28 @@ public class StaticUtil {
             map.put(keys.get(i), values.get(i));
         }
         return map;
+    }
+
+    /**
+     * SpringMvc下获取当前request
+     *
+     * @return
+     */
+    public static HttpServletRequest getRequest() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
+                .getRequestAttributes()).getRequest();
+        return request;
+    }
+
+    /**
+     * SpringMvc下获取当前session
+     *
+     * @return
+     */
+    public static HttpSession getSession() {
+        HttpSession session = getRequest().getSession();
+        return session;
+
     }
 
 }

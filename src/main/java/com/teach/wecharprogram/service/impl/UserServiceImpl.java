@@ -153,24 +153,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getLoginUser(String token) {
-        String json = redisUtil.get(CacheConstant.USER_TOKEN_CODE + token);
-        if (Objects.isNull(json)) {
-            throw new CommonException(DefinedCode.NOTAUTH, "登陆超时，请重新登陆！");
-        }
-        User user = JSONObject.parseObject(json, User.class);
-        return user;
+        HttpServletRequest request = StaticUtil.getRequest();
+        User loginUser = this.getLoginUser(request);
+        return loginUser;
     }
 
     @Override
     public User getLoginUser(HttpServletRequest request) {
         String token = request.getHeader(RequestConstant.TOKEN);
         Object attribute = request.getAttribute(token);
-        User user = new User();
-        try {
-            user = StaticUtil.objectMapper.readValue(JSONUtil.toJSONString(attribute), User.class);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (Objects.isNull(attribute)) {
+            throw new CommonException(DefinedCode.NOTAUTH, "登录超时，请重新登录！");
         }
+        User user = StaticUtil.readToClass(JSONUtil.toJSONStringNotEmpty(attribute), User.class);
         return user;
     }
 

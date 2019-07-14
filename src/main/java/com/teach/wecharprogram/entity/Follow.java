@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 * Create by Code Generator
 * JPA只用来正向生成数据库表和字段 如果不需要此字段更新 请加上注解@TableField(exist = false)和@Transient
 * @Author ZengMin
-* @Date 2019-06-15 18:37:25
+* @Date 2019-07-13 20:43:30
 */
 
 @Data
@@ -26,25 +26,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Follow extends EntityModel {
 
-    @ApiModelProperty(value = "按创建时间查询 格式：yyyy-MM-dd HH:mm:ss")
-    @TableField(exist = false)
-    @Transient
-    private String createTimeQuery;
-
-    @ApiModelProperty(value = "特别关注类型")
-    private String type;
-
-    @ApiModelProperty(value = "编码1学生 2年龄")
-    private Integer typeCode;
-
-    @ApiModelProperty(value = "老师id")
-    private Long teacherId;
+    @ApiModelProperty(value = "老师id",hidden = true)
+    private Long uid;
 
     @ApiModelProperty(value = "被关注学生id")
     private Long studentId;
 
-    @ApiModelProperty(value = "关注的年龄，这里放出生日期")
-    private String followBirthday;
-
+    @ApiModelProperty(value = "学生名称")
+    @TableField(exist = false)
+    @Transient
+    private String studentName;
 
 }

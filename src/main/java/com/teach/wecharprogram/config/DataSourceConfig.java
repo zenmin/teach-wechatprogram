@@ -3,8 +3,6 @@ package com.teach.wecharprogram.config;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -12,6 +10,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -39,7 +38,7 @@ public class DataSourceConfig {
         ServletRegistrationBean<StatViewServlet> servletRegistrationBean = new ServletRegistrationBean(new StatViewServlet(),"/druid/*");
         Map<String, String> map = new HashMap<>();
         map.put("loginUsername","admin");
-        map.put("loginPassword","admin");
+        map.put("loginPassword","teach");
         servletRegistrationBean.setInitParameters(map);
         return servletRegistrationBean;
     }
@@ -66,4 +65,8 @@ public class DataSourceConfig {
         return page;
     }
 
+    @Bean
+    public JdbcTemplate jdbcTemplate(DataSource dataSource){
+        return new JdbcTemplate(dataSource);
+    }
 }

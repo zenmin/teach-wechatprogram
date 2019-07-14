@@ -37,18 +37,12 @@ public class ${table.serviceImplName} implements ${table.serviceName} {
 
     @Override
     public List<${entity}> list(${entity} ${table.name}) {
-        if(StringUtils.isNotBlank(${table.name}.getCreateTimeQuery())){
-            ${table.name}.setCreateTime(DateUtil.parseToDate(${table.name}.getCreateTimeQuery()));
-        }
         List<${entity}> ${table.name}s = ${table.name}Mapper.selectList(new QueryWrapper<>(${table.name}));
         return ${table.name}s;
     }
 
     @Override
     public Pager listByPage(Pager pager, ${entity} ${table.name}) {
-        if(StringUtils.isNotBlank(${table.name}.getCreateTimeQuery())){
-            ${table.name}.setCreateTime(DateUtil.parseToDate(${table.name}.getCreateTimeQuery()));
-        }
         IPage<${entity}> ${table.name}IPage = ${table.name}Mapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(${table.name}));
         return Pager.of(${table.name}IPage);
     }

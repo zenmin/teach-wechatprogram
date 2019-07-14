@@ -1,6 +1,8 @@
 package com.teach.wecharprogram.service.impl;
 
-import com.teach.wecharprogram.common.CommonException;
+import com.google.common.collect.Maps;
+import com.teach.wecharprogram.entity.DO.StudentDo;
+import com.teach.wecharprogram.repostory.FollowRepository;
 import com.teach.wecharprogram.service.FollowService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -14,16 +16,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
 import com.teach.wecharprogram.util.DateUtil;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
-* Create Code Generator
-* @Author ZengMin
-* @Date 2019-06-15 18:37:25
-*/
+ * Create Code Generator
+ *
+ * @Author ZengMin
+ * @Date 2019-07-13 20:43:30
+ */
 
 @Service
 public class FollowServiceImpl implements FollowService {
@@ -31,53 +34,94 @@ public class FollowServiceImpl implements FollowService {
     @Autowired
     FollowMapper followMapper;
 
+    @Autowired
+    FollowRepository followRepository;
+
     @Override
-    public Follow getOne(Long id){
+    public Follow getOne(Long id) {
         return followMapper.selectById(id);
     }
 
     @Override
     public List<Follow> list(Follow follow) {
-        if(StringUtils.isNotBlank(follow.getCreateTimeQuery())){
-            follow.setCreateTime(DateUtil.parseToDate(follow.getCreateTimeQuery()));
-        }
         List<Follow> follows = followMapper.selectList(new QueryWrapper<>(follow));
         return follows;
     }
 
     @Override
     public Pager listByPage(Pager pager, Follow follow) {
-        if(StringUtils.isNotBlank(follow.getCreateTimeQuery())){
-            follow.setCreateTime(DateUtil.parseToDate(follow.getCreateTimeQuery()));
-        }
         IPage<Follow> followIPage = followMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(follow));
         return Pager.of(followIPage);
     }
 
     @Override
-    @Transactional(rollbackFor = CommonException.class)
+    @Transactional
     public Follow save(Follow follow) {
-        if(Objects.nonNull(follow.getId())){
-            followMapper.updateById(follow);
-        }else {
-            followMapper.insert(follow);
-        }
+        followMapper.insert(follow);
         return follow;
     }
 
     @Override
-    @Transactional(rollbackFor = CommonException.class)
+    @Transactional
     public boolean delete(String ids) {
         List<Long> list = Lists.newArrayList();
-        if(ids.indexOf(",") != -1){
+        if (ids.indexOf(",") != -1) {
             List<String> asList = Arrays.asList(ids.split(","));
             asList.stream().forEach(o -> list.add(Long.valueOf(o)));
-        }else {
+        } else {
             list.add(Long.valueOf(ids));
         }
         int i = followMapper.deleteBatchIds(list);
         return i > 0;
     }
 
+    @Override
+    public Map getMyFollow(Follow follow) {
+        List<StudentDo> studentDoList = followRepository.getMyFollow(follow);
+        Map<String, Object> result = Maps.newLinkedHashMap();
+        // 按年龄分组
+        Map<Integer, List<StudentDo>> map = studentDoList.stream().collect(Collectors.groupingBy(StudentDo::getAge));
+        // 3 4 5岁
+        Set<Map.Entry<Integer, List<StudentDo>>> entries = map.entrySet();
+        for (Map.Entry m : entries) {
+            Object key = m.getKey();
+            if (Integer.parseInt(key.toString()) <= 3) {
+                result.put("three", m.getValue());
+            }
+
+            if (Integer.parseInt(key.toString()) == 4) {
+                result.put("four", m.getValue());
+            }
+
+            if (Integer.parseInt(key.toString()) == 5) {
+                result.put("five", m.getValue());
+            }
+
+            if (Integer.parseInt(key.toString()) == 6) {
+                result.put("eight", m.getValue());
+            }
+
+            if (Integer.parseInt(key.toString()) > 6) {
+                result.put("gtEight", m.getValue());
+            }
+        }
+        return result;
+    }
+
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
