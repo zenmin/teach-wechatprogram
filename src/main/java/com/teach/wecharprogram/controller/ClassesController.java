@@ -105,7 +105,7 @@ public class ClassesController {
     @ApiOperation(value = "查询教师关联的班级", response = ResponseEntity.class)
     @PostMapping("/getClasses")
     public ResponseEntity getClasses(@ApiParam(hidden = true) @RequestHeader String token) {
-        User loginUser = userService.getLoginUser(token);
+        User loginUser = userService.getLoginUser();
         return ResponseEntity.success(classesService.getClasses(loginUser.getId()));
     }
 
@@ -119,7 +119,7 @@ public class ClassesController {
             @ApiImplicitParam(name = "name", value = "学生名称")})
     @PostMapping("/getStudents")
     public ResponseEntity getStudents(String name, Long classesId, @ApiParam(hidden = true) @RequestHeader String token) {
-        User loginUser = userService.getLoginUser(token);
+        User loginUser = userService.getLoginUser();
         return ResponseEntity.success(classesService.getStudents(loginUser.getId(), classesId, name));
     }
 

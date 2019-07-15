@@ -1,6 +1,7 @@
 package com.teach.wecharprogram.util;
 
 import org.apache.commons.lang3.StringUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
@@ -173,7 +174,7 @@ public class DateUtil {
             Date dt = sdf.parse(formatDate);
             return dt;
         } catch (ParseException e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
         return null;
     }
@@ -369,8 +370,8 @@ public class DateUtil {
         return Instant.ofEpochMilli(instant).atZone(ZoneId.systemDefault()).minusDays(days).toInstant().toEpochMilli();
     }
 
-    public static final Long plusDays(String currentDay, long days){
-        try{
+    public static final Long plusDays(String currentDay, long days) {
+        try {
             long current = parseToMills(currentDay);
             return plusDays(current, days);
         } catch (ParseException e) {
@@ -510,23 +511,23 @@ public class DateUtil {
         return new Date(millis);
     }
 
-    public static boolean hasTimeUnionSet(Date beg1, Date end1, Date beg2, Date end2){
+    public static boolean hasTimeUnionSet(Date beg1, Date end1, Date beg2, Date end2) {
         if (beg2.compareTo(end1) >= 0 || beg1.compareTo(end2) >= 0)
             return false;
         return true;
     }
 
-    public static String getNowDate(){
-        String date = DateUtil.millisToDateTime(new Date().getTime(), "yyyy-MM-dd");
+    public static String getNowDate() {
+        String date = DateUtil.millisToDateTime(System.currentTimeMillis(), "yyyy-MM-dd");
         return date;
     }
 
-    public static String getNowTime(){
-        String date = DateUtil.millisToDateTime(new Date().getTime(), "yyyy-MM-dd HH:mm:ss");
+    public static String getNowTime() {
+        String date = DateUtil.millisToDateTime(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss");
         return date;
     }
 
-    public static Date millisToDate(Long millis){
+    public static Date millisToDate(Long millis) {
         Date date = new Date();
         date.setTime(millis);
         return date;

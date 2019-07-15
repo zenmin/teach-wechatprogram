@@ -27,7 +27,7 @@ public interface UserService {
 
     User findByInviteCode(Long code);
 
-    User getLoginUser(String token);
+    User getLoginUser();
 
     User getLoginUser(HttpServletRequest request);
 

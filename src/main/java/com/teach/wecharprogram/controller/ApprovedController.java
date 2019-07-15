@@ -99,7 +99,7 @@ public class ApprovedController {
     @RequireRole({CommonConstant.ROLE_TEACHER, CommonConstant.ROLE_HEADMASTER, CommonConstant.ROLE_ADMIN})
     public ResponseEntity approve(ApprovedVo approvedVo, @ApiParam(hidden = true) @RequestHeader String token) {
         StaticUtil.validateObject(approvedVo.getId(), approvedVo.getResultCode());
-        User loginUser = userService.getLoginUser(token);
+        User loginUser = userService.getLoginUser();
         approvedVo.setApprovedUserName(loginUser.getRealName());
         approvedVo.setApprovedUserId(loginUser.getId());
         return ResponseEntity.success(approvedService.agree(approvedVo));

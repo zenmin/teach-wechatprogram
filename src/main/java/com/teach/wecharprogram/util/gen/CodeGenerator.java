@@ -18,7 +18,7 @@ public class CodeGenerator {
      * 注意表中字段不要带下划线 每个字段尽量加上COMMENT
      */
     // 要生成的表名 可以为多个
-    static final String[] tableName = {"follow"};
+    static final String[] tableName = {"course_plan"};
     // author
     static final String author = "ZengMin";
     // 全包名
@@ -88,7 +88,7 @@ public class CodeGenerator {
 
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
-        strategy.setNaming(NamingStrategy.no_change);   // 驼峰关闭
+        strategy.setNaming(NamingStrategy.underline_to_camel);   // 表名驼峰
         strategy.setColumnNaming(NamingStrategy.no_change);// 驼峰关闭
         strategy.setSuperEntityClass(packageName + ".entity.base.EntityModel");
         strategy.setEntityLombokModel(true);

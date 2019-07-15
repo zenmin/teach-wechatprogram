@@ -152,7 +152,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getLoginUser(String token) {
+    public User getLoginUser() {
         HttpServletRequest request = StaticUtil.getRequest();
         User loginUser = this.getLoginUser(request);
         return loginUser;

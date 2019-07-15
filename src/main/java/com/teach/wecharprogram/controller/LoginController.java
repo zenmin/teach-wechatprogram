@@ -101,7 +101,7 @@ public class LoginController {
     @ApiOperation(value = "管理员信息", response = ResponseEntity.class)
     @PostMapping("/userInfo")
     public AdminUserVo userInfo(@RequestHeader String token) {
-        User user = userService.getLoginUser(token);
+        User user = userService.getLoginUser();
         return new AdminUserVo(user.getId().toString(), user.getRealName(), token, user.getStatus(), user.getRoleCode().equals(CommonConstant.ROLE_ADMIN));
     }
 

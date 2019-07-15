@@ -44,7 +44,7 @@ public class FollowController {
     @PostMapping("/save")
     public ResponseEntity saveOrUpdate(Follow follow) {
         StaticUtil.validateObject(follow.getStudentId());
-        follow.setUid(userService.getLoginUser("").getId());
+        follow.setUid(userService.getLoginUser().getId());
         return ResponseEntity.success(followService.save(follow));
     }
 
@@ -70,7 +70,7 @@ public class FollowController {
     @ApiOperation(value = "获取我的关注列表", notes = "返回参数：3 4 5 6岁  以及大于6岁", response = StudentDo.class)
     @PostMapping("/getMyFollow")
     public ResponseEntity getMyFollow(Follow follow) {
-        follow.setUid(userService.getLoginUser("").getId());
+        follow.setUid(userService.getLoginUser().getId());
         return ResponseEntity.success(followService.getMyFollow(follow));
     }
 
