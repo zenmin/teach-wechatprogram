@@ -89,7 +89,7 @@ public class CourseController {
      * @return
      */
     @ApiOperation(value = "查询我添加的课程", response = ResponseEntity.class)
-    @PostMapping("/getMyCourse")
+    @PostMapping("/getMyAddCourse")
     public ResponseEntity getMyCourse(Pager pager, Course course) {
         course.setUid(userService.getLoginUser().getId());
         return ResponseEntity.success(courseService.listByPage(pager, course));

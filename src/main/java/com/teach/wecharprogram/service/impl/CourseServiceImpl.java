@@ -45,7 +45,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Pager listByPage(Pager pager, Course course) {
-        IPage<Course> courseIPage = courseMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(course));
+        IPage<Course> courseIPage = courseMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(course).orderByDesc("createTime"));
         return Pager.of(courseIPage);
     }
 
