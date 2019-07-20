@@ -4,6 +4,7 @@ import com.teach.wecharprogram.entity.DO.CoursePlanCourseDo;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.CoursePlan;
 import java.util.List;
+import java.util.Map;
 
 /**
 * Create by Code Generator
@@ -23,7 +24,7 @@ public interface CoursePlanService {
 
     boolean delete(String ids);
 
-    Pager getMyPlan(Pager pager);
+    List<Map> getMyPlan(Pager pager);
 
     Object getMyPlanByClassesId(Long classesId, Boolean isGroup, Integer day);
 }

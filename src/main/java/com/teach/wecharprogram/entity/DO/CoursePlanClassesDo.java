@@ -26,6 +26,9 @@ public class CoursePlanClassesDo {
     @ApiModelProperty(value = "班级名称")
     private String classesName;
 
+    @ApiModelProperty(value = "学校id")
+    private String schoolId;
+
     @ApiModelProperty(value = "学校名称")
     private String schoolName;
 

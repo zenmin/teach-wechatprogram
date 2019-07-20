@@ -1,6 +1,7 @@
 package com.teach.wecharprogram.service.impl;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.teach.wecharprogram.entity.DO.CoursePlanClassesDo;
 import com.teach.wecharprogram.entity.DO.CoursePlanCourseDo;
 import com.teach.wecharprogram.repostory.CourseRepository;
@@ -93,9 +94,17 @@ public class CoursePlanServiceImpl implements CoursePlanService {
     }
 
     @Override
-    public Pager getMyPlan(Pager pager) {
+    public List<Map> getMyPlan(Pager pager) {
         IPage<CoursePlanClassesDo> byUid = coursePlanMapper.findByUid(new Page(pager.getNum(), pager.getSize()), userService.getLoginUser().getId());
-        return Pager.of(byUid);
+        List<CoursePlanClassesDo> records = byUid.getRecords();
+        List<Map> list = Lists.newArrayList();
+        Map<String, List<CoursePlanClassesDo>> collect = records.stream().collect(Collectors.groupingBy(CoursePlanClassesDo::getSchoolId));
+        Set<Map.Entry<String, List<CoursePlanClassesDo>>> entries = collect.entrySet();
+        for (Map.Entry<String, List<CoursePlanClassesDo>> m : entries) {
+            list.add(ImmutableMap.of("schoolId", m.getKey(), "schoolName", m.getValue().get(0).getSchoolName(), "classes", m.getValue()));
+        }
+
+        return list;
     }
 
     @Override
