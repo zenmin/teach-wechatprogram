@@ -40,18 +40,6 @@ public class StudentPhysicalController {
     }
 
     /**
-     * 查询全部 可带条件
-     *
-     * @param studentPhysical
-     * @return
-     */
-    @ApiOperation(value = "查询全部 可带条件", response = ResponseEntity.class)
-    @PostMapping("/list")
-    public ResponseEntity list(StudentPhysical studentPhysical) {
-        return ResponseEntity.success(studentPhysicalService.list(studentPhysical));
-    }
-
-    /**
      * 查全部 可带条件分页
      *
      * @param pager

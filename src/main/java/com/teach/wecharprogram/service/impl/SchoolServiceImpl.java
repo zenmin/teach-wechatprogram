@@ -3,7 +3,9 @@ package com.teach.wecharprogram.service.impl;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.entity.Classes;
 import com.teach.wecharprogram.entity.RelUserTypeId;
+import com.teach.wecharprogram.mapper.ClassesMapper;
 import com.teach.wecharprogram.mapper.RelUserTypeidMapper;
 import com.teach.wecharprogram.service.SchoolService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -41,6 +43,9 @@ public class SchoolServiceImpl implements SchoolService {
     @Autowired
     RelUserTypeidMapper relUserTypeidMapper;
 
+    @Autowired
+    ClassesMapper classesMapper;
+
     @Override
     public School getOne(Long id) {
         return schoolMapper.selectById(id);
@@ -70,7 +75,15 @@ public class SchoolServiceImpl implements SchoolService {
     @Transactional(rollbackFor = CommonException.class)
     public School save(School school) {
         if (Objects.nonNull(school.getId())) {
+            School one = this.getOne(school.getId());
+            // 判断是否修改了名称
             schoolMapper.updateById(school);
+            if (!one.getName().equals(school.getName())) {
+                // 更新所有班级的学校名称
+                Classes classes = new Classes();
+                classes.setName(school.getName());
+                classesMapper.update(classes, new UpdateWrapper<Classes>().eq("schoolId", one.getId()));
+            }
         } else {
             StaticUtil.validateField(school.getName());
             if (Objects.isNull(school.getStatus())) {

@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Date;
@@ -26,7 +27,7 @@ import java.util.Date;
 @TableName("student_physical")
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel("体适能详情")
+@ApiModel("体适能详情/评测详情")
 public class StudentPhysical extends EntityModel {
 
     @ApiModelProperty(value = "学生id")
@@ -89,6 +90,50 @@ public class StudentPhysical extends EntityModel {
     @ApiModelProperty(value = "颈椎侧曲、侧旋")
     private String upLateralCurvature;
 
+    @ApiModelProperty(value = "灵敏")
+    private Double sensitiveScore;
+
+    @ApiModelProperty(value = "灵敏评估指示")
+    @Column(columnDefinition = "varchar(1000) COMMENT '灵敏评估指示'")
+    private String sensitiveRemark;
+
+    @ApiModelProperty(value = "速度")
+    private Double speedScore;
+
+    @ApiModelProperty(value = "速度评估指示")
+    @Column(columnDefinition = "varchar(1000) COMMENT '速度评估指示'")
+    private String speedRemark;
+
+    @ApiModelProperty(value = "协调")
+    private Double concertScore;
+
+    @ApiModelProperty(value = "协调评估指示")
+    @Column(columnDefinition = "varchar(1000) COMMENT '协调评估指示'")
+    private String concertRemark;
+
+    @ApiModelProperty(value = "柔韧")
+    private Double pliableScore;
+
+    @ApiModelProperty(value = "柔韧评估指示")
+    @Column(columnDefinition = "varchar(1000) COMMENT '柔韧评估指示'")
+    private String pliableRemark;
+
+    @ApiModelProperty(value = "平衡")
+    private Double balanceScore;
+    @ApiModelProperty(value = "平衡评估指示")
+    @Column(columnDefinition = "varchar(1000) COMMENT '平衡评估指示'")
+    private String balanceRemark;
+
+    @ApiModelProperty(value = "力量")
+    private Double powerScore;
+
+    @ApiModelProperty(value = "力量评估指示")
+    @Column(columnDefinition = "varchar(1000) COMMENT '力量评估指示'")
+    private String powerRemark;
+
+    @ApiModelProperty(value = "总分")
+    private Double allScore;
+
     @ApiModelProperty(value = "评测时间", hidden = true)
     private String date;
 
@@ -98,13 +143,8 @@ public class StudentPhysical extends EntityModel {
     @ApiModelProperty(value = "教师姓名", hidden = true)
     private String createUserName;
 
-    @ApiModelProperty(value = "更新人id", hidden = true)
-    private Long updateUid;
-
-    @ApiModelProperty(value = "教师姓名", hidden = true)
-    private String updateUserName;
-
     @ApiModelProperty(value = "更新时间", hidden = true)
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
+
 }

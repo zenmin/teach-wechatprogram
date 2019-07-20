@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
 import com.teach.wecharprogram.util.DateUtil;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -22,10 +23,11 @@ import java.util.Objects;
 
 
 /**
-* Create Code Generator
-* @Author ZengMin
-* @Date 2019-07-15 20:15:32
-*/
+ * Create Code Generator
+ *
+ * @Author ZengMin
+ * @Date 2019-07-15 20:15:32
+ */
 
 @Service
 public class StudentPhysicalServiceImpl implements StudentPhysicalService {
@@ -37,7 +39,7 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
     UserService userService;
 
     @Override
-    public StudentPhysical getOne(Long id){
+    public StudentPhysical getOne(Long id) {
         return studentPhysicalMapper.selectById(id);
     }
 
@@ -49,7 +51,7 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
 
     @Override
     public Pager listByPage(Pager pager, StudentPhysical studentPhysical) {
-        IPage<StudentPhysical> studentPhysicalIPage = studentPhysicalMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(studentPhysical));
+        IPage<StudentPhysical> studentPhysicalIPage = studentPhysicalMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(studentPhysical).orderByDesc("crateTime"));
         return Pager.of(studentPhysicalIPage);
     }
 
@@ -60,11 +62,9 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
         Long id = loginUser.getId();
         String realName = loginUser.getRealName();
         studentPhysical.setUpdateTime(new Date());
-        if(Objects.nonNull(studentPhysical.getId())){
-            studentPhysical.setUpdateUid(id);
-            studentPhysical.setUpdateUserName(realName);
+        if (Objects.nonNull(studentPhysical.getId())) {
             studentPhysicalMapper.updateById(studentPhysical);
-        }else {
+        } else {
             studentPhysical.setCreateUid(id);
             studentPhysical.setCreateUserName(realName);
             studentPhysical.setDate(DateUtil.getNowDate());
@@ -77,10 +77,10 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
     @Transactional
     public boolean delete(String ids) {
         List<Long> list = Lists.newArrayList();
-        if(ids.indexOf(",") != -1){
+        if (ids.indexOf(",") != -1) {
             List<String> asList = Arrays.asList(ids.split(","));
             asList.stream().forEach(o -> list.add(Long.valueOf(o)));
-        }else {
+        } else {
             list.add(Long.valueOf(ids));
         }
         int i = studentPhysicalMapper.deleteBatchIds(list);

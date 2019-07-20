@@ -18,7 +18,7 @@ public class CodeGenerator {
      * 注意表中字段不要带下划线 每个字段尽量加上COMMENT
      */
     // 要生成的表名 可以为多个
-    static final String[] tableName = {"course_plan"};
+    static final String[] tableName = {"student_assess"};
     // author
     static final String author = "ZengMin";
     // 全包名

@@ -22,4 +22,7 @@ public interface CoursePlanService {
 
     boolean delete(String ids);
 
+    Pager getMyPlan(Pager pager);
+
+    Pager getMyPlanByClassesId(Pager pager, Long classesId);
 }

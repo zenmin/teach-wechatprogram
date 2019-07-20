@@ -4,6 +4,7 @@ import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.common.constant.DefinedCode;
 import com.teach.wecharprogram.components.annotation.RequireRole;
+import com.teach.wecharprogram.entity.vo.AdminUserVo;
 import com.teach.wecharprogram.entity.vo.UpdateUserVo;
 import com.teach.wecharprogram.util.StaticUtil;
 import io.swagger.annotations.*;
@@ -124,6 +125,16 @@ public class UserController {
         loginUser.setUsername(null);
         loginUser.setPassword(null);
         return ResponseEntity.success(loginUser);
+    }
+
+    /**
+     * @return 管理员信息
+     */
+    @ApiOperation(value = "管理员信息", response = ResponseEntity.class)
+    @PostMapping("/userInfo")
+    public AdminUserVo userInfo(@RequestHeader String token) {
+        User user = userService.getLoginUser();
+        return new AdminUserVo(user.getId().toString(), user.getRealName(), token, user.getStatus(), user.getRoleCode().equals(CommonConstant.ROLE_ADMIN));
     }
 
     /**

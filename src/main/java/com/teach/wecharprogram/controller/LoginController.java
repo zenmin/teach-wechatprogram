@@ -96,16 +96,6 @@ public class LoginController {
     }
 
     /**
-     * @return 管理员信息
-     */
-    @ApiOperation(value = "管理员信息", response = ResponseEntity.class)
-    @PostMapping("/userInfo")
-    public AdminUserVo userInfo(@RequestHeader String token) {
-        User user = userService.getLoginUser();
-        return new AdminUserVo(user.getId().toString(), user.getRealName(), token, user.getStatus(), user.getRoleCode().equals(CommonConstant.ROLE_ADMIN));
-    }
-
-    /**
      * @return 通过手机号登陆
      */
     @ApiOperation(value = "登出", response = ResponseEntity.class)

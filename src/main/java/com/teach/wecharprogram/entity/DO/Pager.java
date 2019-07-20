@@ -24,7 +24,7 @@ public class Pager<T> {
     private long num = 1;
 
     @ApiModelProperty(value = "分页大小", example = "10")
-    private long size = 10;
+    private long size = 15;
 
     @ApiModelProperty(hidden = true)
     private List<T> data;
