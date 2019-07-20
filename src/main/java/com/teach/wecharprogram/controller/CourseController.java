@@ -44,18 +44,6 @@ public class CourseController {
     }
 
     /**
-     * 查询全部 可带条件
-     *
-     * @param course
-     * @return
-     */
-    @ApiOperation(value = "查询全部 可带条件", response = ResponseEntity.class)
-    @PostMapping("/list")
-    public ResponseEntity list(Course course) {
-        return ResponseEntity.success(courseService.list(course));
-    }
-
-    /**
      * 查全部 可带条件分页
      *
      * @param pager
@@ -92,6 +80,19 @@ public class CourseController {
     @PostMapping("/delete")
     public ResponseEntity delete(String ids) {
         return ResponseEntity.success(courseService.delete(ids));
+    }
+
+    /**
+     * 带ID更新 不带ID新增
+     *
+     * @param course
+     * @return
+     */
+    @ApiOperation(value = "查询我添加的课程", response = ResponseEntity.class)
+    @PostMapping("/getMyCourse")
+    public ResponseEntity getMyCourse(Pager pager, Course course) {
+        course.setUid(userService.getLoginUser().getId());
+        return ResponseEntity.success(courseService.listByPage(pager, course));
     }
 
 

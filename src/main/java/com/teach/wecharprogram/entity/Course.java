@@ -71,7 +71,7 @@ public class Course extends EntityModel {
     @ApiModelProperty(value = "评价")
     private String evaluate;
 
-    @ApiModelProperty(value = "用户id")
+    @ApiModelProperty(value = "用户id",hidden = true)
     private Long uid;
 
 }

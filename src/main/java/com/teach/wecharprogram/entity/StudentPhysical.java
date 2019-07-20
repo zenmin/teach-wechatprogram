@@ -131,6 +131,10 @@ public class StudentPhysical extends EntityModel {
     @Column(columnDefinition = "varchar(1000) COMMENT '力量评估指示'")
     private String powerRemark;
 
+    @ApiModelProperty(value = "总体评估建议")
+    @Column(columnDefinition = "varchar(1000) COMMENT '总体评估建议'")
+    private String allRemark;
+
     @ApiModelProperty(value = "总分")
     private Double allScore;
 
