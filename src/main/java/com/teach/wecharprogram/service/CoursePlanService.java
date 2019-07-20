@@ -18,7 +18,7 @@ public interface CoursePlanService {
 
     Pager listByPage(Pager pager,CoursePlan coursePlan);
 
-    CoursePlan save(CoursePlan coursePlan);
+    List<CoursePlan> save(List<CoursePlan> coursePlan);
 
     boolean delete(String ids);
 

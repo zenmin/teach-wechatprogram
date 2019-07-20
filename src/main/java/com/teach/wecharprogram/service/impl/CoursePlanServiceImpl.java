@@ -1,6 +1,5 @@
 package com.teach.wecharprogram.service.impl;
 
-import com.teach.wecharprogram.entity.Classes;
 import com.teach.wecharprogram.entity.DO.CoursePlanClassesDo;
 import com.teach.wecharprogram.entity.DO.CoursePlanCourseDo;
 import com.teach.wecharprogram.service.CoursePlanService;
@@ -15,8 +14,6 @@ import com.teach.wecharprogram.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
-import org.apache.commons.lang3.StringUtils;
-import com.teach.wecharprogram.util.DateUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -58,12 +55,22 @@ public class CoursePlanServiceImpl implements CoursePlanService {
 
     @Override
     @Transactional
-    public CoursePlan save(CoursePlan coursePlan) {
-        if (Objects.nonNull(coursePlan.getId())) {
-            coursePlanMapper.updateById(coursePlan);
-        } else {
-            coursePlanMapper.insert(coursePlan);
-        }
+    public List<CoursePlan> save(List<CoursePlan> coursePlan) {
+        coursePlan.stream().forEach(o -> {
+            if (Objects.nonNull(o.getId())) {
+                coursePlanMapper.updateById(o);
+            } else {
+                o.setUid(userService.getLoginUser().getId());
+                // 查询当前班级当前时间 当前星期 有没有数据
+                CoursePlan one = coursePlanMapper.selectOne(new QueryWrapper<CoursePlan>().eq("classesId", o.getClassesId()).eq("startTime", o.getStartTime()).eq("endTime", o.getEndTime()).eq("day", o.getDay()));
+                if (Objects.nonNull(one)) {
+                    coursePlanMapper.insert(o);
+                } else {
+                    o.setId(one.getId());
+                    coursePlanMapper.updateById(o);
+                }
+            }
+        });
         return coursePlan;
     }
 

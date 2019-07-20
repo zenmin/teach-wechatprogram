@@ -5,6 +5,7 @@ import com.teach.wecharprogram.entity.DO.CoursePlanCourseDo;
 import com.teach.wecharprogram.service.UserService;
 import com.teach.wecharprogram.util.StaticUtil;
 import io.swagger.annotations.*;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,8 @@ import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.CoursePlan;
 import com.teach.wecharprogram.service.CoursePlanService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 
 /**
@@ -56,8 +59,7 @@ public class CoursePlanController {
      */
     @ApiOperation(value = "1、安排课程", response = ResponseEntity.class)
     @PostMapping("/save")
-    public ResponseEntity saveOrUpdate(CoursePlan coursePlan) {
-        coursePlan.setUid(userService.getLoginUser().getId());
+    public ResponseEntity saveOrUpdate(@RequestBody List<CoursePlan> coursePlan) {
         return ResponseEntity.success(coursePlanService.save(coursePlan));
     }
 
