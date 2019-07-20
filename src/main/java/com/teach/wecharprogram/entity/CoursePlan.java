@@ -31,14 +31,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CoursePlan extends EntityModel {
 
+    @ApiModelProperty(value = "用户id", hidden = true)
+    private Long uid;
+
     @ApiModelProperty(value = "班级id")
     private Long classesId;
 
     @ApiModelProperty(value = "课程id")
     private Long courseId;
 
-    @ApiModelProperty(value = "用户id", hidden = true)
-    private Long uid;
+    @ApiModelProperty(value = "开始时间")
+    private String startTime;
 
+    @ApiModelProperty(value = "结束时间")
+    private String endTime;
+
+    @ApiModelProperty(value = "星期几")
+    private Integer day;
 
 }
