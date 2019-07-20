@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.service.impl;
 
+import com.google.common.collect.ImmutableMap;
 import com.teach.wecharprogram.entity.DO.CoursePlanClassesDo;
 import com.teach.wecharprogram.entity.DO.CoursePlanCourseDo;
 import com.teach.wecharprogram.service.CoursePlanService;
@@ -15,9 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -95,9 +95,18 @@ public class CoursePlanServiceImpl implements CoursePlanService {
     }
 
     @Override
-    public Pager getMyPlanByClassesId(Pager pager, Long classesId) {
-        IPage<CoursePlanCourseDo> myPlanByClassesId = coursePlanMapper.getMyPlanByClassesId(new Page(pager.getNum(), pager.getSize()), classesId, userService.getLoginUser().getId());
-        return Pager.of(myPlanByClassesId);
+    public Object getMyPlanByClassesId(Long classesId, Boolean isGroup) {
+        List<CoursePlanCourseDo> myPlanByClassesId = coursePlanMapper.getMyPlanByClassesId(classesId, userService.getLoginUser().getId());
+        List<Map> groupMap = Lists.newArrayList();
+        if (Objects.nonNull(isGroup) && isGroup) {
+            Map<Integer, List<CoursePlanCourseDo>> collect = myPlanByClassesId.stream().collect(Collectors.groupingBy(CoursePlanCourseDo::getDay));
+            Set<Map.Entry<Integer, List<CoursePlanCourseDo>>> entries = collect.entrySet();
+            for (Map.Entry<Integer, List<CoursePlanCourseDo>> m : entries) {
+                groupMap.add(ImmutableMap.of("day", m.getKey(), "values", m.getValue()));
+            }
+            return groupMap;
+        }
+        return myPlanByClassesId;
     }
 
 

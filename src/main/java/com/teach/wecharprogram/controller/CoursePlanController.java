@@ -78,14 +78,15 @@ public class CoursePlanController {
     /**
      * 查全部 可带条件分页
      *
-     * @param pager
      * @return
      */
     @ApiOperation(value = "3、查询该班级已安排的课程", response = CoursePlanCourseDo.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "classesId", value = "班级id", required = true),
+                        @ApiImplicitParam(name = "isGroup", value = "是否按星期几分组 默认false",paramType = "boolean")})
     @PostMapping("/getMyPlanByClassesId")
-    public ResponseEntity getMyPlanByClassesId(Pager pager, Long classesId) {
+    public ResponseEntity getMyPlanByClassesId(Long classesId, Boolean isGroup) {
         StaticUtil.validateObject(classesId);
-        return ResponseEntity.success(coursePlanService.getMyPlanByClassesId(pager, classesId));
+        return ResponseEntity.success(coursePlanService.getMyPlanByClassesId(classesId,isGroup));
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.service;
 
+import com.teach.wecharprogram.entity.DO.CoursePlanCourseDo;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.CoursePlan;
 import java.util.List;
@@ -24,5 +25,5 @@ public interface CoursePlanService {
 
     Pager getMyPlan(Pager pager);
 
-    Pager getMyPlanByClassesId(Pager pager, Long classesId);
+    Object getMyPlanByClassesId(Long classesId, Boolean isGroup);
 }
