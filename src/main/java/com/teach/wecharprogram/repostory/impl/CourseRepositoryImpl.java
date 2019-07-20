@@ -28,7 +28,7 @@ public class CourseRepositoryImpl implements CourseRepository {
             sql.append(" and day = " + day);
         }
         sql.append(" order by day asc,startTime asc");
-        String lastSql = String.format(sql.toString(), classesId, uid);
+        String lastSql = String.format(sql.toString(), uid, classesId);
         List<CoursePlanCourseDo> query = jdbcTemplate.query(lastSql, new BeanPropertyRowMapper<>(CoursePlanCourseDo.class));
         return query;
     }
