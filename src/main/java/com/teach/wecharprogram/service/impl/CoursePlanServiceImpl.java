@@ -63,7 +63,7 @@ public class CoursePlanServiceImpl implements CoursePlanService {
                 o.setUid(userService.getLoginUser().getId());
                 // 查询当前班级当前时间 当前星期 有没有数据
                 CoursePlan one = coursePlanMapper.selectOne(new QueryWrapper<CoursePlan>().eq("classesId", o.getClassesId()).eq("startTime", o.getStartTime()).eq("endTime", o.getEndTime()).eq("day", o.getDay()));
-                if (Objects.nonNull(one)) {
+                if (Objects.isNull(one)) {
                     coursePlanMapper.insert(o);
                 } else {
                     o.setId(one.getId());

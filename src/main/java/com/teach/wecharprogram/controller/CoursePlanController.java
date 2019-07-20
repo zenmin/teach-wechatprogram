@@ -1,5 +1,7 @@
 package com.teach.wecharprogram.controller;
 
+import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.components.annotation.RequireRole;
 import com.teach.wecharprogram.entity.DO.CoursePlanClassesDo;
 import com.teach.wecharprogram.entity.DO.CoursePlanCourseDo;
 import com.teach.wecharprogram.service.UserService;
@@ -71,6 +73,7 @@ public class CoursePlanController {
      */
     @ApiOperation(value = "2、查询已安排课程的班级", response = CoursePlanClassesDo.class)
     @PostMapping("/getMyPlan")
+    @RequireRole({CommonConstant.ROLE_TRAIN})
     public ResponseEntity getMyPlan(Pager pager) {
         return ResponseEntity.success(coursePlanService.getMyPlan(pager));
     }
@@ -82,11 +85,12 @@ public class CoursePlanController {
      */
     @ApiOperation(value = "3、查询该班级已安排的课程", response = CoursePlanCourseDo.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "classesId", value = "班级id", required = true),
-                        @ApiImplicitParam(name = "isGroup", value = "是否按星期几分组 默认false",paramType = "boolean")})
+            @ApiImplicitParam(name = "isGroup", value = "是否按星期几分组 默认false", paramType = "boolean")})
     @PostMapping("/getMyPlanByClassesId")
+    @RequireRole({CommonConstant.ROLE_TRAIN, CommonConstant.ROLE_ADMIN, CommonConstant.ROLE_TEACHER})
     public ResponseEntity getMyPlanByClassesId(Long classesId, Boolean isGroup) {
         StaticUtil.validateObject(classesId);
-        return ResponseEntity.success(coursePlanService.getMyPlanByClassesId(classesId,isGroup));
+        return ResponseEntity.success(coursePlanService.getMyPlanByClassesId(classesId, isGroup));
     }
 
     /**
@@ -98,6 +102,7 @@ public class CoursePlanController {
     @ApiOperation(value = "删除课程安排", response = ResponseEntity.class)
     @ApiImplicitParam(name = "ids", value = "主键 多个用,隔开", required = true)
     @PostMapping("/delete")
+    @RequireRole({CommonConstant.ROLE_TRAIN, CommonConstant.ROLE_ADMIN})
     public ResponseEntity delete(String ids) {
         return ResponseEntity.success(coursePlanService.delete(ids));
     }
