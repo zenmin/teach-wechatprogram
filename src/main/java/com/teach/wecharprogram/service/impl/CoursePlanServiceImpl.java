@@ -3,6 +3,7 @@ package com.teach.wecharprogram.service.impl;
 import com.google.common.collect.ImmutableMap;
 import com.teach.wecharprogram.entity.DO.CoursePlanClassesDo;
 import com.teach.wecharprogram.entity.DO.CoursePlanCourseDo;
+import com.teach.wecharprogram.repostory.CourseRepository;
 import com.teach.wecharprogram.service.CoursePlanService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -35,6 +36,9 @@ public class CoursePlanServiceImpl implements CoursePlanService {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    CourseRepository courseRepository;
 
     @Override
     public CoursePlan getOne(Long id) {
@@ -95,8 +99,8 @@ public class CoursePlanServiceImpl implements CoursePlanService {
     }
 
     @Override
-    public Object getMyPlanByClassesId(Long classesId, Boolean isGroup) {
-        List<CoursePlanCourseDo> myPlanByClassesId = coursePlanMapper.getMyPlanByClassesId(classesId, userService.getLoginUser().getId());
+    public Object getMyPlanByClassesId(Long classesId, Boolean isGroup, Integer day) {
+        List<CoursePlanCourseDo> myPlanByClassesId = courseRepository.getMyPlanByClassesId(classesId, userService.getLoginUser().getId(), day);
         List<Map> groupMap = Lists.newArrayList();
         if (Objects.nonNull(isGroup) && isGroup) {
             Map<Integer, List<CoursePlanCourseDo>> collect = myPlanByClassesId.stream().collect(Collectors.groupingBy(CoursePlanCourseDo::getDay));

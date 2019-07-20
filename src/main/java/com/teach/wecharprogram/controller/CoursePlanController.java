@@ -85,12 +85,12 @@ public class CoursePlanController {
      */
     @ApiOperation(value = "3、查询该班级已安排的课程", response = CoursePlanCourseDo.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "classesId", value = "班级id", required = true),
-            @ApiImplicitParam(name = "isGroup", value = "是否按星期几分组 默认false", paramType = "boolean")})
+            @ApiImplicitParam(name = "isGroup", value = "是否按星期几分组 默认false", paramType = "boolean"), @ApiImplicitParam(name = "day", value = "星期", paramType = "integer")})
     @PostMapping("/getMyPlanByClassesId")
     @RequireRole({CommonConstant.ROLE_TRAIN, CommonConstant.ROLE_ADMIN, CommonConstant.ROLE_TEACHER})
-    public ResponseEntity getMyPlanByClassesId(Long classesId, Boolean isGroup) {
+    public ResponseEntity getMyPlanByClassesId(Long classesId, Boolean isGroup,Integer day) {
         StaticUtil.validateObject(classesId);
-        return ResponseEntity.success(coursePlanService.getMyPlanByClassesId(classesId, isGroup));
+        return ResponseEntity.success(coursePlanService.getMyPlanByClassesId(classesId, isGroup, day));
     }
 
     /**

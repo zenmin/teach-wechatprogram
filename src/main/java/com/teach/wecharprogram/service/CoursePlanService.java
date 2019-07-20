@@ -25,5 +25,5 @@ public interface CoursePlanService {
 
     Pager getMyPlan(Pager pager);
 
-    Object getMyPlanByClassesId(Long classesId, Boolean isGroup);
+    Object getMyPlanByClassesId(Long classesId, Boolean isGroup, Integer day);
 }
