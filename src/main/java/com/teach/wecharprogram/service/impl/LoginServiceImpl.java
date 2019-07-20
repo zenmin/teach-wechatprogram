@@ -168,7 +168,7 @@ public class LoginServiceImpl implements LoginService {
     private String addToken(User user, String ipAddr) {
         // 生成token
         String tokenPrefix = StaticUtil.getLoginToken(user.getId()) + "/";
-        String token = tokenPrefix + System.currentTimeMillis();
+        String token = tokenPrefix;// + System.currentTimeMillis();
         // 执行登录
         user.setPassword(null);
         user.setNowLoginIp(ipAddr);
