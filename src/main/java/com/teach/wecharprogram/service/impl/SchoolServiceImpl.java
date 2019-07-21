@@ -113,10 +113,12 @@ public class SchoolServiceImpl implements SchoolService {
         int i = schoolMapper.deleteBatchIds(list);
         // 设置班级下的学生未分配班级
         List<Classes> classesList = classesMapper.selectList(new QueryWrapper<Classes>().in("schoolId", ids));
-        List<Long> cids = classesList.stream().map(Classes::getId).collect(Collectors.toList());
-        studentMapper.updateClassIdNull(StaticUtil.joinQuota(cids));
-        // 删除学校对应班级
-        classesMapper.deleteBatchIds(cids);
+        if (classesList.size() > 0) {
+            List<Long> cids = classesList.stream().map(Classes::getId).collect(Collectors.toList());
+            studentMapper.updateClassIdNull(StaticUtil.joinQuota(cids));
+            // 删除学校对应班级
+            classesMapper.deleteBatchIds(cids);
+        }
         return i > 0;
     }
 

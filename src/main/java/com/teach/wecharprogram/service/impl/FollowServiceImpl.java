@@ -1,6 +1,8 @@
 package com.teach.wecharprogram.service.impl;
 
 import com.google.common.collect.Maps;
+import com.teach.wecharprogram.common.CommonException;
+import com.teach.wecharprogram.common.constant.DefinedCode;
 import com.teach.wecharprogram.entity.DO.StudentDo;
 import com.teach.wecharprogram.repostory.FollowRepository;
 import com.teach.wecharprogram.service.FollowService;
@@ -14,8 +16,6 @@ import com.teach.wecharprogram.mapper.FollowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
-import org.apache.commons.lang3.StringUtils;
-import com.teach.wecharprogram.util.DateUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,9 +56,16 @@ public class FollowServiceImpl implements FollowService {
 
     @Override
     @Transactional
-    public Follow save(Follow follow) {
-        followMapper.insert(follow);
-        return follow;
+    public boolean save(Follow follow) {
+        // 是否已经关注
+        Follow one = followMapper.selectOne(new QueryWrapper<Follow>().eq("studentId", follow.getStudentId()).eq("uid", follow.getUid()));
+        if (Objects.nonNull(one)) {
+            throw new CommonException(DefinedCode.ISEXISTS, "已关注该学生了！");
+        } else {
+            followMapper.insert(follow);
+            return true;
+        }
+
     }
 
     @Override

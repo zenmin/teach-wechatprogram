@@ -19,7 +19,7 @@ public interface FollowService {
 
     Pager listByPage(Pager pager,Follow follow);
 
-    Follow save(Follow follow);
+    boolean save(Follow follow);
 
     boolean delete(String ids);
 

@@ -51,7 +51,7 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
 
     @Override
     public Pager listByPage(Pager pager, StudentPhysical studentPhysical) {
-        IPage<StudentPhysical> studentPhysicalIPage = studentPhysicalMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(studentPhysical).orderByDesc("crateTime"));
+        IPage<StudentPhysical> studentPhysicalIPage = studentPhysicalMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(studentPhysical).orderByDesc("createTime"));
         return Pager.of(studentPhysicalIPage);
     }
 

@@ -50,7 +50,7 @@ public class StudentAssessServiceImpl implements StudentAssessService {
 
     @Override
     public Pager listByPage(Pager pager, StudentAssess studentAssess) {
-        IPage<StudentAssess> studentAssessIPage = studentAssessMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(studentAssess));
+        IPage<StudentAssess> studentAssessIPage = studentAssessMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(studentAssess).orderByDesc("updateTime"));
         return Pager.of(studentAssessIPage);
     }
 

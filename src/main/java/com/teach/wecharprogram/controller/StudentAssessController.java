@@ -1,5 +1,7 @@
 package com.teach.wecharprogram.controller;
 
+import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.components.annotation.RequireRole;
 import com.teach.wecharprogram.service.UserService;
 import com.teach.wecharprogram.util.StaticUtil;
 import io.swagger.annotations.*;
@@ -51,7 +53,9 @@ public class StudentAssessController {
      * @return
      */
     @ApiOperation(value = "1、新增/更新评议", response = ResponseEntity.class)
+    @ApiImplicitParam(value = "评议的ids", name = "ids", required = true)
     @PostMapping("/save")
+    @RequireRole({CommonConstant.ROLE_TEACHER, CommonConstant.ROLE_ADMIN})
     public ResponseEntity saveOrUpdate(StudentAssess studentAssess) {
         return ResponseEntity.success(studentAssessService.save(studentAssess));
     }
