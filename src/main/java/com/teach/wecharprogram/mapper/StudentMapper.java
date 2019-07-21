@@ -6,15 +6,21 @@ import com.teach.wecharprogram.entity.Student;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 /**
-* Create by Code Generator
-* @Author ZengMin
-* @Date 2019-06-15 18:17:01
-*/
+ * Create by Code Generator
+ *
+ * @Author ZengMin
+ * @Date 2019-06-15 18:17:01
+ */
 
 public interface StudentMapper extends BaseMapper<Student> {
 
     @Select("SELECT * FROM student where classesId in (SELECT id from classes where schoolId = #{schoolId})")
-    IPage<Student> getStudentsBySchool(Page<Object> objectPage,@Param("schoolId") Long schoolId);
+    IPage<Student> getStudentsBySchool(Page<Object> objectPage, @Param("schoolId") Long schoolId);
+
+    @Update("update student set classesId = null,classesName = null where classesId in (#{classesIds})")
+    void updateClassIdNull(String classesIds);
+
 }

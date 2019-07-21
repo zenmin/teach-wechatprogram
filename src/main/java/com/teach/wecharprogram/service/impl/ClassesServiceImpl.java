@@ -109,10 +109,7 @@ public class ClassesServiceImpl implements ClassesService {
         }
         int i = classesMapper.deleteBatchIds(list);
         // 设置班级下的学生未分配班级
-        Student student = new Student();
-        student.setClassesId(null);
-        student.setClassesName("");
-        studentMapper.update(student, new UpdateWrapper<Student>().in("classesId", list));
+        studentMapper.updateClassIdNull(ids);
         return i > 0;
     }
 

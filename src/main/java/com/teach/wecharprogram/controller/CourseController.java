@@ -82,18 +82,5 @@ public class CourseController {
         return ResponseEntity.success(courseService.delete(ids));
     }
 
-    /**
-     * 带ID更新 不带ID新增
-     *
-     * @param course
-     * @return
-     */
-    @ApiOperation(value = "查询我添加的课程", response = ResponseEntity.class)
-    @PostMapping("/get_my_course")
-    public ResponseEntity getMyCourse(Pager pager, Course course) {
-        course.setUid(userService.getLoginUser().getId());
-        return ResponseEntity.success(courseService.listByPage(pager, course));
-    }
-
 
 }

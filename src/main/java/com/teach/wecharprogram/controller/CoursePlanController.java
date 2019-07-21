@@ -2,8 +2,10 @@ package com.teach.wecharprogram.controller;
 
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.components.annotation.RequireRole;
+import com.teach.wecharprogram.entity.Course;
 import com.teach.wecharprogram.entity.DO.CoursePlanClassesDo;
 import com.teach.wecharprogram.entity.DO.CoursePlanCourseDo;
+import com.teach.wecharprogram.service.CourseService;
 import com.teach.wecharprogram.service.UserService;
 import com.teach.wecharprogram.util.StaticUtil;
 import io.swagger.annotations.*;
@@ -38,6 +40,9 @@ public class CoursePlanController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    CourseService courseService;
+
 
     /**
      * 查全部 可带条件分页
@@ -50,6 +55,19 @@ public class CoursePlanController {
     @PostMapping("/listByPage")
     public ResponseEntity listByPage(Pager pager, CoursePlan coursePlan) {
         return ResponseEntity.success(coursePlanService.listByPage(pager, coursePlan));
+    }
+
+    /**
+     * 带ID更新 不带ID新增
+     *
+     * @param course
+     * @return
+     */
+    @ApiOperation(value = "0、查询我添加的课程", response = ResponseEntity.class)
+    @RequestMapping("/getMyCourse")
+    public ResponseEntity getMyCourse(Pager pager, Course course) {
+        course.setUid(userService.getLoginUser().getId());
+        return ResponseEntity.success(courseService.listByPage(pager, course));
     }
 
 
@@ -88,7 +106,7 @@ public class CoursePlanController {
             @ApiImplicitParam(name = "isGroup", value = "是否按星期几分组 默认false", paramType = "boolean"), @ApiImplicitParam(name = "day", value = "星期", paramType = "integer")})
     @PostMapping("/getMyPlanByClassesId")
     @RequireRole({CommonConstant.ROLE_TRAIN, CommonConstant.ROLE_ADMIN, CommonConstant.ROLE_TEACHER})
-    public ResponseEntity getMyPlanByClassesId(Long classesId, Boolean isGroup,Integer day) {
+    public ResponseEntity getMyPlanByClassesId(Long classesId, Boolean isGroup, Integer day) {
         StaticUtil.validateObject(classesId);
         return ResponseEntity.success(coursePlanService.getMyPlanByClassesId(classesId, isGroup, day));
     }
