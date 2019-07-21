@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.entity.RelUserTypeId;
+import com.teach.wecharprogram.entity.School;
 import com.teach.wecharprogram.entity.Student;
 import com.teach.wecharprogram.mapper.RelUserTypeidMapper;
+import com.teach.wecharprogram.mapper.SchoolMapper;
 import com.teach.wecharprogram.mapper.StudentMapper;
 import com.teach.wecharprogram.service.ClassesService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -50,6 +52,9 @@ public class ClassesServiceImpl implements ClassesService {
     @Autowired
     RelUserTypeidMapper relUserTypeidMapper;
 
+    @Autowired
+    SchoolMapper schoolMapper;
+
     @Override
     public Classes getOne(Long id) {
         return classesMapper.selectById(id);
@@ -85,6 +90,8 @@ public class ClassesServiceImpl implements ClassesService {
             if (Objects.isNull(classes.getStatus())) {
                 classes.setStatus(CommonConstant.STATUS_OK);
             }
+            School school = schoolMapper.selectById(classes.getSchoolId());
+            classes.setSchoolName(school.getName());
             classesMapper.insert(classes);
         }
         return classes;
@@ -101,6 +108,11 @@ public class ClassesServiceImpl implements ClassesService {
             list.add(Long.valueOf(ids));
         }
         int i = classesMapper.deleteBatchIds(list);
+        // 设置班级下的学生未分配班级
+        Student student = new Student();
+        student.setClassesId(null);
+        student.setClassesName("");
+        studentMapper.update(student, new UpdateWrapper<Student>().in("classesId", list));
         return i > 0;
     }
 

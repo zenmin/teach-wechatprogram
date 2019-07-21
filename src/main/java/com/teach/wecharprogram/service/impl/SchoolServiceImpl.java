@@ -5,8 +5,10 @@ import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.entity.Classes;
 import com.teach.wecharprogram.entity.RelUserTypeId;
+import com.teach.wecharprogram.entity.Student;
 import com.teach.wecharprogram.mapper.ClassesMapper;
 import com.teach.wecharprogram.mapper.RelUserTypeidMapper;
+import com.teach.wecharprogram.mapper.StudentMapper;
 import com.teach.wecharprogram.service.SchoolService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -25,6 +27,7 @@ import com.teach.wecharprogram.util.DateUtil;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 /**
@@ -45,6 +48,9 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Autowired
     ClassesMapper classesMapper;
+
+    @Autowired
+    StudentMapper studentMapper;
 
     @Override
     public School getOne(Long id) {
@@ -105,6 +111,15 @@ public class SchoolServiceImpl implements SchoolService {
             list.add(Long.valueOf(ids));
         }
         int i = schoolMapper.deleteBatchIds(list);
+        // 设置班级下的学生未分配班级
+        List<Classes> classesList = classesMapper.selectList(new QueryWrapper<Classes>().in("schoolId", ids));
+        List<Long> cids = classesList.stream().map(Classes::getId).collect(Collectors.toList());
+        Student student = new Student();
+        student.setClassesId(null);
+        student.setClassesName("");
+        studentMapper.update(student, new UpdateWrapper<Student>().in("classesId", cids));
+        // 删除学校对应班级
+        classesMapper.deleteBatchIds(cids);
         return i > 0;
     }
 
