@@ -90,28 +90,38 @@ public class FollowServiceImpl implements FollowService {
         Map<Integer, List<StudentDo>> map = studentDoList.stream().collect(Collectors.groupingBy(StudentDo::getAge));
         // 3 4 5岁
         Set<Map.Entry<Integer, List<StudentDo>>> entries = map.entrySet();
-        for (Map.Entry m : entries) {
+        List<StudentDo> threeList = Lists.newArrayList();
+        List<StudentDo> fourList = Lists.newArrayList();
+        List<StudentDo> fiveList = Lists.newArrayList();
+        List<StudentDo> sixList = Lists.newArrayList();
+        List<StudentDo> gtSixList = Lists.newArrayList();
+        for (Map.Entry<Integer, List<StudentDo>> m : entries) {
             Object key = m.getKey();
             if (Integer.parseInt(key.toString()) <= 3) {
-                result.put("three", m.getValue());
+                threeList = m.getValue();
             }
 
             if (Integer.parseInt(key.toString()) == 4) {
-                result.put("four", m.getValue());
+                fourList = m.getValue();
             }
 
             if (Integer.parseInt(key.toString()) == 5) {
-                result.put("five", m.getValue());
+                fiveList = m.getValue();
             }
 
             if (Integer.parseInt(key.toString()) == 6) {
-                result.put("eight", m.getValue());
+                sixList = m.getValue();
             }
 
             if (Integer.parseInt(key.toString()) > 6) {
-                result.put("gtEight", m.getValue());
+                gtSixList = m.getValue();
             }
         }
+        result.put("three", threeList);
+        result.put("four", fourList);
+        result.put("five", fiveList);
+        result.put("six", sixList);
+        result.put("gtSix", gtSixList);
         return result;
     }
 
