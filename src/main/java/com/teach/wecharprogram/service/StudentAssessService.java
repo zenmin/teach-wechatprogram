@@ -1,6 +1,7 @@
 package com.teach.wecharprogram.service;
 
 import com.teach.wecharprogram.entity.DO.Pager;
+import com.teach.wecharprogram.entity.DO.StudentAssessDo;
 import com.teach.wecharprogram.entity.StudentAssess;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public interface StudentAssessService {
 
     List<StudentAssess> list(StudentAssess studentAssess);
 
-    Pager listByPage(Pager pager,StudentAssess studentAssess);
+    List<StudentAssessDo> listByPage(Pager pager, StudentAssess studentAssess);
 
     StudentAssess save(StudentAssess studentAssess);
 

@@ -1,5 +1,7 @@
 package com.teach.wecharprogram.service.impl;
 
+import com.teach.wecharprogram.entity.DO.StudentAssessDo;
+import com.teach.wecharprogram.repostory.CourseRepository;
 import com.teach.wecharprogram.service.StudentAssessService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -37,6 +39,9 @@ public class StudentAssessServiceImpl implements StudentAssessService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    CourseRepository courseRepository;
+
     @Override
     public StudentAssess getOne(Long id) {
         return studentAssessMapper.selectById(id);
@@ -49,9 +54,9 @@ public class StudentAssessServiceImpl implements StudentAssessService {
     }
 
     @Override
-    public Pager listByPage(Pager pager, StudentAssess studentAssess) {
-        IPage<StudentAssess> studentAssessIPage = studentAssessMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(studentAssess).orderByDesc("updateTime"));
-        return Pager.of(studentAssessIPage);
+    public List<StudentAssessDo> listByPage(Pager pager, StudentAssess studentAssess) {
+        List<StudentAssessDo> allAssessList = courseRepository.getAllAssessList(pager, studentAssess.getStudentName(), studentAssess.getText(), userService.getLoginUser().getId());
+        return allAssessList;
     }
 
     @Override

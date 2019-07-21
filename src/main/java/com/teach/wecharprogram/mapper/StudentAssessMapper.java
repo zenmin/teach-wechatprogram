@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.teach.wecharprogram.entity.StudentAssess;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Select;
