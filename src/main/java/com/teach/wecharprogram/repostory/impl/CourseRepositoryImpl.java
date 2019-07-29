@@ -1,6 +1,5 @@
 package com.teach.wecharprogram.repostory.impl;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.teach.wecharprogram.entity.DO.CoursePlanCourseDo;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.DO.StudentAssessDo;

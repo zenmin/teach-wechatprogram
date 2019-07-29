@@ -2,7 +2,10 @@ package com.teach.wecharprogram.service;
 
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.StudentPhysical;
+import com.teach.wecharprogram.entity.User;
+
 import java.util.List;
+import java.util.Map;
 
 /**
 * Create by Code Generator
@@ -22,4 +25,7 @@ public interface StudentPhysicalService {
 
     boolean delete(String ids);
 
+    List<Map> topFive(User userId);
+
+    List<Map> topUpFive(User loginUser);
 }

@@ -30,6 +30,9 @@ import java.util.Date;
 @ApiModel("体适能详情/评测详情")
 public class StudentPhysical extends EntityModel {
 
+    @ApiModelProperty(value = "班级id",hidden = true)
+    private Long classesId;
+
     @ApiModelProperty(value = "学生id")
     private Long studentId;
 
@@ -151,4 +154,13 @@ public class StudentPhysical extends EntityModel {
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
+    public StudentPhysical(Long classesId, Long studentId, Double allScore, String date, Long createUid, String createUserName, Date updateTime) {
+        this.classesId = classesId;
+        this.studentId = studentId;
+        this.allScore = allScore;
+        this.date = date;
+        this.createUid = createUid;
+        this.createUserName = createUserName;
+        this.updateTime = updateTime;
+    }
 }

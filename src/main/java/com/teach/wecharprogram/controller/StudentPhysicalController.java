@@ -1,6 +1,11 @@
 package com.teach.wecharprogram.controller;
 
+import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.components.annotation.RequireRole;
+import com.teach.wecharprogram.entity.User;
+import com.teach.wecharprogram.service.UserService;
 import io.swagger.annotations.*;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,13 +23,16 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @Date 2019-07-15 20:15:32
  */
 
-@Api(tags = "体适能详情")
+@Api(tags = "体适能及评测详情")
 @RestController
 @RequestMapping("/api/studentPhysical")
 public class StudentPhysicalController {
 
     @Autowired
     StudentPhysicalService studentPhysicalService;
+
+    @Autowired
+    UserService userService;
 
     /**
      * 根据id查询一条数据
@@ -75,6 +83,32 @@ public class StudentPhysicalController {
     @PostMapping("/delete")
     public ResponseEntity delete(String ids) {
         return ResponseEntity.success(studentPhysicalService.delete(ids));
+    }
+
+    /**
+     * 家长：表现五佳
+     *
+     * @return
+     */
+    @ApiOperation(value = "家长：表现五佳", response = ResponseEntity.class)
+    @PostMapping("/topFive")
+    @RequireRole({CommonConstant.ROLE_FAMILY})
+    public ResponseEntity topFive() {
+        User loginUser = userService.getLoginUser();
+        return ResponseEntity.success(studentPhysicalService.topFive(loginUser));
+    }
+
+    /**
+     * 家长：表现五佳
+     *
+     * @return
+     */
+    @ApiOperation(value = "家长：进步五佳", response = ResponseEntity.class)
+    @PostMapping("/topUpFive")
+    @RequireRole({CommonConstant.ROLE_FAMILY})
+    public ResponseEntity topUpFive() {
+        User loginUser = userService.getLoginUser();
+        return ResponseEntity.success(studentPhysicalService.topUpFive(loginUser));
     }
 
 
