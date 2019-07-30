@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.entity.base;
 
+import cn.afterturn.easypoi.excel.annotation.ExcelIgnore;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -30,6 +31,7 @@ public abstract class EntityModel implements Serializable {
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(columnDefinition = "datetime default now() COMMENT '创建时间' ")
     @ApiModelProperty(hidden = true)
+    @ExcelIgnore
     private Date createTime;
 
 }

@@ -1,11 +1,14 @@
 package com.teach.wecharprogram.controller;
 
+import cn.afterturn.easypoi.excel.ExcelExportUtil;
+import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.components.annotation.RequireRole;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.service.UserService;
 import com.teach.wecharprogram.util.StaticUtil;
 import io.swagger.annotations.*;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +18,11 @@ import com.teach.wecharprogram.entity.Student;
 import com.teach.wecharprogram.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Objects;
 
 
@@ -156,5 +163,24 @@ public class StudentController {
             userId = loginUser.getId();
         }
         return ResponseEntity.success(studentService.delRelFamilyToStudent(userId, studentId));
+    }
+
+    /**
+     * 查全部 可带条件分页
+     *
+     * @param student
+     * @return
+     */
+    @ApiOperation(value = "导出excel", response = ResponseEntity.class)
+    @RequestMapping("/export")
+    public void listByPage(Student student, HttpServletResponse response) throws IOException {
+        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("体适能评估表", ""), Student.class, studentService.list(student));
+        ServletOutputStream outputStream = response.getOutputStream();
+        response.setCharacterEncoding("utf-8");
+        response.setContentType("application/msexcel");
+        // 设置浏览器以下载的方式处理该文件名
+        response.setHeader("Content-Disposition", "attachment;filename=".concat(String.valueOf(URLEncoder.encode("体适能评估表.xls", "UTF-8"))));
+        workbook.write(outputStream);
+        outputStream.close();
     }
 }

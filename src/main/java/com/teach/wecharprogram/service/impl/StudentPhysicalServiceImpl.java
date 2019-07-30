@@ -85,6 +85,7 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
             studentPhysical.setCreateUid(id);
             studentPhysical.setCreateUserName(realName);
             studentPhysical.setDate(DateUtil.getNowDate());
+            studentPhysical.setStudentName(one.getName());
             studentPhysicalMapper.insert(studentPhysical);
         }
         return studentPhysical;

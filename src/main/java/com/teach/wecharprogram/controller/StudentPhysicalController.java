@@ -1,10 +1,14 @@
 package com.teach.wecharprogram.controller;
 
+import cn.afterturn.easypoi.excel.ExcelExportUtil;
+import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.components.annotation.RequireRole;
+import com.teach.wecharprogram.entity.Student;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.service.UserService;
 import io.swagger.annotations.*;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +18,11 @@ import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.StudentPhysical;
 import com.teach.wecharprogram.service.StudentPhysicalService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
 
 
 /**
@@ -109,6 +118,25 @@ public class StudentPhysicalController {
     public ResponseEntity topUpFive() {
         User loginUser = userService.getLoginUser();
         return ResponseEntity.success(studentPhysicalService.topUpFive(loginUser));
+    }
+
+    /**
+     * 查全部 可带条件分页
+     *
+     * @param physical
+     * @return
+     */
+    @ApiOperation(value = "导出excel", response = ResponseEntity.class)
+    @RequestMapping("/export")
+    public void listByPage(StudentPhysical physical, HttpServletResponse response) throws IOException {
+        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("体适能评估", ""), StudentPhysical.class, studentPhysicalService.list(physical));
+        ServletOutputStream outputStream = response.getOutputStream();
+        response.setCharacterEncoding("utf-8");
+        response.setContentType("application/msexcel");
+        // 设置浏览器以下载的方式处理该文件名
+        response.setHeader("Content-Disposition", "attachment;filename=".concat(String.valueOf(URLEncoder.encode("体适能评估.xls", "UTF-8"))));
+        workbook.write(outputStream);
+        outputStream.close();
     }
 
 

@@ -109,7 +109,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Object getStudentsBySchool(Pager pager, Long schoolId) {
-        IPage<Student> studentIPage = studentMapper.getStudentsBySchool(new Page<>(pager.getNum(), pager.getSize()),schoolId);
+        IPage<Student> studentIPage = studentMapper.getStudentsBySchool(new Page<>(pager.getNum(), pager.getSize()), schoolId);
         return Pager.of(studentIPage);
     }
 
