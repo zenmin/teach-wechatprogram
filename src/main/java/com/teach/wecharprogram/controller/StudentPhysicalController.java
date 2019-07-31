@@ -4,15 +4,11 @@ import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.components.annotation.RequireRole;
-import com.teach.wecharprogram.entity.Student;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.service.UserService;
 import io.swagger.annotations.*;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.teach.wecharprogram.common.ResponseEntity;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.StudentPhysical;
@@ -92,6 +88,19 @@ public class StudentPhysicalController {
     @PostMapping("/delete")
     public ResponseEntity delete(String ids) {
         return ResponseEntity.success(studentPhysicalService.delete(ids));
+    }
+
+    /**
+     * 家长：表现五佳
+     *
+     * @return
+     */
+    @ApiOperation(value = "根据学生ID查询评测信息", response = ResponseEntity.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "studentId", value = "学生id", required = true),
+            @ApiImplicitParam(name = "queryNow", value = "是否查询最近一次的评测默认true", required = true, dataType = "boolean")})
+    @PostMapping("/getOneByStudent")
+    public ResponseEntity getOneByStudent(@RequestParam(required = true) Long studentId, @RequestParam(defaultValue = "true") Boolean queryNow) {
+        return ResponseEntity.success(studentPhysicalService.getOneByStudent(studentId, queryNow));
     }
 
     /**

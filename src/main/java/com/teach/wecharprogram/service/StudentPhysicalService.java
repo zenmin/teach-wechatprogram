@@ -28,4 +28,6 @@ public interface StudentPhysicalService {
     List<Map> topFive(User userId);
 
     List<Map> topUpFive(User loginUser);
+
+    List<StudentPhysical> getOneByStudent(Long studentId, Boolean queryNow);
 }

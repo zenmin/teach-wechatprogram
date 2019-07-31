@@ -167,5 +167,16 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
         return result;
     }
 
+    @Override
+    public List<StudentPhysical> getOneByStudent(Long studentId, Boolean queryNow) {
+        List<StudentPhysical> records = null;
+        if (queryNow) {
+            records = studentPhysicalMapper.selectPage(new Page<>(0, 1), new QueryWrapper<StudentPhysical>().eq("studentId", studentId).orderByDesc("date")).getRecords();
+        } else {
+            records = studentPhysicalMapper.selectList(new QueryWrapper<StudentPhysical>().eq("studentId", studentId).orderByDesc("date"));
+        }
+        return records;
+    }
+
 
 }
