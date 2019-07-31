@@ -3,9 +3,9 @@ package com.teach.wecharprogram.service.impl;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.entity.DO.StudentDo;
 import com.teach.wecharprogram.entity.RelUserTypeId;
 import com.teach.wecharprogram.entity.School;
-import com.teach.wecharprogram.entity.Student;
 import com.teach.wecharprogram.mapper.RelUserTypeidMapper;
 import com.teach.wecharprogram.mapper.SchoolMapper;
 import com.teach.wecharprogram.mapper.StudentMapper;
@@ -122,12 +122,8 @@ public class ClassesServiceImpl implements ClassesService {
     }
 
     @Override
-    public List<Student> getStudents(Long userId, Long classesId, String name) {
-        QueryWrapper<Student> q = new QueryWrapper<Student>().in("classesId", classesId).eq("status", CommonConstant.STATUS_OK);
-        if (StringUtils.isNotBlank(name)) {
-            q.like("name", name);
-        }
-        List<Student> students = studentMapper.selectList(q);
+    public List<StudentDo> getStudents(Long userId, Long classesId, String name) {
+        List<StudentDo> students = studentMapper.selectStudents(classesId, name);
         return students;
     }
 

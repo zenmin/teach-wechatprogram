@@ -2,6 +2,7 @@ package com.teach.wecharprogram.service;
 
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.Classes;
+import com.teach.wecharprogram.entity.DO.StudentDo;
 import com.teach.wecharprogram.entity.Student;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public interface ClassesService {
 
     List<Classes> getClasses(Long id);
 
-    List<Student> getStudents(Long id, Long classesId, String name);
+    List<StudentDo> getStudents(Long id, Long classesId, String name);
 
     Object relTeacherToClass(Long teacher, String classesId);
 

@@ -2,11 +2,14 @@ package com.teach.wecharprogram.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.teach.wecharprogram.entity.DO.StudentDo;
 import com.teach.wecharprogram.entity.Student;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
 
 /**
  * Create by Code Generator
@@ -23,4 +26,6 @@ public interface StudentMapper extends BaseMapper<Student> {
     @Update("update student set classesId = null,classesName = null where classesId in (#{classesIds})")
     void updateClassIdNull(String classesIds);
 
+    @Select("<script>select *,TIMESTAMPDIFF(YEAR,birthday,CURRENT_DATE) as age from student where classesId = #{classesId} <if test=\"name != null \"> and name like concat('%',#{name},'%')  </if> </script>")
+    List<StudentDo> selectStudents(@Param("classesId") Long classesId, @Param("name") String name);
 }
