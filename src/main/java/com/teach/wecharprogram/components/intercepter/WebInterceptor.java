@@ -3,6 +3,7 @@ package com.teach.wecharprogram.components.intercepter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 
@@ -12,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @Date 2019/1/3 19:18
  */
 @Configuration
-public class WebInterceptor extends WebMvcConfigurerAdapter {
+public class WebInterceptor implements WebMvcConfigurer {
 
     @Bean
     RequestInterceptor requestInterceptor() {

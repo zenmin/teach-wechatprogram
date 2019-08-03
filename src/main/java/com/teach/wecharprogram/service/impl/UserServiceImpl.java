@@ -1,6 +1,5 @@
 package com.teach.wecharprogram.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,6 +9,7 @@ import com.teach.wecharprogram.common.constant.*;
 import com.teach.wecharprogram.components.business.RedisUtil;
 import com.teach.wecharprogram.entity.*;
 import com.teach.wecharprogram.entity.DO.Pager;
+import com.teach.wecharprogram.entity.DO.StudentDo;
 import com.teach.wecharprogram.entity.vo.UpdateUserVo;
 import com.teach.wecharprogram.mapper.*;
 import com.teach.wecharprogram.service.*;
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -283,7 +282,7 @@ public class UserServiceImpl implements UserService {
                 throw new CommonException(DefinedCode.NOTFOUND, "当前没有关联的学生！");
             }
             List<Long> ids = relUserTypeIds.stream().map(RelUserTypeId::getOtherId).collect(Collectors.toList());
-            List<Student> students = studentMapper.selectList(new QueryWrapper<Student>().in("id", ids));
+            List<StudentDo> students = studentMapper.selectStudentsIdIn(ids);
             return students;
         }
         throw new CommonException(DefinedCode.NOTFOUND, "你暂时没有关联的班级或学生，请联系管理员！");

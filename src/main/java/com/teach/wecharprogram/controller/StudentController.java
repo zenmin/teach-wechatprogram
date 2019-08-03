@@ -175,7 +175,9 @@ public class StudentController {
     @ApiOperation(value = "导出excel", response = ResponseEntity.class)
     @PostMapping("/export")
     public void export(StudentDo studentDo, HttpServletResponse response) throws IOException {
-        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("学生基本信息", "学生基本信息(1)"), StudentDo.class, studentService.getStudentAllMsg(studentDo));
+        ExportParams exportParams = new ExportParams("学生基本信息", "学生基本信息(1)");
+//        exportParams.setAddIndex(true);
+        Workbook workbook = ExcelExportUtil.exportExcel(exportParams, StudentDo.class, studentService.getStudentAllMsg(studentDo));
         ServletOutputStream outputStream = response.getOutputStream();
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/msexcel");
