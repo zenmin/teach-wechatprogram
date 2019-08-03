@@ -48,7 +48,7 @@ public class StudentAssess extends EntityModel {
     @Column(columnDefinition = "datetime default now() COMMENT '评价时间' ")
     private Date updateTime;
 
-    @ApiModelProperty(value = "评价时间")
+    @ApiModelProperty(value = "评价时间", hidden = true)
     private String date;
 
     @TableField(exist = false)

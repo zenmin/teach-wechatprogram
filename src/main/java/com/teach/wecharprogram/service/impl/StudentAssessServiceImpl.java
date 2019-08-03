@@ -71,9 +71,8 @@ public class StudentAssessServiceImpl implements StudentAssessService {
             // 查当前孩子的评议  每个孩子只会存在一条记录
             StudentAssess one = studentAssessMapper.selectOne(new QueryWrapper<StudentAssess>().eq("studentId", studentAssess.getStudentId()));
             if (Objects.nonNull(one)) {
-                one.setUpdateTime(new Date());
-                one.setText(studentAssess.getText());
-                studentAssessMapper.updateById(one);
+                studentAssess.setId(one.getId());
+                studentAssessMapper.updateById(studentAssess);
             } else {
                 studentAssessMapper.insert(studentAssess);
             }
