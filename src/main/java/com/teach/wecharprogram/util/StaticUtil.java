@@ -33,9 +33,6 @@ import java.util.concurrent.Executors;
  */
 public class StaticUtil {
 
-    // 业务线程池
-    public static ExecutorService executorService = Executors.newFixedThreadPool(5);
-
     public static NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
     public static ObjectMapper objectMapper = new ObjectMapper();
@@ -116,7 +113,7 @@ public class StaticUtil {
      * @return
      */
     public static String md5Hex(String code) {
-        if(StringUtils.isBlank(code)){
+        if (StringUtils.isBlank(code)) {
             return null;
         }
         return DigestUtils.md5Hex(code);
@@ -185,6 +182,16 @@ public class StaticUtil {
      */
     public static Double multiply(Double multiplicand, Double multiplier) {
         return multiplicand == 0.0D && multiplier == 0.0D ? 0.0D : multiplier == 0.0D ? 1.0D : BigDecimal.valueOf(multiplicand).multiply(BigDecimal.valueOf(multiplier)).doubleValue();
+    }
+
+    /**
+     * @return 减
+     */
+    public static Double subtract(Double substract, Double besubstract) {
+        if (Objects.isNull(substract) || Objects.isNull(besubstract)) {
+            return 0d;
+        }
+        return BigDecimal.valueOf(substract).subtract(BigDecimal.valueOf(besubstract)).doubleValue();
     }
 
     public static Long multiplyToLong(Double multiplicand, Double multiplier) {

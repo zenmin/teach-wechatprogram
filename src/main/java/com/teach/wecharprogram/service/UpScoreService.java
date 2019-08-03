@@ -14,11 +14,11 @@ public interface UpScoreService {
 
     UpScore getOne(Long id);
 
-    List<UpScore> list(UpScore up_score);
+    List<UpScore> list(UpScore upScore);
 
-    Pager listByPage(Pager pager,UpScore up_score);
+    Pager listByPage(Pager pager,UpScore upScore);
 
-    UpScore save(UpScore up_score);
+    void save(UpScore upScore);
 
     boolean delete(String ids);
 

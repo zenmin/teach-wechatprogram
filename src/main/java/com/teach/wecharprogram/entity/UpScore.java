@@ -35,6 +35,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpScore extends EntityModel {
 
+    @ApiModelProperty(value = "评测时间")
+    private String date;
+
     @ApiModelProperty(value = "学生id")
     private Long studentId;
 

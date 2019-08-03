@@ -3,6 +3,7 @@ package com.teach.wecharprogram.service.impl;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.entity.DO.StudentDo;
 import com.teach.wecharprogram.entity.RelUserTypeId;
 import com.teach.wecharprogram.mapper.RelUserTypeidMapper;
 import com.teach.wecharprogram.service.StudentService;
@@ -111,6 +112,16 @@ public class StudentServiceImpl implements StudentService {
     public Object getStudentsBySchool(Pager pager, Long schoolId) {
         IPage<Student> studentIPage = studentMapper.getStudentsBySchool(new Page<>(pager.getNum(), pager.getSize()), schoolId);
         return Pager.of(studentIPage);
+    }
+
+    /**
+     * @param student
+     * @return
+     */
+    @Override
+    public List<StudentDo> getStudentAllMsg(StudentDo student) {
+        List<StudentDo> studentAllMsg = studentMapper.getStudentAllMsg(student.getName(), student.getGender(), student.getStatus(), student.getBirthday(), student.getClassesId(), student.getSchoolId());
+        return studentAllMsg;
     }
 
 

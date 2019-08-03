@@ -4,6 +4,7 @@ import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.components.annotation.RequireRole;
+import com.teach.wecharprogram.entity.DO.StudentDo;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.service.UserService;
 import com.teach.wecharprogram.util.StaticUtil;
@@ -168,18 +169,18 @@ public class StudentController {
     /**
      * 查全部 可带条件分页
      *
-     * @param student
+     * @param studentDo
      * @return
      */
     @ApiOperation(value = "导出excel", response = ResponseEntity.class)
-    @RequestMapping("/export")
-    public void listByPage(Student student, HttpServletResponse response) throws IOException {
-        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("体适能评估表", ""), Student.class, studentService.list(student));
+    @PostMapping("/export")
+    public void export(StudentDo studentDo, HttpServletResponse response) throws IOException {
+        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("学生基本信息", "学生基本信息(1)"), StudentDo.class, studentService.getStudentAllMsg(studentDo));
         ServletOutputStream outputStream = response.getOutputStream();
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/msexcel");
         // 设置浏览器以下载的方式处理该文件名
-        response.setHeader("Content-Disposition", "attachment;filename=".concat(String.valueOf(URLEncoder.encode("体适能评估表.xls", "UTF-8"))));
+        response.setHeader("Content-Disposition", "attachment;filename=".concat(String.valueOf(URLEncoder.encode("学生基本信息.xls", "UTF-8"))));
         workbook.write(outputStream);
         outputStream.close();
     }

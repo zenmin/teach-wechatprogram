@@ -8,6 +8,7 @@ import com.teach.wecharprogram.entity.DO.UpScoreDo;
 import com.teach.wecharprogram.entity.Student;
 import com.teach.wecharprogram.entity.UpScore;
 import com.teach.wecharprogram.entity.User;
+import com.teach.wecharprogram.entity.vo.StudentPhysicalVO;
 import com.teach.wecharprogram.mapper.UpScoreMapper;
 import com.teach.wecharprogram.service.StudentPhysicalService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -18,6 +19,7 @@ import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.StudentPhysical;
 import com.teach.wecharprogram.mapper.StudentPhysicalMapper;
 import com.teach.wecharprogram.service.StudentService;
+import com.teach.wecharprogram.service.UpScoreService;
 import com.teach.wecharprogram.service.UserService;
 import com.teach.wecharprogram.util.StaticUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,8 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
     @Autowired
     UpScoreMapper upScoreMapper;
 
+    @Autowired
+    UpScoreService upScoreService;
 
     @Override
     public StudentPhysical getOne(Long id) {
@@ -76,8 +80,26 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
         Long id = loginUser.getId();
         String realName = loginUser.getRealName();
         studentPhysical.setUpdateTime(new Date());
+        // 更新或新增之前  先查询上一次的分数
+        List<StudentPhysical> oneByStudent = this.getOneByStudent(studentPhysical.getStudentId(), true);
+
         if (Objects.nonNull(studentPhysical.getId())) {
+            String date = studentPhysical.getDate();
+            studentPhysical.setCreateUid(null);
+            studentPhysical.setCreateUserName(null);
+            studentPhysical.setDate(null);
+            // 更新主表
             studentPhysicalMapper.updateById(studentPhysical);
+            //更新分数
+            UpScore upScore = upScoreMapper.selectOne(new QueryWrapper<UpScore>().eq("studentId", studentPhysical.getStudentId()).eq("date", date));
+            if (Objects.nonNull(upScore)) {
+                Double score = StaticUtil.subtract(studentPhysical.getAllScore(), Objects.nonNull(oneByStudent.get(0)) ? oneByStudent.get(0).getAllScore() : 0D);
+                Double upScoreScore = upScore.getScore();
+                if (!score.equals(upScoreScore)) {
+                    upScore.setScore(score);
+                    upScoreService.save(upScore);
+                }
+            }
         } else {
             // 查询学生所在班级
             Student one = studentService.getOne(studentPhysical.getStudentId());
@@ -87,6 +109,14 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
             studentPhysical.setDate(DateUtil.getNowDate());
             studentPhysical.setStudentName(one.getName());
             studentPhysicalMapper.insert(studentPhysical);
+
+            // 计算本次分数和上次分数之差
+            Double allScore = 0d;
+            if (oneByStudent.size() > 0) {
+                allScore = oneByStudent.get(0).getAllScore();
+            }
+            upScoreService.save(new UpScore(DateUtil.getNowDate(), studentPhysical.getStudentId(), studentPhysical.getClassesId(),
+                    StaticUtil.subtract(studentPhysical.getAllScore(), Objects.nonNull(allScore) ? allScore : 0d), new Date()));
         }
         return studentPhysical;
     }
@@ -123,12 +153,12 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
         // 取班级id
         Set<Long> classesId = students.stream().map(Student::getClassesId).collect(Collectors.toSet());
         // 每个班级五条
-        List<StudentPhysical> studentPhysicals = studentPhysicalMapper.selectPage(new Page<>(0, classesId.size() * 5), new QueryWrapper<StudentPhysical>().in("classesId", classesId).orderByDesc("allScore", "date")).getRecords();
+        List<StudentPhysicalVO> studentPhysicals = studentPhysicalMapper.selectToFive(classesId.size() * 5, classesId);
         // 分组
-        Map<Long, List<StudentPhysical>> group = studentPhysicals.stream().collect(Collectors.groupingBy(StudentPhysical::getClassesId));
-        Set<Map.Entry<Long, List<StudentPhysical>>> entries = group.entrySet();
-        for (Map.Entry<Long, List<StudentPhysical>> m : entries) {
-            List<StudentPhysical> value = m.getValue();
+        Map<Long, List<StudentPhysicalVO>> group = studentPhysicals.stream().collect(Collectors.groupingBy(StudentPhysicalVO::getClassesId));
+        Set<Map.Entry<Long, List<StudentPhysicalVO>>> entries = group.entrySet();
+        for (Map.Entry<Long, List<StudentPhysicalVO>> m : entries) {
+            List<StudentPhysicalVO> value = m.getValue();
             if (value.size() > 5) {
                 value = value.subList(0, 5);
             }
@@ -171,7 +201,7 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
     public List<StudentPhysical> getOneByStudent(Long studentId, Boolean queryNow) {
         List<StudentPhysical> records = null;
         if (queryNow) {
-            records = studentPhysicalMapper.selectPage(new Page<>(0, 1), new QueryWrapper<StudentPhysical>().eq("studentId", studentId).orderByDesc("date")).getRecords();
+            records = studentPhysicalMapper.getOneByStudent(studentId);
         } else {
             records = studentPhysicalMapper.selectList(new QueryWrapper<StudentPhysical>().eq("studentId", studentId).orderByDesc("date"));
         }

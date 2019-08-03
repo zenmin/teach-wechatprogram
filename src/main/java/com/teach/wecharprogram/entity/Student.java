@@ -34,7 +34,7 @@ import lombok.NoArgsConstructor;
 public class Student extends EntityModel {
 
     @ApiModelProperty(value = "名字")
-    @Excel(name = "名字")
+    @Excel(name = "姓名")
     private String name;
 
     @ApiModelProperty(value = "性别")

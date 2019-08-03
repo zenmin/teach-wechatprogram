@@ -110,7 +110,6 @@ public class StudentPhysicalController {
      */
     @ApiOperation(value = "家长：表现五佳", response = ResponseEntity.class)
     @PostMapping("/topFive")
-    @RequireRole({CommonConstant.ROLE_FAMILY})
     public ResponseEntity topFive() {
         User loginUser = userService.getLoginUser();
         return ResponseEntity.success(studentPhysicalService.topFive(loginUser));
@@ -123,7 +122,6 @@ public class StudentPhysicalController {
      */
     @ApiOperation(value = "家长：进步五佳", response = ResponseEntity.class)
     @PostMapping("/topUpFive")
-    @RequireRole({CommonConstant.ROLE_FAMILY})
     public ResponseEntity topUpFive() {
         User loginUser = userService.getLoginUser();
         return ResponseEntity.success(studentPhysicalService.topUpFive(loginUser));
@@ -136,14 +134,15 @@ public class StudentPhysicalController {
      * @return
      */
     @ApiOperation(value = "导出excel", response = ResponseEntity.class)
-    @RequestMapping("/export")
+    @PostMapping("/export")
     public void listByPage(StudentPhysical physical, HttpServletResponse response) throws IOException {
-        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("体适能评估", ""), StudentPhysical.class, studentPhysicalService.list(physical));
+        ExportParams exportParams = new ExportParams("体适能评估", "体适能评估(1)");
+        Workbook workbook = ExcelExportUtil.exportExcel(exportParams, StudentPhysical.class, studentPhysicalService.list(physical));
         ServletOutputStream outputStream = response.getOutputStream();
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/msexcel");
         // 设置浏览器以下载的方式处理该文件名
-        response.setHeader("Content-Disposition", "attachment;filename=".concat(String.valueOf(URLEncoder.encode("体适能评估.xls", "UTF-8"))));
+        response.setHeader("Content-Disposition", "attachment;filename=".concat(new String("体适能评估.xls".getBytes("UTF-8"))));
         workbook.write(outputStream);
         outputStream.close();
     }

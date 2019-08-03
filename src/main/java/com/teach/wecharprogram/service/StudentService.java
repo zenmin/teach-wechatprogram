@@ -1,7 +1,10 @@
 package com.teach.wecharprogram.service;
 
 import com.teach.wecharprogram.entity.DO.Pager;
+import com.teach.wecharprogram.entity.DO.StudentDo;
 import com.teach.wecharprogram.entity.Student;
+
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -27,4 +30,7 @@ public interface StudentService {
     boolean delRelFamilyToStudent(Long userId, String studentsId);
 
     Object getStudentsBySchool(Pager pager, Long schoolId);
+
+    List<StudentDo> getStudentAllMsg(StudentDo studentDo);
+
 }
