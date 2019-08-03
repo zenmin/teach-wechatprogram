@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.DefinedCode;
+import com.teach.wecharprogram.entity.DO.StudentDo;
 import com.teach.wecharprogram.entity.DO.UpScoreDo;
 import com.teach.wecharprogram.entity.Student;
 import com.teach.wecharprogram.entity.UpScore;
@@ -146,12 +147,12 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
 
         // 缓存班级名称
         Map<Long, String> classNameMap = Maps.newHashMap();
-        List<Student> students = (List<Student>) myRelInfo;
+        List<StudentDo> students = (List<StudentDo>) myRelInfo;
         students.stream().forEach(o -> {
             classNameMap.put(o.getClassesId(), o.getClassesName());
         });
         // 取班级id
-        Set<Long> classesId = students.stream().map(Student::getClassesId).collect(Collectors.toSet());
+        Set<Long> classesId = students.stream().map(StudentDo::getClassesId).collect(Collectors.toSet());
         // 每个班级五条
         List<StudentPhysicalVO> studentPhysicals = studentPhysicalMapper.selectToFive(classesId.size() * 5, classesId);
         // 分组
@@ -177,12 +178,12 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
         }
         // 缓存班级名称
         Map<Long, String> classNameMap = Maps.newHashMap();
-        List<Student> students = (List<Student>) myRelInfo;
+        List<StudentDo> students = (List<StudentDo>) myRelInfo;
         students.stream().forEach(o -> {
             classNameMap.put(o.getClassesId(), o.getClassesName());
         });
         // 取班级id
-        Set<Long> classesId = students.stream().map(Student::getClassesId).collect(Collectors.toSet());
+        Set<Long> classesId = students.stream().map(StudentDo::getClassesId).collect(Collectors.toSet());
         List<UpScoreDo> records = upScoreMapper.selectTopUpFive(classesId, classesId.size() * 5);
         // 分组
         Map<Long, List<UpScoreDo>> group = records.stream().collect(Collectors.groupingBy(UpScoreDo::getClassesId));

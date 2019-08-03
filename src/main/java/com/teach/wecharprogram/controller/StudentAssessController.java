@@ -53,7 +53,6 @@ public class StudentAssessController {
      * @return
      */
     @ApiOperation(value = "1、新增/更新评议", response = ResponseEntity.class)
-    @ApiImplicitParam(value = "评议的ids", name = "ids", required = true)
     @PostMapping("/save")
     @RequireRole({CommonConstant.ROLE_TEACHER, CommonConstant.ROLE_ADMIN})
     public ResponseEntity saveOrUpdate(StudentAssess studentAssess) {

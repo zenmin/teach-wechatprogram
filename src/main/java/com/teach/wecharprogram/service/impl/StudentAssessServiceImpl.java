@@ -64,17 +64,18 @@ public class StudentAssessServiceImpl implements StudentAssessService {
     public StudentAssess save(StudentAssess studentAssess) {
         studentAssess.setUid(userService.getLoginUser().getId());
         studentAssess.setUpdateTime(new Date());
+        studentAssess.setDate(DateUtil.getNowDate());
         if (Objects.nonNull(studentAssess.getId())) {
             studentAssessMapper.updateById(studentAssess);
         } else {
             // 查当前孩子的评议  每个孩子只会存在一条记录
             StudentAssess one = studentAssessMapper.selectOne(new QueryWrapper<StudentAssess>().eq("studentId", studentAssess.getStudentId()));
             if (Objects.nonNull(one)) {
-                studentAssessMapper.insert(studentAssess);
-            } else {
                 one.setUpdateTime(new Date());
                 one.setText(studentAssess.getText());
-
+                studentAssessMapper.updateById(one);
+            } else {
+                studentAssessMapper.insert(studentAssess);
             }
         }
         return studentAssess;

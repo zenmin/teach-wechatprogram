@@ -43,10 +43,13 @@ public class StudentAssess extends EntityModel {
     @ApiModelProperty(value = "评价")
     private String text;
 
-    @ApiModelProperty(value = "评价时间")
+    @ApiModelProperty(value = "评价时间", hidden = true)
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(columnDefinition = "datetime default now() COMMENT '创建时间' ")
+    @Column(columnDefinition = "datetime default now() COMMENT '评价时间' ")
     private Date updateTime;
+
+    @ApiModelProperty(value = "评价时间")
+    private String date;
 
     @TableField(exist = false)
     @Transient
