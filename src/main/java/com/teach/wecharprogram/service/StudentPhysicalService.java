@@ -3,6 +3,8 @@ package com.teach.wecharprogram.service;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.StudentPhysical;
 import com.teach.wecharprogram.entity.User;
+import com.teach.wecharprogram.entity.vo.StudentPhysicalTextVO;
+import com.teach.wecharprogram.entity.vo.StudentPhysicalVO;
 
 import java.util.List;
 import java.util.Map;
@@ -30,4 +32,7 @@ public interface StudentPhysicalService {
     List<Map> topUpFive(User loginUser);
 
     List<StudentPhysical> getOneByStudent(Long studentId, Boolean queryNow);
+
+    List<StudentPhysicalTextVO> getPhysicalByStudentIds(String studentIds);
+
 }

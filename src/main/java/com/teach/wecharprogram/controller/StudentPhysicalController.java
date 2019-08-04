@@ -128,6 +128,18 @@ public class StudentPhysicalController {
     }
 
     /**
+     * 家长：查询最近一次的教练建议
+     *
+     * @return
+     */
+    @ApiOperation(value = "家长：查询最近一次的教练建议", response = ResponseEntity.class)
+    @ApiImplicitParam(name = "studentIds", value = "学生id 多个用,隔开", required = true)
+    @PostMapping("/getPhysicalByStudentIds")
+    public ResponseEntity getPhysicalByStudentIds(String studentIds) {
+        return ResponseEntity.success(studentPhysicalService.getPhysicalByStudentIds(studentIds));
+    }
+
+    /**
      * 查全部 可带条件分页
      *
      * @param physical

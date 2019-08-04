@@ -9,6 +9,7 @@ import com.teach.wecharprogram.entity.DO.UpScoreDo;
 import com.teach.wecharprogram.entity.Student;
 import com.teach.wecharprogram.entity.UpScore;
 import com.teach.wecharprogram.entity.User;
+import com.teach.wecharprogram.entity.vo.StudentPhysicalTextVO;
 import com.teach.wecharprogram.entity.vo.StudentPhysicalVO;
 import com.teach.wecharprogram.mapper.UpScoreMapper;
 import com.teach.wecharprogram.service.StudentPhysicalService;
@@ -207,6 +208,16 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
             records = studentPhysicalMapper.selectList(new QueryWrapper<StudentPhysical>().eq("studentId", studentId).orderByDesc("date"));
         }
         return records;
+    }
+
+    @Override
+    public List<StudentPhysicalTextVO> getPhysicalByStudentIds(String studentIds) {
+        List<StudentPhysicalTextVO> list = Lists.newArrayList();
+        List<String> ids = Arrays.asList(studentIds.split(","));
+        ids.stream().forEach(o -> {
+            list.add(studentPhysicalMapper.getPhysicalByStudentIds(Long.valueOf(o)));
+        });
+        return list;
     }
 
 
