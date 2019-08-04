@@ -102,7 +102,7 @@ public class StudentAssessServiceImpl implements StudentAssessService {
 
     @Override
     public StudentAssess selectOne(Long studentId) {
-        StudentAssess one = studentAssessMapper.selectOne(new QueryWrapper<StudentAssess>().eq("studentId", studentId));
+        StudentAssess one = studentAssessMapper.selectOne(new QueryWrapper<StudentAssess>().eq("studentId", studentId).eq("date", DateUtil.getNowDate()));
         return one;
     }
 

@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.entity.DO;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -52,7 +53,11 @@ public class StudentAssessDo {
 
     @ApiModelProperty(value = "更新时间")
     @Column(columnDefinition = "datetime default now() COMMENT '创建时间' ")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
+
+    @ApiModelProperty(value = "评价时间", hidden = true)
+    private String date;
 
     @ApiModelProperty(value = "评价")
     private String text;
