@@ -8,6 +8,7 @@ import com.teach.wecharprogram.entity.DO.StudentDo;
 import com.teach.wecharprogram.entity.StudentPhysical;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.service.UserService;
+import com.teach.wecharprogram.util.DateUtil;
 import com.teach.wecharprogram.util.StaticUtil;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
@@ -187,7 +188,7 @@ public class StudentController {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/msexcel");
         // 设置浏览器以下载的方式处理该文件名
-        response.setHeader("Content-Disposition", "attachment;filename=".concat(String.valueOf(URLEncoder.encode("学生基本信息.xls", "UTF-8"))));
+        response.setHeader("Content-Disposition", "attachment;filename=" + DateUtil.getNowTime() + ".xls");
         workbook.write(outputStream);
         outputStream.close();
     }
