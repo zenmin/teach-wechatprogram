@@ -12,7 +12,7 @@ import lombok.Data;
  * @Date 2019/7/14 11:36
  */
 @Data
-@ApiModel(value = "学生详细")
+@ApiModel(value = "学生详细", description = "允许导出的字段：name,gender,remark,status,birthday,classesName,schoolName,age")
 @ExcelTarget("studentMsgEntity")
 public class StudentDo {
 

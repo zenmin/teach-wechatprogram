@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.util;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -7,6 +8,7 @@ import com.google.common.io.BaseEncoding;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.common.constant.DefinedCode;
+import com.teach.wecharprogram.entity.StudentPhysical;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -445,6 +447,23 @@ public class StaticUtil {
         HttpSession session = getRequest().getSession();
         return session;
 
+    }
+
+    public static String[] getExportExcelField(Class<?> clazz, String includes) {
+        List<String> list = Arrays.asList(includes.split(","));
+        List<String> tempList = Lists.newArrayList();
+        Field[] declaredFields = clazz.getDeclaredFields();
+        for (Field field : declaredFields) {
+            Excel annotation = field.getAnnotation(Excel.class);
+            if (Objects.nonNull(annotation)) {
+                // 不包含的字段
+                if (!list.contains(field.getName())) {
+                    // easypoi 需要写入中文名称过滤
+                    tempList.add(annotation.name());
+                }
+            }
+        }
+        return tempList.toArray(new String[tempList.size()]);
     }
 
 }

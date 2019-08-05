@@ -2,11 +2,12 @@ package com.teach.wecharprogram.controller;
 
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
-import com.teach.wecharprogram.common.constant.CommonConstant;
-import com.teach.wecharprogram.components.annotation.RequireRole;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.service.UserService;
+import com.teach.wecharprogram.util.DateUtil;
+import com.teach.wecharprogram.util.StaticUtil;
 import io.swagger.annotations.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.web.bind.annotation.*;
 import com.teach.wecharprogram.common.ResponseEntity;
@@ -18,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLEncoder;
 
 
 /**
@@ -145,16 +145,20 @@ public class StudentPhysicalController {
      * @param physical
      * @return
      */
-    @ApiOperation(value = "导出excel", response = ResponseEntity.class)
+    @ApiOperation(value = "导出excel", response = StudentPhysical.class)
+    @ApiImplicitParam(name = "fields", value = "要导出的字段，多个用，隔开  为空导出全部")
     @PostMapping("/export")
-    public void listByPage(StudentPhysical physical, HttpServletResponse response) throws IOException {
+    public void listByPage(StudentPhysical physical, HttpServletResponse response, String fields) throws IOException {
         ExportParams exportParams = new ExportParams("体适能评估", "体适能评估(1)");
+        if (StringUtils.isNotBlank(fields)) {
+            exportParams.setExclusions(StaticUtil.getExportExcelField(StudentPhysical.class, fields));   // 此处传入需要排除的字段
+        }
         Workbook workbook = ExcelExportUtil.exportExcel(exportParams, StudentPhysical.class, studentPhysicalService.list(physical));
         ServletOutputStream outputStream = response.getOutputStream();
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/msexcel");
         // 设置浏览器以下载的方式处理该文件名
-        response.setHeader("Content-Disposition", "attachment;filename=".concat(new String("体适能评估.xls".getBytes("UTF-8"))));
+        response.setHeader("Content-Disposition", "attachment;filename=" + DateUtil.getNowTime() + ".xls");
         workbook.write(outputStream);
         outputStream.close();
     }

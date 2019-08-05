@@ -71,4 +71,5 @@ public class Student extends EntityModel {
         this.classesId = classesId;
         this.classesName = classesName;
     }
+
 }

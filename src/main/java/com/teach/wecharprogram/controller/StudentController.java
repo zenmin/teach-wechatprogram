@@ -5,10 +5,12 @@ import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.components.annotation.RequireRole;
 import com.teach.wecharprogram.entity.DO.StudentDo;
+import com.teach.wecharprogram.entity.StudentPhysical;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.service.UserService;
 import com.teach.wecharprogram.util.StaticUtil;
 import io.swagger.annotations.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -172,11 +174,14 @@ public class StudentController {
      * @param studentDo
      * @return
      */
-    @ApiOperation(value = "导出excel", response = ResponseEntity.class)
+    @ApiOperation(value = "导出excel", response = StudentDo.class)
+    @ApiImplicitParam(name = "fields", value = "要导出的字段，多个用，隔开  为空导出全部")
     @PostMapping("/export")
-    public void export(StudentDo studentDo, HttpServletResponse response) throws IOException {
+    public void export(StudentDo studentDo, HttpServletResponse response, String fields) throws IOException {
         ExportParams exportParams = new ExportParams("学生基本信息", "学生基本信息(1)");
-//        exportParams.setAddIndex(true);
+        if (StringUtils.isNotBlank(fields)) {
+            exportParams.setExclusions(StaticUtil.getExportExcelField(StudentDo.class, fields));   // 此处传入需要排除的字段
+        }
         Workbook workbook = ExcelExportUtil.exportExcel(exportParams, StudentDo.class, studentService.getStudentAllMsg(studentDo));
         ServletOutputStream outputStream = response.getOutputStream();
         response.setCharacterEncoding("utf-8");

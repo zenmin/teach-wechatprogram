@@ -29,7 +29,7 @@ import java.util.Date;
 @TableName("student_physical")
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel("体适能详情/评测详情")
+@ApiModel(value = "体适能详情/评测详情", description = "允许导出的字段：studentName,height,weight,bmi,downValgus,downEightFoot,downXo,downOverextension,downLongLegs,downPelvicGyration,downPelvicAnter,downLeftPelvic,upScoliosis,upThoracic,upWingedScapula,upHighLowShoulders,upRoundShoulders,upAnteriorCervical,upIsCorners,upLateralCurvature,sensitiveScore,sensitiveRemark,speedScore,speedRemark,concertScore,concertRemark,pliableRemark,balanceScore,balanceRemark,powerScore,powerRemark,allRemark,allScore,date,createUserName,updateTime")
 @ExcelTarget("studentPhysicalEntity")
 public class StudentPhysical extends EntityModel {
 
@@ -206,4 +206,5 @@ public class StudentPhysical extends EntityModel {
         this.createUserName = createUserName;
         this.updateTime = updateTime;
     }
+
 }
