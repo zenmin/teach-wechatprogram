@@ -78,7 +78,7 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
         if (Objects.nonNull(schoolId)) {
             // 查询学校下面的班级
             List<Classes> classesList = classesMapper.selectList(new QueryWrapper<Classes>().eq("schoolId", schoolId));
-            List<Long> collect = classesList.stream().map(Classes::getSchoolId).collect(Collectors.toList());
+            List<Long> collect = classesList.stream().map(Classes::getId).collect(Collectors.toList());
             queryWrapper.in("classesId", collect);
         }
         String studentName = studentPhysical.getStudentName();

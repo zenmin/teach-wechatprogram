@@ -202,7 +202,7 @@ public class StudentPhysical extends EntityModel {
     @Excel(name = "评测更新时间", format = "yyyy-MM-dd HH:mm:ss", width = 20)
     private Date updateTime;
 
-    @ApiModelProperty(value = "学校id", hidden = true)
+    @ApiModelProperty(value = "学校id")
     @TableField(exist = false)
     @Transient
     private Long schoolId;
