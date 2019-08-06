@@ -22,6 +22,7 @@ import com.teach.wecharprogram.service.StudentService;
 import com.teach.wecharprogram.service.UpScoreService;
 import com.teach.wecharprogram.service.UserService;
 import com.teach.wecharprogram.util.StaticUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -79,6 +80,10 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
             List<Classes> classesList = classesMapper.selectList(new QueryWrapper<Classes>().eq("schoolId", schoolId));
             List<Long> collect = classesList.stream().map(Classes::getSchoolId).collect(Collectors.toList());
             queryWrapper.in("classesId", collect);
+        }
+        String studentName = studentPhysical.getStudentName();
+        if(StringUtils.isNotBlank(studentName)) {
+            queryWrapper.like("studentName",studentName);
         }
         IPage<StudentPhysical> studentPhysicalIPage = studentPhysicalMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), queryWrapper);
         return Pager.of(studentPhysicalIPage);
