@@ -82,8 +82,8 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
             queryWrapper.in("classesId", collect);
         }
         String studentName = studentPhysical.getStudentName();
-        if(StringUtils.isNotBlank(studentName)) {
-            queryWrapper.like("studentName",studentName);
+        if (StringUtils.isNotBlank(studentName)) {
+            queryWrapper.like("studentName", studentName);
         }
         IPage<StudentPhysical> studentPhysicalIPage = studentPhysicalMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), queryWrapper);
         return Pager.of(studentPhysicalIPage);
@@ -121,6 +121,7 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
             Student one = studentService.getOne(studentPhysical.getStudentId());
             studentPhysical.setClassesId(one.getClassesId());
             studentPhysical.setClassesName(one.getClassesName());
+            studentPhysical.setNo(one.getNo());
             studentPhysical.setCreateUid(id);
             studentPhysical.setCreateUserName(realName);
             studentPhysical.setDate(DateUtil.getNowDate());

@@ -33,6 +33,11 @@ import lombok.NoArgsConstructor;
 @ExcelTarget("studentEntity")
 public class Student extends EntityModel {
 
+    @ApiModelProperty(value = "学号")
+    @Excel(name = "学号")
+    @Column(columnDefinition = "int(11) COMMENT '学号'", unique = true)
+    private Integer no;
+
     @ApiModelProperty(value = "名字")
     @Excel(name = "姓名")
     private String name;
@@ -62,8 +67,5 @@ public class Student extends EntityModel {
     @ApiModelProperty(value = "班级名称")
     @Excel(name = "所在班级")
     private String classesName;
-
-    @ApiModelProperty(value = "排序")
-    private Integer sort;
 
 }

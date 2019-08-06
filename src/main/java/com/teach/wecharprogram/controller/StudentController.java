@@ -116,6 +116,7 @@ public class StudentController {
             student.setClassesId(null);
             student.setClassesName(null);
         }
+        student.setNo(null);    // 学号不更改
         return ResponseEntity.success(studentService.save(student));
     }
 

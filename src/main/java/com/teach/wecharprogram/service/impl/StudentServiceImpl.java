@@ -52,7 +52,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Student> list(Student student) {
-        List<Student> students = studentMapper.selectList(new QueryWrapper<>(student).orderByAsc("sort"));
+        List<Student> students = studentMapper.selectList(new QueryWrapper<>(student).orderByDesc("no"));
         return students;
     }
 
@@ -63,7 +63,7 @@ public class StudentServiceImpl implements StudentService {
         if (StringUtils.isNotBlank(name)) {
             studentQueryWrapper.like("name", name);
         }
-        studentQueryWrapper.orderByAsc("sort");
+        studentQueryWrapper.orderByDesc("no");
         IPage<Student> studentIPage = studentMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), studentQueryWrapper);
         return Pager.of(studentIPage);
     }
@@ -83,8 +83,10 @@ public class StudentServiceImpl implements StudentService {
                 }
             }
         } else {
-            if (Objects.nonNull(student.getSort())) {
-                student.setSort(0);
+            // 查询数据库有无学生 没有设置一个默认学号
+            Integer count = studentMapper.selectCount(null);
+            if (count <= 0) {
+                student.setNo(100000);
             }
             studentMapper.insert(student);
         }

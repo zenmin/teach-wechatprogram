@@ -31,12 +31,16 @@ import java.util.Date;
 @TableName("student_physical")
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "体适能详情/评测详情", description = "允许导出的字段：studentName,height,weight,bmi,downValgus,downEightFoot,downXo,downOverextension,downLongLegs,downPelvicGyration,downPelvicAnter,downLeftPelvic,upScoliosis,upThoracic,upWingedScapula,upHighLowShoulders,upRoundShoulders,upAnteriorCervical,upIsCorners,upLateralCurvature,sensitiveScore,sensitiveRemark,speedScore,speedRemark,concertScore,concertRemark,pliableRemark,balanceScore,balanceRemark,powerScore,powerRemark,allRemark,allScore,date,createUserName,updateTime")
+@ApiModel(value = "体适能详情/评测详情", description = "允许导出的字段：no,studentName,height,weight,bmi,downValgus,downEightFoot,downXo,downOverextension,downLongLegs,downPelvicGyration,downPelvicAnter,downLeftPelvic,upScoliosis,upThoracic,upWingedScapula,upHighLowShoulders,upRoundShoulders,upAnteriorCervical,upIsCorners,upLateralCurvature,sensitiveScore,sensitiveRemark,speedScore,speedRemark,concertScore,concertRemark,pliableRemark,balanceScore,balanceRemark,powerScore,powerRemark,allRemark,allScore,date,createUserName,updateTime")
 @ExcelTarget("studentPhysicalEntity")
 public class StudentPhysical extends EntityModel {
 
     @ApiModelProperty(value = "班级id", hidden = true)
     private Long classesId;
+
+    @ApiModelProperty(value = "学号", hidden = true)
+    @Excel(name = "学号")
+    private Integer no;
 
     @ApiModelProperty(value = "班级名称", hidden = true)
     private String classesName;

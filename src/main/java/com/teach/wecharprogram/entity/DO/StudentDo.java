@@ -13,13 +13,17 @@ import lombok.Data;
  * @Date 2019/7/14 11:36
  */
 @Data
-@ApiModel(value = "学生详细", description = "允许导出的字段：name,gender,remark,status,birthday,classesName,schoolName,age")
+@ApiModel(value = "学生详细", description = "允许导出的字段：no,name,gender,remark,status,birthday,classesName,schoolName,age")
 @ExcelTarget("studentMsgEntity")
 @JsonInclude(JsonInclude.Include.ALWAYS)
 public class StudentDo {
 
     @ApiModelProperty(value = "数据id", hidden = true)
     private String id;
+
+    @ApiModelProperty(value = "名字")
+    @Excel(name = "学号")
+    private Integer no;
 
     @ApiModelProperty(value = "名字")
     @Excel(name = "姓名")
@@ -62,6 +66,4 @@ public class StudentDo {
     @Excel(name = "年龄")
     private Integer age;
 
-    @ApiModelProperty(value = "排序", hidden = true)
-    private Integer sort;
 }
