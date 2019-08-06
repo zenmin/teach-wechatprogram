@@ -5,7 +5,9 @@ import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.entity.DO.StudentDo;
 import com.teach.wecharprogram.entity.RelUserTypeId;
+import com.teach.wecharprogram.entity.StudentPhysical;
 import com.teach.wecharprogram.mapper.RelUserTypeidMapper;
+import com.teach.wecharprogram.mapper.StudentPhysicalMapper;
 import com.teach.wecharprogram.service.StudentService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -40,6 +42,9 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     RelUserTypeidMapper relUserTypeidMapper;
 
+    @Autowired
+    StudentPhysicalMapper studentPhysicalMapper;
+
     @Override
     public Student getOne(Long id) {
         return studentMapper.selectById(id);
@@ -67,7 +72,16 @@ public class StudentServiceImpl implements StudentService {
     @Transactional(rollbackFor = CommonException.class)
     public Student save(Student student) {
         if (Objects.nonNull(student.getId())) {
+            Student one = this.getOne(student.getId());
             studentMapper.updateById(student);
+            if (Objects.nonNull(one)) {
+                if (!one.getName().equals(student.getName())) {
+                    // 更新评测表
+                    StudentPhysical studentPhysical = new StudentPhysical();
+                    studentPhysical.setStudentName(student.getName());
+                    studentPhysicalMapper.update(studentPhysical, new UpdateWrapper<StudentPhysical>().eq("studentId", student.getId()));
+                }
+            }
         } else {
             if (Objects.nonNull(student.getSort())) {
                 student.setSort(0);
