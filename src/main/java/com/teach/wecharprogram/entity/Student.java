@@ -63,13 +63,7 @@ public class Student extends EntityModel {
     @Excel(name = "所在班级")
     private String classesName;
 
-    public Student(String name, Integer gender, Integer status, String birthday, Long classesId, String classesName) {
-        this.name = name;
-        this.gender = gender;
-        this.status = status;
-        this.birthday = birthday;
-        this.classesId = classesId;
-        this.classesName = classesName;
-    }
+    @ApiModelProperty(value = "排序")
+    private Integer sort;
 
 }

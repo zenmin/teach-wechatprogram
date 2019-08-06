@@ -4,13 +4,12 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.DefinedCode;
+import com.teach.wecharprogram.entity.*;
 import com.teach.wecharprogram.entity.DO.StudentDo;
 import com.teach.wecharprogram.entity.DO.UpScoreDo;
-import com.teach.wecharprogram.entity.Student;
-import com.teach.wecharprogram.entity.UpScore;
-import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.entity.vo.StudentPhysicalTextVO;
 import com.teach.wecharprogram.entity.vo.StudentPhysicalVO;
+import com.teach.wecharprogram.mapper.ClassesMapper;
 import com.teach.wecharprogram.mapper.UpScoreMapper;
 import com.teach.wecharprogram.service.StudentPhysicalService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -18,7 +17,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
 import com.teach.wecharprogram.entity.DO.Pager;
-import com.teach.wecharprogram.entity.StudentPhysical;
 import com.teach.wecharprogram.mapper.StudentPhysicalMapper;
 import com.teach.wecharprogram.service.StudentService;
 import com.teach.wecharprogram.service.UpScoreService;
@@ -58,6 +56,9 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
     @Autowired
     UpScoreService upScoreService;
 
+    @Autowired
+    ClassesMapper classesMapper;
+
     @Override
     public StudentPhysical getOne(Long id) {
         return studentPhysicalMapper.selectById(id);
@@ -71,7 +72,15 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
 
     @Override
     public Pager listByPage(Pager pager, StudentPhysical studentPhysical) {
-        IPage<StudentPhysical> studentPhysicalIPage = studentPhysicalMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), new QueryWrapper<>(studentPhysical).orderByDesc("createTime"));
+        QueryWrapper<StudentPhysical> queryWrapper = new QueryWrapper<>(studentPhysical).orderByDesc("createTime");
+        Long schoolId = studentPhysical.getSchoolId();
+        if (Objects.nonNull(schoolId)) {
+            // 查询学校下面的班级
+            List<Classes> classesList = classesMapper.selectList(new QueryWrapper<Classes>().eq("schoolId", schoolId));
+            List<Long> collect = classesList.stream().map(Classes::getSchoolId).collect(Collectors.toList());
+            queryWrapper.in("classesId", collect);
+        }
+        IPage<StudentPhysical> studentPhysicalIPage = studentPhysicalMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), queryWrapper);
         return Pager.of(studentPhysicalIPage);
     }
 
@@ -106,6 +115,7 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
             // 查询学生所在班级
             Student one = studentService.getOne(studentPhysical.getStudentId());
             studentPhysical.setClassesId(one.getClassesId());
+            studentPhysical.setClassesName(one.getClassesName());
             studentPhysical.setCreateUid(id);
             studentPhysical.setCreateUserName(realName);
             studentPhysical.setDate(DateUtil.getNowDate());

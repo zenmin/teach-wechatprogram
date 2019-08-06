@@ -3,20 +3,15 @@ package com.teach.wecharprogram.service.impl;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.entity.*;
 import com.teach.wecharprogram.entity.DO.StudentDo;
-import com.teach.wecharprogram.entity.RelUserTypeId;
-import com.teach.wecharprogram.entity.School;
-import com.teach.wecharprogram.mapper.RelUserTypeidMapper;
-import com.teach.wecharprogram.mapper.SchoolMapper;
-import com.teach.wecharprogram.mapper.StudentMapper;
+import com.teach.wecharprogram.mapper.*;
 import com.teach.wecharprogram.service.ClassesService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
 import com.teach.wecharprogram.entity.DO.Pager;
-import com.teach.wecharprogram.entity.Classes;
-import com.teach.wecharprogram.mapper.ClassesMapper;
 import com.teach.wecharprogram.util.StaticUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +50,9 @@ public class ClassesServiceImpl implements ClassesService {
     @Autowired
     SchoolMapper schoolMapper;
 
+    @Autowired
+    StudentPhysicalMapper studentPhysicalMapper;
+
     @Override
     public Classes getOne(Long id) {
         return classesMapper.selectById(id);
@@ -83,7 +81,20 @@ public class ClassesServiceImpl implements ClassesService {
     @Transactional(rollbackFor = CommonException.class)
     public Classes save(Classes classes) {
         if (Objects.nonNull(classes.getId())) {
+            Classes one = this.getOne(classes.getId());
             classesMapper.updateById(classes);
+            if (Objects.nonNull(one)) {
+                if (!one.getName().equals(classes.getName())) {
+                    // 更新本班级下学生的班级名称
+                    Student student = new Student();
+                    student.setClassesName(classes.getName());
+                    studentMapper.update(student, new UpdateWrapper<Student>().eq("classesId", classes.getId()));
+                    // 更新评测表班级名称
+                    StudentPhysical studentPhysical = new StudentPhysical();
+                    studentPhysical.setClassesName(classes.getName());
+                    studentPhysicalMapper.update(studentPhysical, new UpdateWrapper<StudentPhysical>().eq("classesId", classes.getId()));
+                }
+            }
         } else {
             StaticUtil.validateField(classes.getName());
             StaticUtil.validateObject(classes.getSchoolId());

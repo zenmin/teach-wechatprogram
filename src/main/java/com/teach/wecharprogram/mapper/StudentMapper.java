@@ -26,7 +26,10 @@ public interface StudentMapper extends BaseMapper<Student> {
     @Update("update student set classesId = null,classesName = null where classesId in (#{classesIds})")
     void updateClassIdNull(String classesIds);
 
-    @Select("<script>select s.*,TIMESTAMPDIFF(YEAR,s.birthday,CURRENT_DATE) as age,c.schoolName as schoolName from student s left join classes c on s.classesId = c.id where s.classesId = #{classesId} <if test=\"name != null \"> and s.name like concat('%',#{name},'%')  </if> </script>")
+    @Select("<script>select s.*,TIMESTAMPDIFF(YEAR,s.birthday,CURRENT_DATE) as age,c.schoolName as schoolName from student s left join classes c on s.classesId = c.id " +
+            "where s.classesId = #{classesId} " +
+            "<if test=\"name != null \"> and s.name like concat('%',#{name},'%')  </if>" +
+            " order by s.sort asc </script>")
     List<StudentDo> selectStudents(@Param("classesId") Long classesId, @Param("name") String name);
 
     @Select("<script>select s.*,TIMESTAMPDIFF(YEAR,s.birthday,CURRENT_DATE) as age,c.schoolName as schoolName from student s left join classes c on s.classesId = c.id where 1=1 "
@@ -35,7 +38,7 @@ public interface StudentMapper extends BaseMapper<Student> {
             "<if test=\"status != null \"> and s.status = #{status}  </if> " +
             "<if test=\"birthday != null \"> and YEAR(s.birthday) = #{birthday}  </if> " +
             "<if test=\"schoolId != null \"> and s.schoolId = #{schoolId}  </if> " +
-            " order by s.birthday asc" +
+            " order by s.birthday asc,s.sort asc" +
             "</script>")
     List<StudentDo> getStudentAllMsg(@Param("name") String name, @Param("gender") Integer gender, @Param("status") Integer status, @Param("birthday") String birthday, @Param("classesId") Long classesId, @Param("schoolId") Long schoolId);
 

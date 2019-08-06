@@ -2,6 +2,7 @@ package com.teach.wecharprogram.entity.DO;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import cn.afterturn.easypoi.excel.annotation.ExcelTarget;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -14,6 +15,7 @@ import lombok.Data;
 @Data
 @ApiModel(value = "学生详细", description = "允许导出的字段：name,gender,remark,status,birthday,classesName,schoolName,age")
 @ExcelTarget("studentMsgEntity")
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class StudentDo {
 
     @ApiModelProperty(value = "数据id", hidden = true)
@@ -59,4 +61,7 @@ public class StudentDo {
     @ApiModelProperty(value = "年龄", hidden = true)
     @Excel(name = "年龄")
     private Integer age;
+
+    @ApiModelProperty(value = "排序", hidden = true)
+    private Integer sort;
 }

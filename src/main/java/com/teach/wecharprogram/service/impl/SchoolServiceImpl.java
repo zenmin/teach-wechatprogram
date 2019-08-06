@@ -82,14 +82,17 @@ public class SchoolServiceImpl implements SchoolService {
     public School save(School school) {
         if (Objects.nonNull(school.getId())) {
             School one = this.getOne(school.getId());
-            // 判断是否修改了名称
             schoolMapper.updateById(school);
-            if (!one.getName().equals(school.getName())) {
-                // 更新所有班级的学校名称
-                Classes classes = new Classes();
-                classes.setName(school.getName());
-                classesMapper.update(classes, new UpdateWrapper<Classes>().eq("schoolId", one.getId()));
+            // 判断是否修改了名称
+            if (Objects.nonNull(one)) {
+                if (!one.getName().equals(school.getName())) {
+                    // 更新所有班级的学校名称
+                    Classes classes = new Classes();
+                    classes.setName(school.getName());
+                    classesMapper.update(classes, new UpdateWrapper<Classes>().eq("schoolId", one.getId()));
+                }
             }
+
         } else {
             StaticUtil.validateField(school.getName());
             if (Objects.isNull(school.getStatus())) {

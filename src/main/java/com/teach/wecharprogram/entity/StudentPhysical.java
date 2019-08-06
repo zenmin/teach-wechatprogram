@@ -2,6 +2,7 @@ package com.teach.wecharprogram.entity;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import cn.afterturn.easypoi.excel.annotation.ExcelTarget;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.teach.wecharprogram.entity.base.EntityModel;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 /**
@@ -35,6 +37,9 @@ public class StudentPhysical extends EntityModel {
 
     @ApiModelProperty(value = "班级id", hidden = true)
     private Long classesId;
+
+    @ApiModelProperty(value = "班级名称", hidden = true)
+    private String classesName;
 
     @ApiModelProperty(value = "学生姓名", hidden = true)
     @Excel(name = "姓名")
@@ -196,6 +201,11 @@ public class StudentPhysical extends EntityModel {
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "评测更新时间", format = "yyyy-MM-dd HH:mm:ss", width = 20)
     private Date updateTime;
+
+    @ApiModelProperty(value = "学校id", hidden = true)
+    @TableField(exist = false)
+    @Transient
+    private Long schoolId;
 
     public StudentPhysical(Long classesId, Long studentId, Double allScore, String date, Long createUid, String createUserName, Date updateTime) {
         this.classesId = classesId;

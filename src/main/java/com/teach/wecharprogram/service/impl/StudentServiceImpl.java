@@ -47,7 +47,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Student> list(Student student) {
-        List<Student> students = studentMapper.selectList(new QueryWrapper<>(student));
+        List<Student> students = studentMapper.selectList(new QueryWrapper<>(student).orderByAsc("sort"));
         return students;
     }
 
@@ -58,6 +58,7 @@ public class StudentServiceImpl implements StudentService {
         if (StringUtils.isNotBlank(name)) {
             studentQueryWrapper.like("name", name);
         }
+        studentQueryWrapper.orderByAsc("sort");
         IPage<Student> studentIPage = studentMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), studentQueryWrapper);
         return Pager.of(studentIPage);
     }
@@ -68,6 +69,9 @@ public class StudentServiceImpl implements StudentService {
         if (Objects.nonNull(student.getId())) {
             studentMapper.updateById(student);
         } else {
+            if (Objects.nonNull(student.getSort())) {
+                student.setSort(0);
+            }
             studentMapper.insert(student);
         }
         return student;
