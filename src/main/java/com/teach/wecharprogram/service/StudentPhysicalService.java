@@ -1,6 +1,7 @@
 package com.teach.wecharprogram.service;
 
 import com.teach.wecharprogram.entity.DO.Pager;
+import com.teach.wecharprogram.entity.DO.StudentPhysicalDo;
 import com.teach.wecharprogram.entity.StudentPhysical;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.entity.vo.StudentPhysicalTextVO;
@@ -21,7 +22,7 @@ public interface StudentPhysicalService {
 
     List<StudentPhysical> list(StudentPhysical studentPhysical);
 
-    Pager listByPage(Pager pager,StudentPhysical studentPhysical);
+    Pager listByPage(Pager pager,StudentPhysicalDo studentPhysical);
 
     StudentPhysical save(StudentPhysical studentPhysical);
 

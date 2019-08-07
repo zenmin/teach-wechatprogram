@@ -38,6 +38,11 @@ public class Pager<T> {
     @ApiModelProperty(hidden = true)
     private long totalPages;
 
+    public Pager(int num, int size) {
+        this.num = num;
+        this.size = size;
+    }
+
     public static Pager of(IPage iPage) {
         return new Pager<>(iPage.getCurrent(), iPage.getSize(), iPage.getRecords(), iPage.getPages() <= iPage.getCurrent(), iPage.getTotal(), iPage.getPages());
     }

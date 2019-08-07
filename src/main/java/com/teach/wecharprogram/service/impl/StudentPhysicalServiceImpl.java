@@ -6,11 +6,13 @@ import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.DefinedCode;
 import com.teach.wecharprogram.entity.*;
 import com.teach.wecharprogram.entity.DO.StudentDo;
+import com.teach.wecharprogram.entity.DO.StudentPhysicalDo;
 import com.teach.wecharprogram.entity.DO.UpScoreDo;
 import com.teach.wecharprogram.entity.vo.StudentPhysicalTextVO;
 import com.teach.wecharprogram.entity.vo.StudentPhysicalVO;
 import com.teach.wecharprogram.mapper.ClassesMapper;
 import com.teach.wecharprogram.mapper.UpScoreMapper;
+import com.teach.wecharprogram.repostory.StudentPhysicalRepository;
 import com.teach.wecharprogram.service.StudentPhysicalService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -60,6 +62,9 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
     @Autowired
     ClassesMapper classesMapper;
 
+    @Autowired
+    StudentPhysicalRepository studentPhysicalRepository;
+
     @Override
     public StudentPhysical getOne(Long id) {
         return studentPhysicalMapper.selectById(id);
@@ -72,21 +77,9 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
     }
 
     @Override
-    public Pager listByPage(Pager pager, StudentPhysical studentPhysical) {
-        QueryWrapper<StudentPhysical> queryWrapper = new QueryWrapper<>(studentPhysical).orderByDesc("createTime");
-        Long schoolId = studentPhysical.getSchoolId();
-        if (Objects.nonNull(schoolId)) {
-            // 查询学校下面的班级
-            List<Classes> classesList = classesMapper.selectList(new QueryWrapper<Classes>().eq("schoolId", schoolId));
-            List<Long> collect = classesList.stream().map(Classes::getId).collect(Collectors.toList());
-            queryWrapper.in("classesId", collect);
-        }
-        String studentName = studentPhysical.getStudentName();
-        if (StringUtils.isNotBlank(studentName)) {
-            queryWrapper.like("studentName", studentName);
-        }
-        IPage<StudentPhysical> studentPhysicalIPage = studentPhysicalMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), queryWrapper);
-        return Pager.of(studentPhysicalIPage);
+    public Pager listByPage(Pager pager, StudentPhysicalDo studentPhysical) {
+        Pager<StudentPhysicalDo> studentPhysicalIPage = studentPhysicalRepository.selectPage(pager, studentPhysical);
+        return studentPhysicalIPage;
     }
 
     @Override

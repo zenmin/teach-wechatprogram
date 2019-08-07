@@ -2,6 +2,7 @@ package com.teach.wecharprogram.controller;
 
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
+import com.teach.wecharprogram.entity.DO.StudentPhysicalDo;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.service.UserService;
 import com.teach.wecharprogram.util.DateUtil;
@@ -61,7 +62,7 @@ public class StudentPhysicalController {
      */
     @ApiOperation(value = "查全部 可带条件分页", response = ResponseEntity.class)
     @PostMapping("/listByPage")
-    public ResponseEntity listByPage(Pager pager, StudentPhysical studentPhysical) {
+    public ResponseEntity listByPage(Pager pager, StudentPhysicalDo studentPhysical) {
         return ResponseEntity.success(studentPhysicalService.listByPage(pager, studentPhysical));
     }
 
@@ -148,12 +149,12 @@ public class StudentPhysicalController {
     @ApiOperation(value = "导出excel", response = StudentPhysical.class)
     @ApiImplicitParam(name = "fields", value = "要导出的字段，多个用，隔开  为空导出全部")
     @PostMapping("/export")
-    public void listByPage(StudentPhysical physical, HttpServletResponse response, String fields) throws IOException {
+    public void listByPage(StudentPhysicalDo physical, HttpServletResponse response, String fields) throws IOException {
         ExportParams exportParams = new ExportParams("体适能评估", "体适能评估(1)");
         if (StringUtils.isNotBlank(fields)) {
-            exportParams.setExclusions(StaticUtil.getExportExcelField(StudentPhysical.class, fields));   // 此处传入需要排除的字段
+            exportParams.setExclusions(StaticUtil.getExportExcelField(StudentPhysicalDo.class, fields));   // 此处传入需要排除的字段
         }
-        Workbook workbook = ExcelExportUtil.exportExcel(exportParams, StudentPhysical.class, studentPhysicalService.list(physical));
+        Workbook workbook = ExcelExportUtil.exportExcel(exportParams, StudentPhysicalDo.class, studentPhysicalService.listByPage(new Pager(0, Integer.MAX_VALUE), physical).getData());
         ServletOutputStream outputStream = response.getOutputStream();
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/msexcel");
