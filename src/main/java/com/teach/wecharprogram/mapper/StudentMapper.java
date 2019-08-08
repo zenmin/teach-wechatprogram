@@ -38,7 +38,7 @@ public interface StudentMapper extends BaseMapper<Student> {
             "<if test=\"status != null \"> and s.status = #{status}  </if> " +
             "<if test=\"birthday != null \"> and YEAR(s.birthday) = #{birthday}  </if> " +
             "<if test=\"schoolId != null \"> and s.schoolId = #{schoolId}  </if> " +
-            "<if test=\"classesId != null \"> and s.schoolId = #{classesId}  </if> " +
+            "<if test=\"classesId != null \"> and s.classesId = #{classesId}  </if> " +
             " order by s.no asc,s.birthday asc" +
             "</script>")
     List<StudentDo> getStudentAllMsg(@Param("name") String name, @Param("gender") Integer gender, @Param("status") Integer status, @Param("birthday") String birthday, @Param("classesId") Long classesId, @Param("schoolId") Long schoolId);

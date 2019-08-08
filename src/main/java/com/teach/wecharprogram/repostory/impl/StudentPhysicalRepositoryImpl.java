@@ -3,6 +3,7 @@ package com.teach.wecharprogram.repostory.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.DO.StudentPhysicalDo;
+import com.teach.wecharprogram.entity.IndexVo;
 import com.teach.wecharprogram.repostory.StudentPhysicalRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -100,5 +102,12 @@ public class StudentPhysicalRepositoryImpl implements StudentPhysicalRepository 
         studentPhysicalDoPage.setTotal(count);
         studentPhysicalDoPage.setPages(count <= pager.getSize() ? 1 : (int) (count / pager.getSize()));
         return Pager.of(studentPhysicalDoPage);
+    }
+
+    @Override
+    public IndexVo getIndex() {
+        String sql = "SELECT count(*) as count from classes as classesNum UNION ALL SELECT count(*) as studentNum from student where `status` != 0 UNION all SELECT count(*) as userNum from user where `status` = 1 UNION all SELECT count(*) as schoolNum from school where `status` != 0 ";
+        List<Long> counts = jdbcTemplate.queryForList(sql, Long.class);
+        return IndexVo.of(counts);
     }
 }

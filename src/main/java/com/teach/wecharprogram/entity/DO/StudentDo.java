@@ -21,7 +21,7 @@ public class StudentDo {
     @ApiModelProperty(value = "数据id", hidden = true)
     private String id;
 
-    @ApiModelProperty(value = "名字")
+    @ApiModelProperty(value = "学号")
     @Excel(name = "学号")
     private Integer no;
 

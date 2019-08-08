@@ -2,6 +2,7 @@ package com.teach.wecharprogram.repostory;
 
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.DO.StudentPhysicalDo;
+import com.teach.wecharprogram.entity.IndexVo;
 import com.teach.wecharprogram.entity.StudentPhysical;
 
 /**
@@ -13,5 +14,5 @@ public interface StudentPhysicalRepository {
 
     Pager<StudentPhysicalDo> selectPage(Pager pager, StudentPhysicalDo studentPhysical);
 
-
+    IndexVo getIndex();
 }

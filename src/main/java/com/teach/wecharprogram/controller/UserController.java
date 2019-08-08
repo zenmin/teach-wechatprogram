@@ -6,6 +6,7 @@ import com.teach.wecharprogram.common.constant.DefinedCode;
 import com.teach.wecharprogram.components.annotation.RequireRole;
 import com.teach.wecharprogram.entity.vo.AdminUserVo;
 import com.teach.wecharprogram.entity.vo.UpdateUserVo;
+import com.teach.wecharprogram.service.IndexService;
 import com.teach.wecharprogram.util.StaticUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +41,9 @@ public class UserController {
 
     @Value("${spring.profiles.active}")
     String env;
+
+    @Autowired
+    IndexService indexService;
 
     /**
      * 根据id查询一条数据
@@ -172,6 +176,15 @@ public class UserController {
         } else {
             throw new CommonException(DefinedCode.NOTAUTH_OPTION, "非开发环境不允许切换角色！");
         }
+    }
+
+    /**
+     * @return 首页信息
+     */
+    @ApiOperation(value = "首页信息", response = ResponseEntity.class)
+    @PostMapping("/index")
+    public ResponseEntity index() {
+        return ResponseEntity.success(indexService.getIndex());
     }
 
 }
