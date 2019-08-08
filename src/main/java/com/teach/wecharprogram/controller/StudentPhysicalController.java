@@ -146,7 +146,7 @@ public class StudentPhysicalController {
      * @param physical
      * @return
      */
-    @ApiOperation(value = "导出excel", response = StudentPhysical.class)
+    @ApiOperation(value = "导出excel", response = StudentPhysicalDo.class)
     @ApiImplicitParam(name = "fields", value = "要导出的字段，多个用，隔开  为空导出全部")
     @PostMapping("/export")
     public void listByPage(StudentPhysicalDo physical, HttpServletResponse response, String fields) throws IOException {
