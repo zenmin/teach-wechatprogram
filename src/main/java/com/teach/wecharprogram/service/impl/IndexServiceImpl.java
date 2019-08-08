@@ -1,10 +1,11 @@
 package com.teach.wecharprogram.service.impl;
 
-import com.teach.wecharprogram.entity.IndexVo;
 import com.teach.wecharprogram.repostory.StudentPhysicalRepository;
 import com.teach.wecharprogram.service.IndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 
 /**
@@ -19,10 +20,9 @@ public class IndexServiceImpl implements IndexService {
     StudentPhysicalRepository studentPhysicalRepository;
 
     @Override
-    public IndexVo getIndex() {
-        IndexVo index = studentPhysicalRepository.getIndex();
+    public Map getIndex() {
+        Map index = studentPhysicalRepository.getIndex();
         return index;
     }
-
 
 }

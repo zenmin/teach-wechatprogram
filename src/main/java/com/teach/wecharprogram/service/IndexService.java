@@ -1,6 +1,6 @@
 package com.teach.wecharprogram.service;
 
-import com.teach.wecharprogram.entity.IndexVo;
+import java.util.Map;
 
 /**
  * @Describle This Class Is
@@ -9,6 +9,6 @@ import com.teach.wecharprogram.entity.IndexVo;
  */
 public interface IndexService {
 
-    IndexVo getIndex();
+    Map getIndex();
 
 }

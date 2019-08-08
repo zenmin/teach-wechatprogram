@@ -186,5 +186,4 @@ public class UserController {
     public ResponseEntity index() {
         return ResponseEntity.success(indexService.getIndex());
     }
-
 }

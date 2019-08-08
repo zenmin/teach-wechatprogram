@@ -5,6 +5,9 @@ import com.teach.wecharprogram.entity.DO.StudentPhysicalDo;
 import com.teach.wecharprogram.entity.IndexVo;
 import com.teach.wecharprogram.entity.StudentPhysical;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Describle This Class Is
  * @Author ZengMin
@@ -14,5 +17,6 @@ public interface StudentPhysicalRepository {
 
     Pager<StudentPhysicalDo> selectPage(Pager pager, StudentPhysicalDo studentPhysical);
 
-    IndexVo getIndex();
+    Map getIndex();
+
 }

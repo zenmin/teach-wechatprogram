@@ -37,7 +37,7 @@ public interface StudentMapper extends BaseMapper<Student> {
             "<if test=\"gender != null \"> and s.gender = #{gender}  </if> " +
             "<if test=\"status != null \"> and s.status = #{status}  </if> " +
             "<if test=\"birthday != null \"> and YEAR(s.birthday) = #{birthday}  </if> " +
-            "<if test=\"schoolId != null \"> and s.schoolId = #{schoolId}  </if> " +
+            "<if test=\"schoolId != null \"> and c.schoolId = #{schoolId}  </if> " +
             "<if test=\"classesId != null \"> and s.classesId = #{classesId}  </if> " +
             " order by s.no asc,s.birthday asc" +
             "</script>")

@@ -1,6 +1,8 @@
 package com.teach.wecharprogram.repostory.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.ImmutableMap;
+import com.teach.wecharprogram.entity.DO.BmiDo;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.DO.StudentPhysicalDo;
 import com.teach.wecharprogram.entity.IndexVo;
@@ -9,10 +11,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -105,9 +109,12 @@ public class StudentPhysicalRepositoryImpl implements StudentPhysicalRepository 
     }
 
     @Override
-    public IndexVo getIndex() {
+    public Map getIndex() {
         String sql = "SELECT count(*) as count from classes as classesNum UNION ALL SELECT count(*) as studentNum from student where `status` != 0 UNION all SELECT count(*) as userNum from user where `status` = 1 UNION all SELECT count(*) as schoolNum from school where `status` != 0 ";
         List<Long> counts = jdbcTemplate.queryForList(sql, Long.class);
-        return IndexVo.of(counts);
+        String bmiSql = "SELECT sum(score) as score ,date from up_score GROUP BY date  ORDER BY date asc LIMIT 7";
+        List<BmiDo> list = jdbcTemplate.query(bmiSql, new BeanPropertyRowMapper<>(BmiDo.class));
+        return ImmutableMap.of("index", IndexVo.of(counts), "bmi", list);
     }
+
 }
