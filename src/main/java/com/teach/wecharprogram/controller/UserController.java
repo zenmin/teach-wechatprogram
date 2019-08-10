@@ -80,6 +80,7 @@ public class UserController {
      */
     @ApiOperation(value = "带ID更新 不带ID新增", response = ResponseEntity.class)
     @PostMapping("/save")
+    @RequireRole(CommonConstant.ROLE_ADMIN)
     public ResponseEntity saveOrUpdate(User user) {
         return ResponseEntity.success(userService.save(user));
     }

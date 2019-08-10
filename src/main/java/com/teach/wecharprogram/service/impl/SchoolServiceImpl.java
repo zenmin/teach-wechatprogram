@@ -71,6 +71,7 @@ public class SchoolServiceImpl implements SchoolService {
         QueryWrapper<School> schoolQueryWrapper = new QueryWrapper<>(school);
         String name = school.getName();
         if (StringUtils.isNotBlank(name)) {
+            school.setName(null);
             schoolQueryWrapper.like("name", name);
         }
         IPage<School> schoolIPage = schoolMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), schoolQueryWrapper);

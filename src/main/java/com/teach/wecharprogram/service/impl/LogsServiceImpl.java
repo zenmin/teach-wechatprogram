@@ -1,5 +1,6 @@
 package com.teach.wecharprogram.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.service.LogsService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -9,8 +10,10 @@ import com.google.common.collect.Lists;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.Logs;
 import com.teach.wecharprogram.mapper.LogsMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
@@ -29,10 +32,23 @@ import java.util.Objects;
  */
 
 @Service
+@Slf4j
 public class LogsServiceImpl implements LogsService {
 
     @Autowired
     LogsMapper logsMapper;
+
+    /**
+     * 每周一任务 清理访问日志  清理七天前的访问日志
+     */
+    @Scheduled(cron = "* 10 0 * * MON")
+    public void everyWeekExecute() {
+        log.info("清理访问日志开始...");
+        long l = DateUtil.plusDays(System.currentTimeMillis(), -7L);
+        String s = DateUtil.millisToDateTime(l, "yyyy-MM-dd");
+        logsMapper.delete(new UpdateWrapper<Logs>().lt("date", s));
+        log.info("清理访问日志结束...");
+    }
 
     @Override
     public Logs getOne(Long id) {

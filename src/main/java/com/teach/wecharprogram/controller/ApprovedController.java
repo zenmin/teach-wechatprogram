@@ -47,6 +47,7 @@ public class ApprovedController {
     @ApiOperation(value = "根据id查询一条数据", response = ResponseEntity.class)
     @ApiImplicitParam(name = "id", value = "主键", required = true)
     @PostMapping("/getOne")
+    @RequireRole({CommonConstant.ROLE_TEACHER, CommonConstant.ROLE_HEADMASTER, CommonConstant.ROLE_ADMIN})
     public ResponseEntity getOne(Long id) {
         return ResponseEntity.success(approvedService.getOne(id));
     }
@@ -60,6 +61,7 @@ public class ApprovedController {
      */
     @ApiOperation(value = "查全部 可带条件分页", response = ResponseEntity.class)
     @PostMapping("/listByPage")
+    @RequireRole({CommonConstant.ROLE_TEACHER, CommonConstant.ROLE_HEADMASTER, CommonConstant.ROLE_ADMIN})
     public ResponseEntity listByPage(Pager pager, Approved approved) {
         return ResponseEntity.success(approvedService.listByPage(pager, approved));
     }
@@ -72,6 +74,7 @@ public class ApprovedController {
      */
     @ApiOperation(value = "带ID更新 不带ID新增", response = ResponseEntity.class)
     @PostMapping("/save")
+    @RequireRole({CommonConstant.ROLE_TEACHER, CommonConstant.ROLE_HEADMASTER, CommonConstant.ROLE_ADMIN})
     public ResponseEntity saveOrUpdate(Approved approved) {
         return ResponseEntity.success(approvedService.save(approved));
     }
@@ -85,6 +88,7 @@ public class ApprovedController {
     @ApiOperation(value = "根据id删除 多个用,隔开", response = ResponseEntity.class)
     @ApiImplicitParam(name = "ids", value = "主键 多个用,隔开", required = true)
     @PostMapping("/delete")
+    @RequireRole({CommonConstant.ROLE_TEACHER, CommonConstant.ROLE_HEADMASTER, CommonConstant.ROLE_ADMIN})
     public ResponseEntity delete(String ids) {
         return ResponseEntity.success(approvedService.delete(ids));
     }
@@ -97,7 +101,7 @@ public class ApprovedController {
     @ApiOperation(value = "审批", response = ResponseEntity.class)
     @PostMapping("/approve")
     @RequireRole({CommonConstant.ROLE_TEACHER, CommonConstant.ROLE_HEADMASTER, CommonConstant.ROLE_ADMIN})
-    public ResponseEntity approve(ApprovedVo approvedVo, @ApiParam(hidden = true) @RequestHeader String token) {
+    public ResponseEntity approve(ApprovedVo approvedVo) {
         StaticUtil.validateObject(approvedVo.getId(), approvedVo.getResultCode());
         User loginUser = userService.getLoginUser();
         approvedVo.setApprovedUserName(loginUser.getRealName());
@@ -112,6 +116,7 @@ public class ApprovedController {
      */
     @ApiOperation(value = "获取当前待审批列表", response = ResponseEntity.class)
     @PostMapping("/getMyApprove")
+    @RequireRole({CommonConstant.ROLE_TEACHER, CommonConstant.ROLE_HEADMASTER, CommonConstant.ROLE_ADMIN})
     public ResponseEntity getMyApprove(Pager pager, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
         String userRoleCode = loginUser.getRoleCode();
@@ -139,6 +144,7 @@ public class ApprovedController {
      */
     @ApiOperation(value = "获取当前待审批数量", response = ResponseEntity.class)
     @PostMapping("/getMyApproveCount")
+    @RequireRole({CommonConstant.ROLE_TEACHER, CommonConstant.ROLE_HEADMASTER, CommonConstant.ROLE_ADMIN})
     public ResponseEntity getMyApproveCount(HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
         String userRoleCode = loginUser.getRoleCode();

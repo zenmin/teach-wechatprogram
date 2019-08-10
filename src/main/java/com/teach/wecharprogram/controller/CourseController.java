@@ -1,5 +1,7 @@
 package com.teach.wecharprogram.controller;
 
+import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.components.annotation.RequireRole;
 import com.teach.wecharprogram.service.UserService;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,6 +66,7 @@ public class CourseController {
      */
     @ApiOperation(value = "带ID更新 不带ID新增", response = ResponseEntity.class)
     @PostMapping("/save")
+    @RequireRole({CommonConstant.ROLE_TRAIN, CommonConstant.ROLE_ADMIN})
     public ResponseEntity saveOrUpdate(Course course) {
         course.setUid(userService.getLoginUser().getId());
         return ResponseEntity.success(courseService.save(course));
@@ -78,6 +81,7 @@ public class CourseController {
     @ApiOperation(value = "根据id删除 多个用,隔开", response = ResponseEntity.class)
     @ApiImplicitParam(name = "ids", value = "主键 多个用,隔开", required = true)
     @PostMapping("/delete")
+    @RequireRole({CommonConstant.ROLE_TRAIN, CommonConstant.ROLE_ADMIN})
     public ResponseEntity delete(String ids) {
         return ResponseEntity.success(courseService.delete(ids));
     }

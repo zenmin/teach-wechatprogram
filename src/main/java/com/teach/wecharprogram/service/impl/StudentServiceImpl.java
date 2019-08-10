@@ -61,6 +61,7 @@ public class StudentServiceImpl implements StudentService {
         QueryWrapper<Student> studentQueryWrapper = new QueryWrapper<>(student);
         String name = student.getName();
         if (StringUtils.isNotBlank(name)) {
+            student.setName(null);
             studentQueryWrapper.like("name", name);
         }
         studentQueryWrapper.orderByDesc("no");

@@ -79,6 +79,7 @@ public class CoursePlanController {
      */
     @ApiOperation(value = "1、安排课程", response = ResponseEntity.class)
     @PostMapping("/save")
+    @RequireRole({CommonConstant.ROLE_TRAIN, CommonConstant.ROLE_ADMIN})
     public ResponseEntity saveOrUpdate(@RequestBody List<CoursePlan> coursePlan) {
         return ResponseEntity.success(coursePlanService.save(coursePlan));
     }

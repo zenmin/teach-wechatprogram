@@ -9,7 +9,6 @@ import javax.persistence.*;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 

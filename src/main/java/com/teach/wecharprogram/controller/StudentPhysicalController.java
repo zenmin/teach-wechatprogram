@@ -2,6 +2,8 @@ package com.teach.wecharprogram.controller;
 
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
+import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.components.annotation.RequireRole;
 import com.teach.wecharprogram.entity.DO.StudentPhysicalDo;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.service.UserService;
@@ -74,6 +76,7 @@ public class StudentPhysicalController {
      */
     @ApiOperation(value = "带ID更新 不带ID新增", response = ResponseEntity.class)
     @PostMapping("/save")
+    @RequireRole({CommonConstant.ROLE_TRAIN})
     public ResponseEntity saveOrUpdate(StudentPhysical studentPhysical) {
         return ResponseEntity.success(studentPhysicalService.save(studentPhysical));
     }
@@ -87,6 +90,7 @@ public class StudentPhysicalController {
     @ApiOperation(value = "根据id删除 多个用,隔开", response = ResponseEntity.class)
     @ApiImplicitParam(name = "ids", value = "主键 多个用,隔开", required = true)
     @PostMapping("/delete")
+    @RequireRole({CommonConstant.ROLE_ADMIN, CommonConstant.ROLE_TRAIN})
     public ResponseEntity delete(String ids) {
         return ResponseEntity.success(studentPhysicalService.delete(ids));
     }

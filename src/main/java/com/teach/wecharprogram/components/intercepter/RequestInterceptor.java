@@ -45,7 +45,7 @@ public class RequestInterceptor implements HandlerInterceptor {
         Map<String, String[]> parameterMap = request.getParameterMap();
         String params = StaticUtil.objectMapper.writeValueAsString(parameterMap);
         log.info("客户端ip:[{}]请求URL:[{}] ,请求params:[{}]", IpHelper.getRequestIpAddr(request), request.getRequestURL(), params);
-//        commonLogService.save(new Logs(IpHelper.getRequestIpAddr(request), request.getRequestURL().toString(), params));
+        commonLogService.save(new Logs(IpHelper.getRequestIpAddr(request), request.getRequestURL().toString(), params));
         return true;
     }
 
