@@ -96,7 +96,7 @@ public class LoginController {
     }
 
     /**
-     * @return 通过手机号登陆
+     * @return 登出
      */
     @ApiOperation(value = "登出", response = ResponseEntity.class)
     @PostMapping("/logOut")
