@@ -3,11 +3,14 @@ package com.teach.wecharprogram.service.impl;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.common.constant.DefinedCode;
+import com.teach.wecharprogram.entity.Classes;
 import com.teach.wecharprogram.entity.DO.StudentDo;
 import com.teach.wecharprogram.entity.RelUserTypeId;
 import com.teach.wecharprogram.entity.StudentPhysical;
 import com.teach.wecharprogram.mapper.RelUserTypeidMapper;
 import com.teach.wecharprogram.mapper.StudentPhysicalMapper;
+import com.teach.wecharprogram.service.ClassesService;
 import com.teach.wecharprogram.service.StudentService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -36,6 +39,9 @@ import java.util.Objects;
 @Service
 public class StudentServiceImpl implements StudentService {
 
+    // 是否已有学生
+    static boolean hasStudent = false;
+
     @Autowired
     StudentMapper studentMapper;
 
@@ -44,6 +50,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     StudentPhysicalMapper studentPhysicalMapper;
+
+    @Autowired
+    ClassesService classesService;
 
     @Override
     public Student getOne(Long id) {
@@ -84,11 +93,19 @@ public class StudentServiceImpl implements StudentService {
                 }
             }
         } else {
-            // 查询数据库有无学生 没有设置一个默认学号
-            Integer count = studentMapper.selectCount(null);
-            if (count <= 0) {
-                student.setNo(100000);
+            if (!hasStudent) {
+                // 查询数据库有无学生 没有设置一个默认学号
+                Integer count = studentMapper.selectCount(null);
+                if (count <= 0) {
+                    student.setNo(100000);  // 初始学号
+                    hasStudent = true;
+                }
             }
+            if (Objects.isNull(student.getClassesId())) {
+                throw new CommonException(DefinedCode.PARAMSERROR, "请选择班级，再添加学生！");
+            }
+            Classes one = classesService.getOne(student.getClassesId());
+            student.setClassesName(one.getName());
             studentMapper.insert(student);
         }
         return student;
