@@ -69,11 +69,14 @@ public class ClassesServiceImpl implements ClassesService {
 
     @Override
     public Pager listByPage(Pager pager, Classes classes) {
-        QueryWrapper<Classes> classesQueryWrapper = new QueryWrapper<>(classes);
+        QueryWrapper<Classes> classesQueryWrapper = new QueryWrapper<>();
         if (StringUtils.isNotBlank(classes.getName())) {
             classesQueryWrapper.like("name", classes.getName());
         }
-        IPage<Classes> classesIPage = classesMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), classesQueryWrapper);
+        if (Objects.nonNull(classes.getSchoolId())) {
+            classesQueryWrapper.eq("schoolId", classes.getSchoolId());
+        }
+        IPage<Classes> classesIPage = classesMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), classesQueryWrapper.eq("status", 1));
         return Pager.of(classesIPage);
     }
 

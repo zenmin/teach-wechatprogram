@@ -94,6 +94,8 @@ public class StudentPhysicalRepositoryImpl implements StudentPhysicalRepository 
 
         if (StringUtils.isNotBlank(sortFiled)) {
             sql.append(String.format(" order by %s %s ", sortFiled, sortType == 1 ? "asc" : "desc"));
+        } else {
+            sql.append(" order by date desc ");
         }
 
         sql.append(String.format(" limit %s,%s", pager.getSize() * pager.getNum() - 1 < 0 ? 0 : 1, pager.getSize()));
