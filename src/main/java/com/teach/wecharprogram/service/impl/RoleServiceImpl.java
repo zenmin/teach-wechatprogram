@@ -62,6 +62,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Cacheable
     public Pager listByPage(Pager pager, Role role) {
         if (StringUtils.isNotBlank(role.getCreateTimeQuery())) {
             role.setCreateTime(DateUtil.parseToDate(role.getCreateTimeQuery()));

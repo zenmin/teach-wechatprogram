@@ -70,9 +70,10 @@ public class ClassesServiceImpl implements ClassesService {
     @Override
     public Pager listByPage(Pager pager, Classes classes) {
         QueryWrapper<Classes> classesQueryWrapper = new QueryWrapper<>(classes);
-        if (StringUtils.isNotBlank(classes.getName())) {
+        String name = classes.getName();
+        if (StringUtils.isNotBlank(name)) {
             classes.setName(null);
-            classesQueryWrapper.like("name", classes.getName());
+            classesQueryWrapper.like("name", name);
         }
         IPage<Classes> classesIPage = classesMapper.selectPage(new Page<>(pager.getNum(), pager.getSize()), classesQueryWrapper.eq("status", 1));
         return Pager.of(classesIPage);
