@@ -116,6 +116,7 @@ public class UserServiceImpl implements UserService {
             if (count > 0) {
                 throw new CommonException(DefinedCode.ISEXISTS, "用户名或手机号已存在");
             }
+            StaticUtil.validateField(user.getRoleCode());
             user.setRoleName(RoleConstant.ROLE.getName(user.getRoleCode()));
             userMapper.insert(user);
         }
@@ -309,6 +310,18 @@ public class UserServiceImpl implements UserService {
     @Async
     public void updateLoginTime(User user) {
         userMapper.updateById(new User(user.getId(), user.getLastLoginTime(), user.getLastLoginIp()));
+    }
+
+    @Override
+    public boolean updateMyPwd(String oldPwd, String newPwd) {
+        User loginUser = this.getLoginUser();
+        User user = userMapper.selectOne(new QueryWrapper<User>().eq("id", loginUser.getId()).eq("password", StaticUtil.md5Hex(oldPwd)));
+        if (Objects.isNull(user)) {
+            throw new CommonException(DefinedCode.DATAERROR, "原密码错误！");
+        }
+        user.setPassword(StaticUtil.md5Hex(newPwd));
+        int i = userMapper.updateById(user);
+        return i > 0;
     }
 
 

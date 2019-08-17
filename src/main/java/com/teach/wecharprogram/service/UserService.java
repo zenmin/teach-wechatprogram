@@ -45,4 +45,5 @@ public interface UserService {
 
     User findByUserNameAndPwd(String username,String password);
 
+    boolean updateMyPwd(String oldPwd, String newPwd);
 }

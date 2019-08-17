@@ -10,10 +10,7 @@ import com.teach.wecharprogram.service.IndexService;
 import com.teach.wecharprogram.util.StaticUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.teach.wecharprogram.common.ResponseEntity;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.User;
@@ -187,4 +184,19 @@ public class UserController {
     public ResponseEntity index() {
         return ResponseEntity.success(indexService.getIndex());
     }
+
+    /**
+     * 修改密码
+     *
+     * @param oldPwd
+     * @param newPwd
+     * @return
+     */
+    @ApiOperation(value = "修改密码", response = ResponseEntity.class)
+    @PostMapping("/updateMyPwd")
+    public ResponseEntity updateMyPwd(@RequestParam(required = true) String oldPwd,@RequestParam(required = true) String newPwd) {
+        return ResponseEntity.success(userService.updateMyPwd(oldPwd, newPwd));
+    }
+
+
 }
