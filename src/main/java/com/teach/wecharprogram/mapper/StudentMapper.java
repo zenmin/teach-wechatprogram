@@ -23,8 +23,10 @@ public interface StudentMapper extends BaseMapper<Student> {
     @Select("SELECT * FROM student where classesId in (SELECT id from classes where schoolId = #{schoolId})")
     IPage<Student> getStudentsBySchool(Page<Object> objectPage, @Param("schoolId") Long schoolId);
 
-    @Update("update student set classesId = null,classesName = null where classesId in (#{classesIds})")
-    void updateClassIdNull(String classesIds);
+    @Update("<script>update student set classesId = null,classesName = null where classesId in " +
+            "<foreach collection=\"ids\" item=\"id\" open=\"(\" close=\")\" separator=\",\">#{id}</foreach>" +
+            "</script>")
+    void updateClassIdNull(@Param("ids") List<Long> ids);
 
     @Select("<script>select s.*,TIMESTAMPDIFF(YEAR,s.birthday,CURRENT_DATE) as age,c.schoolName as schoolName from student s left join classes c on s.classesId = c.id " +
             "where s.classesId = #{classesId} " +

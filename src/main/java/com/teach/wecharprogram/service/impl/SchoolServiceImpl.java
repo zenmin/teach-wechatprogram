@@ -119,7 +119,7 @@ public class SchoolServiceImpl implements SchoolService {
         List<Classes> classesList = classesMapper.selectList(new QueryWrapper<Classes>().in("schoolId", ids));
         if (classesList.size() > 0) {
             List<Long> cids = classesList.stream().map(Classes::getId).collect(Collectors.toList());
-            studentMapper.updateClassIdNull(StaticUtil.joinQuota(cids));
+            studentMapper.updateClassIdNull(cids);
             // 删除学校对应班级
             classesMapper.deleteBatchIds(cids);
         }
