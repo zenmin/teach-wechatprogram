@@ -161,7 +161,7 @@ public class StaticUtil {
      */
     public static String getLoginToken(Long userId) {
         String userIdHex = StaticUtil.md5Hex(userId + CommonConstant.TOKEN_KEY);
-        return userIdHex + "/";
+        return userIdHex;
     }
 
     public static String sha1512Hex(String code) {
