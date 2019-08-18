@@ -167,13 +167,12 @@ public class LoginServiceImpl implements LoginService {
      */
     private String addToken(User user, String ipAddr) {
         // 生成token
-        String tokenPrefix = StaticUtil.getLoginToken(user.getId()) + "/";
-        String token = tokenPrefix;// + System.currentTimeMillis();
+        String token = StaticUtil.getLoginToken(user.getId());
         // 执行登录
         user.setPassword(null);
         user.setNowLoginIp(ipAddr);
         // 删除用户之前的token
-        redisUtil.deleteLike(CacheConstant.USER_TOKEN_CODE + tokenPrefix);
+        redisUtil.deleteLike(CacheConstant.USER_TOKEN_CODE + token);
         // 加token
         // 失效时间7天 , 60 * 60 * 24 * 7
         redisUtil.set(CacheConstant.USER_TOKEN_CODE + token, user, CacheConstant.EXPIRE_LOGON_TIME);

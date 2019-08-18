@@ -1,8 +1,10 @@
 package com.teach.wecharprogram.controller;
 
 import com.google.common.collect.ImmutableMap;
+import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.ResponseEntity;
 import com.teach.wecharprogram.common.constant.CommonConstant;
+import com.teach.wecharprogram.common.constant.DefinedCode;
 import com.teach.wecharprogram.common.constant.RequestConstant;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.entity.vo.AdminUserVo;
@@ -15,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -79,7 +82,9 @@ public class LoginController {
     @PostMapping("/login_wx")
     public ResponseEntity loginByPhone(WxUserInfoVo wxUserInfoVo, HttpServletRequest request) throws UnsupportedEncodingException {
         // 校验字段
-        StaticUtil.validateField(wxUserInfoVo.getCode());
+        if (StringUtils.isBlank(wxUserInfoVo.getCode())) {
+            throw new CommonException(DefinedCode.PARAMSERROR, "jsCode为空！");
+        }
         String ipAddr = IpHelper.getRequestIpAddr(request);
         wxUserInfoVo.setNickName(URLEncoder.encode(wxUserInfoVo.getNickName(), "UTF-8"));
         return ResponseEntity.success(ImmutableMap.of(RequestConstant.TOKEN, loginService.loginByWx(wxUserInfoVo, ipAddr)));

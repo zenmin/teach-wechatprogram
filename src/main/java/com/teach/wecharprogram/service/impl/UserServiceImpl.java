@@ -1,6 +1,7 @@
 package com.teach.wecharprogram.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
@@ -116,13 +117,14 @@ public class UserServiceImpl implements UserService {
             if (count > 0) {
                 throw new CommonException(DefinedCode.ISEXISTS, "用户名或手机号已存在");
             }
-            StaticUtil.validateField(user.getRoleCode());
-            user.setRoleName(RoleConstant.ROLE.getName(user.getRoleCode()));
+            if (Objects.nonNull(user.getRoleCode())) {
+                user.setRoleName(RoleConstant.ROLE.getName(user.getRoleCode()));
+            }
             userMapper.insert(user);
         }
         // 更新用户缓存信息
         user = this.getOne(user.getId());
-        String tokenPrefix = CacheConstant.USER_TOKEN_CODE + StaticUtil.getLoginToken(user.getId()) + "/";
+        String tokenPrefix = CacheConstant.USER_TOKEN_CODE + StaticUtil.getLoginToken(user.getId());
         Set<String> keys = redisUtil.getKeys(tokenPrefix);
         if (keys.size() > 0) {
             String token = keys.iterator().next();
@@ -143,6 +145,13 @@ public class UserServiceImpl implements UserService {
             list.add(Long.valueOf(ids));
         }
         int i = userMapper.deleteBatchIds(list);
+        // 删缓存
+        list.forEach(o -> {
+            String token = StaticUtil.getLoginToken(o);
+            redisUtil.deleteLike(CacheConstant.USER_TOKEN_CODE + token);
+            // 删用户关系
+            relUserTypeidMapper.delete(new UpdateWrapper<RelUserTypeId>().eq("userId", o));
+        });
         return i > 0;
     }
 
