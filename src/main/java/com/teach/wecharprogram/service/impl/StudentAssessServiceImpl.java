@@ -68,14 +68,17 @@ public class StudentAssessServiceImpl implements StudentAssessService {
         if (Objects.nonNull(studentAssess.getId())) {
             studentAssessMapper.updateById(studentAssess);
         } else {
-            // 查当前孩子的评议  每个孩子只会存在一条记录
-            StudentAssess one = studentAssessMapper.selectOne(new QueryWrapper<StudentAssess>().eq("studentId", studentAssess.getStudentId()));
-            if (Objects.nonNull(one)) {
-                studentAssess.setId(one.getId());
-                studentAssessMapper.updateById(studentAssess);
-            } else {
+            String studentIds = studentAssess.getStudentIds();
+            List<String> asList = Arrays.asList(studentIds.split(","));
+            List<Long> list = Lists.newArrayList();
+            asList.stream().forEach(o -> list.add(Long.valueOf(o)));
+            // 先删  再 增加
+            studentAssessMapper.delete(new QueryWrapper<StudentAssess>().in("studentId", list));
+            list.stream().forEach(o -> {
+                studentAssess.setId(null);
+                studentAssess.setStudentId(o);
                 studentAssessMapper.insert(studentAssess);
-            }
+            });
         }
         return studentAssess;
     }

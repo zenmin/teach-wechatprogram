@@ -108,15 +108,12 @@ public class StudentController {
     @PostMapping("/save")
     @RequireRole({CommonConstant.ROLE_FAMILY, CommonConstant.ROLE_TEACHER, CommonConstant.ROLE_HEADMASTER})
     public ResponseEntity saveOrUpdate(Student student, HttpServletRequest servletRequest) {
-        StaticUtil.validateField(student.getName());
-        StaticUtil.validateObject(student.getStatus());
         User user = userService.getLoginUser(servletRequest);
         // 如果当前用户是家长 不允许修改编辑
         if (user.getRoleCode().equals(CommonConstant.ROLE_FAMILY)) {
             student.setClassesId(null);
             student.setClassesName(null);
         }
-        student.setNo(null);    // 学号不更改
         return ResponseEntity.success(studentService.save(student));
     }
 

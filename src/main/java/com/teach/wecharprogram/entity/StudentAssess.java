@@ -34,7 +34,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class StudentAssess extends EntityModel {
 
-    @ApiModelProperty(value = "学生id")
+    @ApiModelProperty(value = "学生id", hidden = true)
     private Long studentId;
 
     @ApiModelProperty(value = "教师id", hidden = true)
@@ -55,6 +55,11 @@ public class StudentAssess extends EntityModel {
     @Transient
     @ApiModelProperty(value = "学生姓名", hidden = true)
     private String studentName;
+
+    @ApiModelProperty(value = "学生ids")
+    @TableField(exist = false)
+    @Transient
+    private String studentIds;
 
     public StudentAssess(Long studentId) {
         this.studentId = studentId;

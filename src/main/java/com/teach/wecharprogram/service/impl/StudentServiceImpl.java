@@ -82,8 +82,9 @@ public class StudentServiceImpl implements StudentService {
     @Transactional(rollbackFor = CommonException.class)
     public Student save(Student student) {
         if (Objects.nonNull(student.getId())) {
-            Student one = this.getOne(student.getId());
+            student.setNo(null);    // 学号不更改
             studentMapper.updateById(student);
+            Student one = this.getOne(student.getId());
             if (Objects.nonNull(one)) {
                 if (!one.getName().equals(student.getName())) {
                     // 更新评测表
