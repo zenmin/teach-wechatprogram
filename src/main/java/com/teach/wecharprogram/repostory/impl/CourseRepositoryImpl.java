@@ -26,12 +26,15 @@ public class CourseRepositoryImpl implements CourseRepository {
 
     @Override
     public List<CoursePlanCourseDo> getMyPlanByClassesId(Long classesId, Long uid, Integer day) {
-        StringBuilder sql = new StringBuilder("SELECT p.id,p.createTime,p.courseId,c.name as courseName,p.startTime,p.endTime,p.day from course_plan p left JOIN course c on p.courseId = c.id where c.uid = %s and p.classesId = %s ");
+        StringBuilder sql = new StringBuilder("SELECT p.id,p.createTime,p.courseId,c.name as courseName,p.startTime,p.endTime,p.day from course_plan p left JOIN course c on p.courseId = c.id where 1=1 and p.classesId = %s ");
         if (Objects.nonNull(day) && day != 0) {
             sql.append(" and day = " + day);
         }
+        if(Objects.nonNull(uid)) {
+            sql.append(String.format(" and c.uid = %s ",uid));
+        }
         sql.append(" order by day asc,startTime asc");
-        String lastSql = String.format(sql.toString(), uid, classesId);
+        String lastSql = String.format(sql.toString(), classesId);
         List<CoursePlanCourseDo> query = jdbcTemplate.query(lastSql, new BeanPropertyRowMapper<>(CoursePlanCourseDo.class));
         return query;
     }

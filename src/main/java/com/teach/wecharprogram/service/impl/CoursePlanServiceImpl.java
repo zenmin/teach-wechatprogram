@@ -2,8 +2,10 @@ package com.teach.wecharprogram.service.impl;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.entity.DO.CoursePlanClassesDo;
 import com.teach.wecharprogram.entity.DO.CoursePlanCourseDo;
+import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.repostory.CourseRepository;
 import com.teach.wecharprogram.service.CoursePlanService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -109,7 +111,9 @@ public class CoursePlanServiceImpl implements CoursePlanService {
 
     @Override
     public Object getMyPlanByClassesId(Long classesId, Boolean isGroup, Integer day) {
-        List<CoursePlanCourseDo> myPlanByClassesId = courseRepository.getMyPlanByClassesId(classesId, userService.getLoginUser().getId(), day);
+        User loginUser = userService.getLoginUser();
+        String userRoleCode = loginUser.getRoleCode();
+        List<CoursePlanCourseDo> myPlanByClassesId = courseRepository.getMyPlanByClassesId(classesId, userRoleCode.equals(CommonConstant.ROLE_TRAIN) ? loginUser.getId() : null, day);
         List<Map> groupMap = Lists.newArrayList();
         if (Objects.nonNull(isGroup) && isGroup) {
             Map<Integer, List<CoursePlanCourseDo>> collect = myPlanByClassesId.stream().collect(Collectors.groupingBy(CoursePlanCourseDo::getDay));
