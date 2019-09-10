@@ -113,7 +113,7 @@ public class StudentPhysicalController {
      *
      * @return
      */
-    @ApiOperation(value = "家长：表现五佳", response = ResponseEntity.class)
+    @ApiOperation(value = "家长：表现3佳", response = ResponseEntity.class)
     @PostMapping("/topFive")
     public ResponseEntity topFive() {
         User loginUser = userService.getLoginUser();
@@ -125,7 +125,7 @@ public class StudentPhysicalController {
      *
      * @return
      */
-    @ApiOperation(value = "家长：进步五佳", response = ResponseEntity.class)
+    @ApiOperation(value = "家长：进步3佳", response = ResponseEntity.class)
     @PostMapping("/topUpFive")
     public ResponseEntity topUpFive() {
         User loginUser = userService.getLoginUser();

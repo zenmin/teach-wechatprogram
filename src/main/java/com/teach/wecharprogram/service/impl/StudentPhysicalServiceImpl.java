@@ -164,14 +164,14 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
         // 取班级id
         Set<Long> classesId = students.stream().map(StudentDo::getClassesId).collect(Collectors.toSet());
         // 每个班级五条
-        List<StudentPhysicalVO> studentPhysicals = studentPhysicalMapper.selectToFive(classesId.size() * 5, classesId);
+        List<StudentPhysicalVO> studentPhysicals = studentPhysicalMapper.selectToFive(classesId.size() * 3, classesId);
         // 分组
         Map<Long, List<StudentPhysicalVO>> group = studentPhysicals.stream().collect(Collectors.groupingBy(StudentPhysicalVO::getClassesId));
         Set<Map.Entry<Long, List<StudentPhysicalVO>>> entries = group.entrySet();
         for (Map.Entry<Long, List<StudentPhysicalVO>> m : entries) {
             List<StudentPhysicalVO> value = m.getValue();
-            if (value.size() > 5) {
-                value = value.subList(0, 5);
+            if (value.size() > 3) {
+                value = value.subList(0, 3);
             }
             result.add(ImmutableMap.of("classesId", m.getKey(), "classesName", classNameMap.get(m.getKey()), "values", value));
         }
@@ -194,14 +194,14 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
         });
         // 取班级id
         Set<Long> classesId = students.stream().map(StudentDo::getClassesId).collect(Collectors.toSet());
-        List<UpScoreDo> records = upScoreMapper.selectTopUpFive(classesId, classesId.size() * 5);
+        List<UpScoreDo> records = upScoreMapper.selectTopUpFive(classesId, classesId.size() * 3);
         // 分组
         Map<Long, List<UpScoreDo>> group = records.stream().collect(Collectors.groupingBy(UpScoreDo::getClassesId));
         Set<Map.Entry<Long, List<UpScoreDo>>> entries = group.entrySet();
         for (Map.Entry<Long, List<UpScoreDo>> m : entries) {
             List<UpScoreDo> value = m.getValue();
-            if (value.size() > 5) {
-                value = value.subList(0, 5);
+            if (value.size() > 3) {
+                value = value.subList(0, 3);
             }
             result.add(ImmutableMap.of("classesId", m.getKey(), "classesName", classNameMap.get(m.getKey()), "values", value));
         }
