@@ -41,7 +41,8 @@ public class StudentAssess extends EntityModel {
     private Long uid;
 
     @ApiModelProperty(value = "评价")
-    private String text;
+    @Column(columnDefinition = "int(11) default 0 COMMENT '星星数量'")
+    private Integer text;
 
     @ApiModelProperty(value = "评价时间", hidden = true)
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
