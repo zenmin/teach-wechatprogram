@@ -24,7 +24,7 @@ public interface StudentPhysicalMapper extends BaseMapper<StudentPhysical> {
 
     @Select("<script>select classesId,studentName,bmi,allScore,date from student_physical s" +
             " where classesId in <foreach collection=\"classesIds\" item=\"id\" open=\"(\" close=\")\" separator=\",\">#{id}</foreach> " +
-            "order by s.allScore desc limit #{count}</script>")
+            " GROUP BY studentId order by s.allScore desc limit #{count}</script>")
     List<StudentPhysicalVO> selectToFive(@Param("count") int count, @Param("classesIds") Set<Long> classesIds);
 
     @Select("SELECT studentName,bmi,allScore,date,allRemark,createUserName from student_physical where studentId = #{studentId} ORDER BY date desc limit 1")

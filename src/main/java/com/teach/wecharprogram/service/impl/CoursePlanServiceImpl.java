@@ -126,5 +126,31 @@ public class CoursePlanServiceImpl implements CoursePlanService {
         return myPlanByClassesId;
     }
 
+    @Override
+    public Object getMyPlanDay() {
+        IPage<CoursePlanClassesDo> iPage = coursePlanMapper.findByUid(new Page(0, 500), userService.getLoginUser().getId());
+        List<CoursePlanClassesDo> records = iPage.getRecords();
+
+        Map<Integer, Object> result = Maps.newHashMap();
+
+        // 按星期分组
+        Map<Integer, List<CoursePlanClassesDo>> dayGroup = records.stream().collect(Collectors.groupingBy(CoursePlanClassesDo::getDay));
+
+        Set<Map.Entry<Integer, List<CoursePlanClassesDo>>> entries = dayGroup.entrySet();
+
+        for (Map.Entry<Integer, List<CoursePlanClassesDo>> m : entries) {
+            List<Map> groupMap = Lists.newArrayList();
+            Map<String, List<CoursePlanClassesDo>> collect = m.getValue().stream().collect(Collectors.groupingBy(CoursePlanClassesDo::getSchoolId));
+            Set<Map.Entry<String, List<CoursePlanClassesDo>>> e = collect.entrySet();
+            for (Map.Entry<String, List<CoursePlanClassesDo>> p : e) {
+                groupMap.add(ImmutableMap.of("schoolId", p.getKey(), "schoolName", p.getValue().get(0).getSchoolName(), "classes", p.getValue()));
+            }
+            // 按学校分组
+            result.put(m.getKey(), groupMap);
+        }
+
+        return result;
+    }
+
 
 }

@@ -27,4 +27,6 @@ public interface CoursePlanService {
     List<Map> getMyPlan(Pager pager);
 
     Object getMyPlanByClassesId(Long classesId, Boolean isGroup, Integer day);
+
+    Object getMyPlanDay();
 }

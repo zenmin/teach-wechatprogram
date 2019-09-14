@@ -102,6 +102,19 @@ public class CoursePlanController {
      *
      * @return
      */
+    @ApiOperation(value = "2、查询已安排课程的班级(按星期分组)", response = CoursePlanClassesDo.class)
+    @PostMapping("/getMyPlanDay")
+    @RequireRole({CommonConstant.ROLE_TRAIN})
+    public ResponseEntity getMyPlanDay() {
+        return ResponseEntity.success(coursePlanService.getMyPlanDay());
+    }
+
+
+    /**
+     * 查全部 可带条件分页
+     *
+     * @return
+     */
     @ApiOperation(value = "3、查询该班级已安排的课程", response = CoursePlanCourseDo.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "classesId", value = "班级id", required = true),
             @ApiImplicitParam(name = "isGroup", value = "是否按星期几分组 默认false", paramType = "boolean"), @ApiImplicitParam(name = "day", value = "星期", paramType = "integer")})

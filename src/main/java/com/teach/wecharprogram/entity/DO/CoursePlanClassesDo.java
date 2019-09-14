@@ -32,5 +32,8 @@ public class CoursePlanClassesDo {
     @ApiModelProperty(value = "学校名称")
     private String schoolName;
 
+    @ApiModelProperty(value = "星期")
+    private Integer day;
+
 
 }
