@@ -18,7 +18,7 @@ import org.apache.ibatis.annotations.Select;
 
 public interface CoursePlanMapper extends BaseMapper<CoursePlan> {
 
-    @Select("SELECT p.id,p.createTime,p.classesId,p.courseId,c.name as classesName,c.schoolName,c.schoolId,p.day from course_plan p LEFT JOIN classes c on p.classesId = c.id where p.uid = #{uid} order by p.startTime asc,p.day asc")
+    @Select("SELECT p.id,p.createTime,p.classesId,p.courseId,c.name as classesName,c.schoolName,c.schoolId,p.day from course_plan p LEFT JOIN classes c on p.classesId = c.id where p.uid = #{uid} group by classesId,day order by p.createTime desc,p.day asc")
     IPage<CoursePlanClassesDo> findByUid(Page page,@Param("uid") Long uid);
 
 }
