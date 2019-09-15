@@ -38,6 +38,9 @@ public class Course extends EntityModel {
     @ApiModelProperty(value = "学生人数")
     private Integer sportNum;
 
+    @ApiModelProperty(value = "课程时间")
+    private String time;
+
     @ApiModelProperty(value = "开始时间")
     private String startTime;
 
