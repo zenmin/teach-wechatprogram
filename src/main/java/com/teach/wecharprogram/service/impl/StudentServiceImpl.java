@@ -91,11 +91,13 @@ public class StudentServiceImpl implements StudentService {
             studentMapper.updateById(student);
             Student one = this.getOne(student.getId());
             if (Objects.nonNull(one)) {
-                if (!one.getName().equals(student.getName())) {
-                    // 更新评测表
-                    StudentPhysical studentPhysical = new StudentPhysical();
-                    studentPhysical.setStudentName(student.getName());
-                    studentPhysicalMapper.update(studentPhysical, new UpdateWrapper<StudentPhysical>().eq("studentId", student.getId()));
+                if(StringUtils.isNotBlank(student.getName())) {
+                    if (!one.getName().equals(student.getName())) {
+                        // 更新评测表
+                        StudentPhysical studentPhysical = new StudentPhysical();
+                        studentPhysical.setStudentName(student.getName());
+                        studentPhysicalMapper.update(studentPhysical, new UpdateWrapper<StudentPhysical>().eq("studentId", student.getId()));
+                    }
                 }
             }
         } else {
