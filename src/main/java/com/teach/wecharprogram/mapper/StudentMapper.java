@@ -20,8 +20,8 @@ import java.util.List;
 
 public interface StudentMapper extends BaseMapper<Student> {
 
-    @Select("SELECT * FROM student where classesId in (SELECT id from classes where schoolId = #{schoolId})")
-    IPage<Student> getStudentsBySchool(Page<Object> objectPage, @Param("schoolId") Long schoolId);
+    @Select("SELECT * FROM student where classesId in (SELECT id from classes where schoolId = #{schoolId}) and status = #{status}")
+    IPage<Student> getStudentsBySchool(Page<Object> objectPage, @Param("schoolId") Long schoolId, @Param("status") Integer status);
 
     @Update("<script>update student set classesId = null,classesName = null where classesId in " +
             "<foreach collection=\"ids\" item=\"id\" open=\"(\" close=\")\" separator=\",\">#{id}</foreach>" +
@@ -31,8 +31,9 @@ public interface StudentMapper extends BaseMapper<Student> {
     @Select("<script>select s.*,TIMESTAMPDIFF(YEAR,s.birthday,CURRENT_DATE) as age,c.schoolName as schoolName from student s left join classes c on s.classesId = c.id " +
             "where s.classesId = #{classesId} " +
             "<if test=\"name != null \"> and s.name like concat('%',#{name},'%')  </if>" +
+            "<if test=\"status != null \"> and s.status = #{status}  </if> " +
             " order by s.no desc </script>")
-    List<StudentDo> selectStudents(@Param("classesId") Long classesId, @Param("name") String name);
+    List<StudentDo> selectStudents(@Param("classesId") Long classesId, @Param("name") String name, @Param("status") Integer status);
 
     @Select("<script>select s.*,TIMESTAMPDIFF(YEAR,s.birthday,CURRENT_DATE) as age,c.schoolName as schoolName from student s left join classes c on s.classesId = c.id where 1=1 "
             + "<if test=\"name != null \"> and s.name like concat('%',#{name},'%')  </if> " +

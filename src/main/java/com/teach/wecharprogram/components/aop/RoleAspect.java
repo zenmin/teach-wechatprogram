@@ -5,7 +5,10 @@ import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.common.constant.DefinedCode;
 import com.teach.wecharprogram.common.constant.RequestConstant;
 import com.teach.wecharprogram.components.annotation.RequireRole;
+import com.teach.wecharprogram.entity.Logs;
 import com.teach.wecharprogram.entity.User;
+import com.teach.wecharprogram.service.LogsService;
+import com.teach.wecharprogram.util.IpHelper;
 import com.teach.wecharprogram.util.JSONUtil;
 import com.teach.wecharprogram.util.StaticUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +18,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -24,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * @Describle This Class Is 全局权限验证切面
@@ -34,6 +39,9 @@ import java.util.Arrays;
 @Aspect
 @Slf4j
 public class RoleAspect {
+
+    @Autowired
+    LogsService commonLogService;
 
     @Pointcut("execution(* com.teach.wecharprogram.controller.*Controller.*(..))")
     private void pointCut() {
@@ -71,6 +79,9 @@ public class RoleAspect {
                 // 无操作权限
                 throw new CommonException(DefinedCode.NOTAUTH_OPTION, "您没有权限操作！");
             }
+            Map<String, String[]> parameterMap = request.getParameterMap();
+            String params = StaticUtil.objectMapper.writeValueAsString(parameterMap);
+            commonLogService.save(new Logs(IpHelper.getRequestIpAddr(request), request.getRequestURL().toString(), params));
             return true;
         } else {
             throw new IllegalArgumentException("该注解仅用于Controller实现方法上！");

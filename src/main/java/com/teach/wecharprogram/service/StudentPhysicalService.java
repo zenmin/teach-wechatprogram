@@ -32,7 +32,7 @@ public interface StudentPhysicalService {
 
     List<Map> topUpFive(User loginUser);
 
-    List<StudentPhysical> getOneByStudent(Long studentId, Boolean queryNow);
+    List<StudentPhysical> getOneByStudent(Long studentId, String date, Boolean queryNow);
 
     List<StudentPhysicalTextVO> getPhysicalByStudentIds(String studentIds);
 

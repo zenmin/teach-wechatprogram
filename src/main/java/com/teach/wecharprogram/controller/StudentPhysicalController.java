@@ -105,7 +105,7 @@ public class StudentPhysicalController {
             @ApiImplicitParam(name = "queryNow", value = "是否查询最近一次的评测默认true", required = true, dataType = "boolean")})
     @PostMapping("/getOneByStudent")
     public ResponseEntity getOneByStudent(@RequestParam(required = true) Long studentId, @RequestParam(defaultValue = "true") Boolean queryNow) {
-        return ResponseEntity.success(studentPhysicalService.getOneByStudent(studentId, queryNow));
+        return ResponseEntity.success(studentPhysicalService.getOneByStudent(studentId, null, queryNow));
     }
 
     /**

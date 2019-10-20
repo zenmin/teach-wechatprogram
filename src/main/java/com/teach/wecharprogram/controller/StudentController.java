@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.teach.wecharprogram.common.ResponseEntity;
 import com.teach.wecharprogram.entity.DO.Pager;
@@ -94,8 +95,8 @@ public class StudentController {
      */
     @ApiOperation(value = "查全部 可带条件分页", response = ResponseEntity.class)
     @PostMapping("/getStudentsBySchool")
-    public ResponseEntity getStudentsBySchool(Pager pager, Long schoolId) {
-        return ResponseEntity.success(studentService.getStudentsBySchool(pager, schoolId));
+    public ResponseEntity getStudentsBySchool(Pager pager, Long schoolId,@RequestParam(defaultValue = "1") Integer status) {
+        return ResponseEntity.success(studentService.getStudentsBySchool(pager, schoolId, status));
     }
 
     /**

@@ -55,7 +55,8 @@ public class Student extends EntityModel {
 
     @ApiModelProperty(value = "状态1正常 2退学")
     @Excel(name = "状态", replace = {"正常_1", "退学_2"})
-    private Integer status;
+    @Column(columnDefinition = "int(11) default 1 COMMENT '状态1正常 2退学'")
+    private Integer status = 1;
 
     @ApiModelProperty(value = "出生日期")
     @Excel(name = "出生日期")

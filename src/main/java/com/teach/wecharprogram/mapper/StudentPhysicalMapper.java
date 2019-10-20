@@ -19,8 +19,10 @@ import java.util.Set;
 
 public interface StudentPhysicalMapper extends BaseMapper<StudentPhysical> {
 
-    @Select("select * from student_physical s where s.studentId = #{studentId} order by s.date desc limit 1")
-    List<StudentPhysical> getOneByStudent(Long studentId);
+    @Select("<script>select * from student_physical s where s.studentId = #{studentId} " +
+            "<if test=\"date != null \"> and s.date != #{date}  </if>" +
+            "order by s.date desc limit 1</script>")
+    StudentPhysical getOneByStudent(@Param("studentId") Long studentId, @Param("date") String date);
 
     @Select("<script>select classesId,studentName,bmi,allScore,date from student_physical s" +
             " where classesId in <foreach collection=\"classesIds\" item=\"id\" open=\"(\" close=\")\" separator=\",\">#{id}</foreach> " +

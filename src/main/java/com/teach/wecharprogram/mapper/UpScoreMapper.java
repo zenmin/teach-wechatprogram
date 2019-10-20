@@ -19,6 +19,7 @@ public interface UpScoreMapper extends BaseMapper<UpScore> {
 
     @Select("<script>SELECT s.*,u.name as studentName FROM up_score s left join student u on s.studentId = u.id where s.classesId in " +
             "<foreach collection=\"classesIds\" item=\"id\" open=\"(\" close=\")\" separator=\",\">#{id}</foreach> " +
+            " and u.status = 1 " +
             "limit #{size}</script>")
     List<UpScoreDo> selectTopUpFive(@Param("classesIds") Set<Long> classesIds, @Param("size") int size);
 }

@@ -29,7 +29,7 @@ public interface StudentService {
 
     boolean delRelFamilyToStudent(Long userId, String studentsId);
 
-    Object getStudentsBySchool(Pager pager, Long schoolId);
+    Object getStudentsBySchool(Pager pager, Long schoolId, Integer status);
 
     List<StudentDo> getStudentAllMsg(StudentDo studentDo);
 

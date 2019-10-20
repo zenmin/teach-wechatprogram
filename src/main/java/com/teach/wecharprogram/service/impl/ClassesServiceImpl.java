@@ -135,8 +135,8 @@ public class ClassesServiceImpl implements ClassesService {
     }
 
     @Override
-    public List<StudentDo> getStudents(Long userId, Long classesId, String name) {
-        List<StudentDo> students = studentMapper.selectStudents(classesId, name);
+    public List<StudentDo> getStudents(Long userId, Long classesId, String name, Integer status) {
+        List<StudentDo> students = studentMapper.selectStudents(classesId, name, status);
         return students;
     }
 

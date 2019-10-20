@@ -211,14 +211,4 @@ public class StudentPhysical extends EntityModel {
     @Transient
     private Long schoolId;
 
-    public StudentPhysical(Long classesId, Long studentId, Double allScore, String date, Long createUid, String createUserName, Date updateTime) {
-        this.classesId = classesId;
-        this.studentId = studentId;
-        this.allScore = allScore;
-        this.date = date;
-        this.createUid = createUid;
-        this.createUserName = createUserName;
-        this.updateTime = updateTime;
-    }
-
 }

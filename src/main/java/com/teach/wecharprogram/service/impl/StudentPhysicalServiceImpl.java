@@ -15,8 +15,6 @@ import com.teach.wecharprogram.mapper.UpScoreMapper;
 import com.teach.wecharprogram.repostory.StudentPhysicalRepository;
 import com.teach.wecharprogram.service.StudentPhysicalService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.mapper.StudentPhysicalMapper;
@@ -24,7 +22,6 @@ import com.teach.wecharprogram.service.StudentService;
 import com.teach.wecharprogram.service.UpScoreService;
 import com.teach.wecharprogram.service.UserService;
 import com.teach.wecharprogram.util.StaticUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -89,11 +86,10 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
         Long id = loginUser.getId();
         String realName = loginUser.getRealName();
         studentPhysical.setUpdateTime(new Date());
+        String date = studentPhysical.getDate();
         // 更新或新增之前  先查询上一次的分数
-        List<StudentPhysical> oneByStudent = this.getOneByStudent(studentPhysical.getStudentId(), true);
-
+        List<StudentPhysical> oneByStudent = this.getOneByStudent(studentPhysical.getStudentId(), date, true);
         if (Objects.nonNull(studentPhysical.getId())) {
-            String date = studentPhysical.getDate();
             studentPhysical.setCreateUid(null);
             studentPhysical.setCreateUserName(null);
             studentPhysical.setDate(null);
@@ -209,10 +205,10 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
     }
 
     @Override
-    public List<StudentPhysical> getOneByStudent(Long studentId, Boolean queryNow) {
+    public List<StudentPhysical> getOneByStudent(Long studentId, String date, Boolean queryNow) {
         List<StudentPhysical> records = null;
         if (queryNow) {
-            records = studentPhysicalMapper.getOneByStudent(studentId);
+            records = Lists.newArrayList(studentPhysicalMapper.getOneByStudent(studentId, date));
         } else {
             records = studentPhysicalMapper.selectList(new QueryWrapper<StudentPhysical>().eq("studentId", studentId).orderByDesc("date"));
         }

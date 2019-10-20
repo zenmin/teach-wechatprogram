@@ -30,6 +30,9 @@ public class StudentPhysicalDo extends EntityModel {
     @ApiModelProperty(value = "学校id", hidden = true)
     private Long schoolId;
 
+    @ApiModelProperty(value = "学生状态 1正常 2退学")
+    private Integer status = 1;
+
     @Excel(name = "班级")
     @ApiModelProperty(value = "班级名称", hidden = true)
     private String classesName;

@@ -3,10 +3,7 @@ package com.teach.wecharprogram.controller;
 import com.teach.wecharprogram.entity.User;
 import com.teach.wecharprogram.service.UserService;
 import io.swagger.annotations.*;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.teach.wecharprogram.common.ResponseEntity;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.Classes;
@@ -118,9 +115,9 @@ public class ClassesController {
     @ApiImplicitParams({@ApiImplicitParam(name = "classesId", value = "班级id", required = true),
             @ApiImplicitParam(name = "name", value = "学生名称")})
     @PostMapping("/getStudents")
-    public ResponseEntity getStudents(String name, Long classesId, @ApiParam(hidden = true) @RequestHeader String token) {
+    public ResponseEntity getStudents(String name, Long classesId,@RequestParam(defaultValue = "1") Integer status) {
         User loginUser = userService.getLoginUser();
-        return ResponseEntity.success(classesService.getStudents(loginUser.getId(), classesId, name));
+        return ResponseEntity.success(classesService.getStudents(loginUser.getId(), classesId, name, status));
     }
 
     /**

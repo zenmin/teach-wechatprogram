@@ -4,12 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.teach.wecharprogram.common.CommonException;
 import com.teach.wecharprogram.common.constant.CommonConstant;
 import com.teach.wecharprogram.common.constant.DefinedCode;
-import com.teach.wecharprogram.entity.Classes;
+import com.teach.wecharprogram.entity.*;
 import com.teach.wecharprogram.entity.DO.StudentDo;
-import com.teach.wecharprogram.entity.RelUserTypeId;
-import com.teach.wecharprogram.entity.StudentPhysical;
-import com.teach.wecharprogram.mapper.RelUserTypeidMapper;
-import com.teach.wecharprogram.mapper.StudentPhysicalMapper;
+import com.teach.wecharprogram.mapper.*;
 import com.teach.wecharprogram.service.ClassesService;
 import com.teach.wecharprogram.service.StudentService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -17,8 +14,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
 import com.teach.wecharprogram.entity.DO.Pager;
-import com.teach.wecharprogram.entity.Student;
-import com.teach.wecharprogram.mapper.StudentMapper;
+import com.teach.wecharprogram.util.StaticUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +49,15 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     ClassesService classesService;
+
+    @Autowired
+    UpScoreMapper upScoreMapper;
+
+    @Autowired
+    StudentAssessMapper studentAssessMapper;
+
+    @Autowired
+    FollowMapper followMapper;
 
     @Override
     public Student getOne(Long id) {
@@ -123,6 +128,19 @@ public class StudentServiceImpl implements StudentService {
             list.add(Long.valueOf(ids));
         }
         int i = studentMapper.deleteBatchIds(list);
+        // 删除学生对应的评测
+        StaticUtil.executorService.execute(() -> {
+            // 评测表
+            studentPhysicalMapper.delete(new QueryWrapper<StudentPhysical>().in("studentId", list));
+            // 分数进步表
+            upScoreMapper.delete(new QueryWrapper<UpScore>().in("studentId", list));
+            // 每日评议
+            studentAssessMapper.delete(new QueryWrapper<StudentAssess>().in("studentId", list));
+            // 关联表
+            relUserTypeidMapper.delete(new QueryWrapper<RelUserTypeId>().in("otherId", list));
+            // 关注表
+            followMapper.delete(new QueryWrapper<Follow>().in("studentId", list));
+        });
         return i > 0;
     }
 
@@ -148,8 +166,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Object getStudentsBySchool(Pager pager, Long schoolId) {
-        IPage<Student> studentIPage = studentMapper.getStudentsBySchool(new Page<>(pager.getNum(), pager.getSize()), schoolId);
+    public Object getStudentsBySchool(Pager pager, Long schoolId, Integer status) {
+        IPage<Student> studentIPage = studentMapper.getStudentsBySchool(new Page<>(pager.getNum(), pager.getSize()), schoolId, status);
         return Pager.of(studentIPage);
     }
 
