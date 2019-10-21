@@ -98,7 +98,7 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
             //更新分数
             UpScore upScore = upScoreMapper.selectOne(new QueryWrapper<UpScore>().eq("studentId", studentPhysical.getStudentId()).eq("date", date));
             if (Objects.nonNull(upScore)) {
-                Double score = StaticUtil.subtract(studentPhysical.getAllScore(), Objects.nonNull(oneByStudent.get(0)) ? oneByStudent.get(0).getAllScore() : 0D);
+                Double score = StaticUtil.subtract(studentPhysical.getAllScore(), Objects.nonNull(oneByStudent) ? oneByStudent.get(0).getAllScore() : 0D);
                 Double upScoreScore = upScore.getScore();
                 if (!score.equals(upScoreScore)) {
                     upScore.setScore(score);
@@ -119,7 +119,7 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
 
             // 计算本次分数和上次分数之差
             Double allScore = 0d;
-            if (oneByStudent.size() > 0) {
+            if (Objects.nonNull(oneByStudent) && oneByStudent.size() > 0) {
                 allScore = oneByStudent.get(0).getAllScore();
             }
             upScoreService.save(new UpScore(DateUtil.getNowDate(), studentPhysical.getStudentId(), studentPhysical.getClassesId(),
@@ -208,7 +208,8 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
     public List<StudentPhysical> getOneByStudent(Long studentId, String date, Boolean queryNow) {
         List<StudentPhysical> records = null;
         if (queryNow) {
-            records = Lists.newArrayList(studentPhysicalMapper.getOneByStudent(studentId, date));
+            StudentPhysical oneByStudent = studentPhysicalMapper.getOneByStudent(studentId, date);
+            records = Objects.nonNull(oneByStudent) ? Lists.newArrayList(oneByStudent) : null;
         } else {
             records = studentPhysicalMapper.selectList(new QueryWrapper<StudentPhysical>().eq("studentId", studentId).orderByDesc("date"));
         }
