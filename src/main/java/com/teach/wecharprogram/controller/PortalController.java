@@ -17,9 +17,9 @@ public class PortalController {
     @Value("${spring.profiles.active}")
     String env;
 
-    @RequestMapping("/")
-    public String toApi(){
-        if(env.indexOf("dev")!=-1){
+    @RequestMapping({"/", "/swagger-ui.html", "/v2"})
+    public String toApi() {
+        if (env.indexOf("dev") != -1) {
             return "doc";
         }
         return "/";
