@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 import java.util.Properties;
 
 @Slf4j
@@ -47,8 +48,13 @@ public class IpHelper {
      * @return 本机ip地址
      * @throws Exception
      */
-    public static String getLocalIpAddr() throws Exception {
-        InetAddress address = InetAddress.getLocalHost();
+    public static String getLocalIpAddr() {
+        InetAddress address = null;
+        try {
+            address = InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
         return address.getHostAddress();
     }
 

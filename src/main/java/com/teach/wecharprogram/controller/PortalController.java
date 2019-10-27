@@ -1,8 +1,10 @@
 package com.teach.wecharprogram.controller;
 
+import com.teach.wecharprogram.util.IpHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import springfox.documentation.annotations.ApiIgnore;
 
 /**
@@ -23,6 +25,12 @@ public class PortalController {
             return "doc";
         }
         return "/";
+    }
+
+    @RequestMapping("/nowIp")
+    @ResponseBody
+    public String nowIp() {
+        return IpHelper.getLocalIpAddr();
     }
 
 }
