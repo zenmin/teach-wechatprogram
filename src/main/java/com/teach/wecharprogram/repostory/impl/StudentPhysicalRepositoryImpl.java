@@ -57,7 +57,7 @@ public class StudentPhysicalRepositoryImpl implements StudentPhysicalRepository 
             countSql.append(String.format(" and p.no = '%s' ", no));
         }
 
-        if (Objects.isNull(schoolId) && Objects.nonNull(classesId)) {
+        if (Objects.nonNull(classesId)) {
             sql.append(String.format(" and p.classesId = %s ", classesId));
             countSql.append(String.format(" and p.classesId = %s ", classesId));
         }
