@@ -87,8 +87,6 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
         String realName = loginUser.getRealName();
         studentPhysical.setUpdateTime(new Date());
         String date = studentPhysical.getDate();
-        // 更新或新增之前  先查询上一次的分数
-        List<StudentPhysical> oneByStudent = this.getOneByStudent(studentPhysical.getStudentId(), date, true);
         if (Objects.nonNull(studentPhysical.getId())) {
             studentPhysical.setCreateUid(null);
             studentPhysical.setCreateUserName(null);
@@ -96,11 +94,18 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
             // 更新主表
             studentPhysicalMapper.updateById(studentPhysical);
             //更新分数
-            UpScore upScore = upScoreMapper.selectOne(new QueryWrapper<UpScore>().eq("studentId", studentPhysical.getStudentId()).eq("date", date));
+            // 查本次评测是否存在分数进步记录表
+            UpScore upScore = upScoreMapper.selectOne(new QueryWrapper<UpScore>().eq("physicalId", studentPhysical.getId()));
+            if (Objects.isNull(upScore)) {
+                upScore = upScoreMapper.selectOne(new QueryWrapper<UpScore>().eq("studentId", studentPhysical.getStudentId()).eq("date", date));
+            }
             if (Objects.nonNull(upScore)) {
-                Double score = StaticUtil.subtract(studentPhysical.getAllScore(), Objects.nonNull(oneByStudent) ? oneByStudent.get(0).getAllScore() : 0D);
-                Double upScoreScore = upScore.getScore();
-                if (!score.equals(upScoreScore)) {
+                Double lastScore = upScore.getLastScore();
+                if (Objects.isNull(lastScore)) {
+                    lastScore = 0d;
+                }
+                Double score = StaticUtil.subtract(studentPhysical.getAllScore(), lastScore);
+                if (!score.equals(upScore.getScore())) {
                     upScore.setScore(score);
                     upScoreService.save(upScore);
                 }
@@ -116,14 +121,17 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
             studentPhysical.setDate(DateUtil.getNowDate());
             studentPhysical.setStudentName(one.getName());
             studentPhysicalMapper.insert(studentPhysical);
-
+            // 先查询上一次的分数
+            List<StudentPhysical> oneByStudent = this.getOneByStudent(studentPhysical.getStudentId(), date, true);
             // 计算本次分数和上次分数之差
-            Double allScore = 0d;
+            Double changeScore = 0d;
+            Double lastScore = 0d;
             if (Objects.nonNull(oneByStudent) && oneByStudent.size() > 0) {
-                allScore = oneByStudent.get(0).getAllScore();
+                lastScore = oneByStudent.get(0).getAllScore();
+                changeScore = StaticUtil.subtract(studentPhysical.getAllScore(), Objects.nonNull(lastScore) ? lastScore : 0d);
             }
             upScoreService.save(new UpScore(DateUtil.getNowDate(), studentPhysical.getStudentId(), studentPhysical.getClassesId(),
-                    StaticUtil.subtract(studentPhysical.getAllScore(), Objects.nonNull(allScore) ? allScore : 0d), new Date()));
+                    changeScore, new Date(), lastScore, studentPhysical.getId()));
         }
         return studentPhysical;
     }

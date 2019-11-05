@@ -50,5 +50,10 @@ public class UpScore extends EntityModel {
     @ApiModelProperty(value = "更新时间")
     private Date updateTime;
 
+    @ApiModelProperty(value = "上次分数")
+    private Double lastScore;
+
+    @ApiModelProperty(value = "本次评测id")
+    private Long physicalId;
 
 }
