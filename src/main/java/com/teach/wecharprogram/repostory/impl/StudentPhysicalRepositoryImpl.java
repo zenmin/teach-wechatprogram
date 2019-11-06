@@ -6,6 +6,7 @@ import com.teach.wecharprogram.entity.DO.BmiDo;
 import com.teach.wecharprogram.entity.DO.Pager;
 import com.teach.wecharprogram.entity.DO.StudentPhysicalDo;
 import com.teach.wecharprogram.entity.IndexVo;
+import com.teach.wecharprogram.entity.StudentPhysical;
 import com.teach.wecharprogram.repostory.StudentPhysicalRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,6 +118,14 @@ public class StudentPhysicalRepositoryImpl implements StudentPhysicalRepository 
         String bmiSql = "SELECT sum(score) as score ,date from up_score GROUP BY date  ORDER BY date asc LIMIT 7";
         List<BmiDo> list = jdbcTemplate.query(bmiSql, new BeanPropertyRowMapper<>(BmiDo.class));
         return ImmutableMap.of("index", IndexVo.of(counts), "bmi", list);
+    }
+
+    @Override
+    public StudentPhysical selectById(Long id) {
+        String sql = String.format("SELECT p.*,TIMESTAMPDIFF(YEAR,s.birthday,CURRENT_DATE) as age,s.gender FROM " +
+                "student_physical p left JOIN student s on p.studentId = s.id WHERE p.id = %s ", id);
+        List<StudentPhysical> query = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(StudentPhysical.class));
+        return query.size() > 0 ? query.get(0) : null;
     }
 
 }

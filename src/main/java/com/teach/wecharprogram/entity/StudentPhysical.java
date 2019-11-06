@@ -211,4 +211,9 @@ public class StudentPhysical extends EntityModel {
     @Transient
     private Long schoolId;
 
+    @ApiModelProperty(value = "年龄")
+    @TableField(exist = false)
+    @Transient
+    private Integer age;
+
 }

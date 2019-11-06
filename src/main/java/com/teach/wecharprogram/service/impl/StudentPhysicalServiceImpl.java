@@ -64,7 +64,7 @@ public class StudentPhysicalServiceImpl implements StudentPhysicalService {
 
     @Override
     public StudentPhysical getOne(Long id) {
-        return studentPhysicalMapper.selectById(id);
+        return studentPhysicalRepository.selectById(id);
     }
 
     @Override
