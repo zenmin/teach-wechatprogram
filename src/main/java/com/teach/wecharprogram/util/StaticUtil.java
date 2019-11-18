@@ -215,7 +215,7 @@ public class StaticUtil {
      * @return
      */
     public static Map<String, Object> getUrlParams(String param) {
-        Map<String, Object> map = new HashMap<String, Object>(0);
+        Map<String, Object> map = new HashMap<>();
         if (StringUtils.isBlank(param)) {
             return map;
         }
